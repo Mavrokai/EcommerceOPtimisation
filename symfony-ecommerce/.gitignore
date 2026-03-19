@@ -70,6 +70,9 @@ yarn-error.log*
 
 ###> Node.js (si vous utilisez npm/yarn pour le front) ###
 node_modules/
+
+###> Lighthouse CI ###
+/.lighthouseci/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

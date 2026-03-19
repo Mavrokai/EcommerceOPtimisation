@@ -105,7 +105,7 @@ class HomeController extends AbstractController
         $customerReviews = [
             [
                 'name' => 'Marie Dupont',
-                'avatar' => 'avatar-marie.jpg',
+                'avatar' => 'default-avatar.svg',
                 'rating' => 5,
                 'comment' => 'Service excellent ! Mon chat adore ses nouvelles croquettes. Livraison rapide et soignée.',
                 'product' => 'Croquettes Chat Premium',
@@ -113,7 +113,7 @@ class HomeController extends AbstractController
             ],
             [
                 'name' => 'Pierre Lambert',
-                'avatar' => 'avatar-pierre.jpg',
+                'avatar' => 'default-avatar.svg',
                 'rating' => 5,
                 'comment' => 'Très satisfait de ma commande. Le jouet Kong est vraiment résistant, parfait pour mon labrador.',
                 'product' => 'Kong Classic',
@@ -121,7 +121,7 @@ class HomeController extends AbstractController
             ],
             [
                 'name' => 'Sophie Martin',
-                'avatar' => 'avatar-sophie.jpg',
+                'avatar' => 'default-avatar.svg',
                 'rating' => 4,
                 'comment' => 'Large choix de produits de qualité. Prix compétitifs et conseils utiles.',
                 'product' => 'Accessoires Chien',

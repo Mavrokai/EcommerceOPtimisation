@@ -6,30 +6,30 @@
     <a href="{{ path('app_product_index', {'category': category.name|lower}) }}" class="category-link">
         <div class="category-image-container">
             {% if category.image %}
-                {# Utilise l'image depuis la base de données si elle existe #}
-                {% set imageSource = asset('assets/images/' ~ category.image) %}
+                {% set imgRelPath = 'assets/images/' ~ category.image %}
             {% else %}
-                {# Fallback sur les images statiques par défaut #}
                 {% if category.name|lower == 'chiens' %}
-                    {% set imageName = 'category-dog.png' %}
+                    {% set imgRelPath = 'assets/images/category-dog.png' %}
                 {% elseif category.name|lower == 'chats' %}
-                    {% set imageName = 'category-cat.png' %}
+                    {% set imgRelPath = 'assets/images/category-cat.png' %}
                 {% elseif category.name|lower == 'oiseaux' %}
-                    {% set imageName = 'category-bird.png' %}
+                    {% set imgRelPath = 'assets/images/category-bird.png' %}
                 {% elseif category.name|lower == 'lézards' %}
-                    {% set imageName = 'category-lizard.png' %}
+                    {% set imgRelPath = 'assets/images/category-lizard.png' %}
                 {% else %}
-                    {% set imageName = 'category-dog.png' %}
+                    {% set imgRelPath = 'assets/images/category-dog.png' %}
                 {% endif %}
-                {% set imageSource = asset('assets/images/' ~ imageName) %}
             {% endif %}
-            
-            <img 
-                src="{{ imageSource }}" 
-                alt="{{ category.name }}" 
-                class="category-image"
-                loading="lazy"
-                onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+
+            <picture>
+                <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                <img
+                    src="{{ asset(imgRelPath) }}"
+                    alt="{{ category.name }}"
+                    class="category-image"
+                    loading="lazy"
+                    onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+            </picture>
         </div>
         <div class="category-content">
             <h3 class="category-name">{{ category.name }}</h3>

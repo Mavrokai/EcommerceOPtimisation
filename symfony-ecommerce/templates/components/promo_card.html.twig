@@ -8,29 +8,31 @@
 <div class="{{ cardClass }}">
     <a href="{{ promotion.buttonUrl|default('#') }}" class="promo-link">
         <div class="promo-image-container">
-            <picture>
-                <source 
-                    media="(max-width: 768px)" 
-                    srcset="{{ asset('assets/images/' ~ promotion.imageMobile|default(promotion.imageUrl)) }}" 
-                    type="image/webp">
-                {% if promotion.imageUrl starts with 'http' %}
-                    {# URL complète pour les images distantes #}
-                    <img 
-                        src="{{ promotion.imageUrl }}" 
-                        alt="{{ promotion.title }}" 
+            {% if promotion.imageUrl starts with 'http' %}
+                <picture>
+                    <img
+                        src="{{ promotion.imageUrl }}"
+                        alt="{{ promotion.title }}"
                         class="promo-image"
                         loading="lazy"
                         onerror="this.src='{{ asset('assets/images/promo-image.png') }}'">
-                {% else %}
-                    {# URL relative pour les images locales #}
-                    <img 
-                        src="{{ asset('assets/images/' ~ promotion.imageUrl) }}" 
-                        alt="{{ promotion.title }}" 
+                </picture>
+            {% else %}
+                {% set baseWidth = cardSize == 'large' ? 160 : (cardSize == 'small' ? 100 : 150) %}
+                {% set thumb1x = thumb_url(promotion.imageUrl, baseWidth) %}
+                {% set thumb2x = thumb_url(promotion.imageUrl, baseWidth * 2) %}
+                <picture>
+                    <img
+                        src="{{ thumb1x }}"
+                        srcset="{{ thumb1x }} 1x, {{ thumb2x }} 2x"
+                        alt="{{ promotion.title }}"
                         class="promo-image"
+                        width="{{ baseWidth }}"
+                        height="{{ baseWidth }}"
                         loading="lazy"
-                        onerror="this.src='{{ asset('assets/images/promo-image.png') }}'">
-                {% endif %}
-            </picture>
+                        onerror="this.src='{{ asset('assets/images/promo-image.png') }}'; this.srcset='';">
+                </picture>
+            {% endif %}
             {% if promotion.discountPercent %}
                 <div class="discount-badge">
                     -{{ promotion.discountPercent|number_format(0) }}%

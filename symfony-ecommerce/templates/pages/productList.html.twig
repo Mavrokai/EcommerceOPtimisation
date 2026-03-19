@@ -1,4 +1,6 @@
 {% extends 'base.html.twig' %}
+{% block title %}Tous nos produits pour animaux | Clochette&CO{% endblock %}
+{% block meta_description %}Parcourez notre catalogue complet de produits pour animaux : chiens, chats, oiseaux, lézards. Alimentation, jouets, accessoires et soins au meilleur prix.{% endblock %}
 {% block stylesheets %}
 {{ parent() }}
     <style>
@@ -1658,7 +1660,10 @@ body {
                     <div class="category-item-vertical" data-category-id="all">
                         <button class="category-btn-vertical active" data-category="all" data-type="all">
                             <div class="category-icon-vertical">
-                                <img src="{{ asset('assets/images/hero-image.png') }}" alt="Tous les produits" class="category-image-vertical">
+                                <picture>
+                                    <source srcset="{{ asset('assets/images/hero-image.png'|webp_path) }}" type="image/webp">
+                                    <img src="{{ asset('assets/images/hero-image.png') }}" alt="Tous les produits" class="category-image-vertical">
+                                </picture>
                             </div>
                             <span class="category-name-vertical">Tous les produits</span>
                         </button>
@@ -1669,26 +1674,28 @@ body {
                             <button class="category-btn-vertical" data-category="{{ category.id }}" data-type="category">
                                 <div class="category-icon-vertical">
                                     {% if category.image %}
-                                        {% set imageSource = asset('assets/images/' ~ category.image) %}
+                                        {% set imgRelPath = 'assets/images/' ~ category.image %}
                                     {% else %}
                                         {% if category.name|lower == 'chiens' %}
-                                            {% set imageName = 'category-dog.png' %}
+                                            {% set imgRelPath = 'assets/images/category-dog.png' %}
                                         {% elseif category.name|lower == 'chats' %}
-                                            {% set imageName = 'category-cat.png' %}
+                                            {% set imgRelPath = 'assets/images/category-cat.png' %}
                                         {% elseif category.name|lower == 'oiseaux' %}
-                                            {% set imageName = 'category-bird.png' %}
+                                            {% set imgRelPath = 'assets/images/category-bird.png' %}
                                         {% else %}
-                                            {% set imageName = 'category-dog.png' %}
+                                            {% set imgRelPath = 'assets/images/category-dog.png' %}
                                         {% endif %}
-                                        {% set imageSource = asset('assets/images/' ~ imageName) %}
                                     {% endif %}
-                                    
-                                    <img 
-                                        src="{{ imageSource }}" 
-                                        alt="{{ category.name }}" 
-                                        class="category-image-vertical"
-                                        loading="lazy"
-                                        onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+
+                                    <picture>
+                                        <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                                        <img
+                                            src="{{ asset(imgRelPath) }}"
+                                            alt="{{ category.name }}"
+                                            class="category-image-vertical"
+                                            loading="lazy"
+                                            onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+                                    </picture>
                                 </div>
                                 <span class="category-name-vertical">{{ category.name }}</span>
                                 {% if category.subCategories is not empty %}
@@ -1722,7 +1729,7 @@ body {
         <!-- Contenu principal -->
         <main class="products-content">
             <div class="products-header">
-                <h2 class="products-title">Nos Produits</h2>
+                <h1 class="products-title">Nos Produits</h1>
                 <div class="results-info" id="resultsInfo">
                     {{ products|length }} produit{{ products|length > 1 ? 's' : '' }} trouvé{{ products|length > 1 ? 's' : '' }}
                 </div>
@@ -1735,10 +1742,14 @@ body {
                  data-subcategory="{{ product.subCategory ? product.subCategory.id : 'all' }}">
                 <div class="product-image">
                     {% if product.imageUrl and product.imageUrl is not empty %}
-                        <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" alt="{{ product.name }}" />
+                        {% set imgRelPath = 'assets/images/' ~ product.imageUrl %}
                     {% else %}
-                        <img src="{{ asset('assets/images/hero-image.png') }}" alt="{{ product.name }}" />
+                        {% set imgRelPath = 'assets/images/hero-image.png' %}
                     {% endif %}
+                    <picture>
+                        <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                        <img src="{{ asset(imgRelPath) }}" alt="{{ product.name }}" loading="lazy">
+                    </picture>
                 </div>
                 <div class="product-content">
                     <h3 class="product-title">{{ product.name }}</h3>

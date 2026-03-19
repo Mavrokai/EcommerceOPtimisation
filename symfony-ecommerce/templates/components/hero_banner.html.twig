@@ -13,11 +13,15 @@
                 </a>
             </div>
             <div class="hero-image-container">
-                <img 
-                    src="{{ asset('assets/images/hero-image.png') }}" 
-                    alt="Animaux heureux" 
-                    class="hero-image"
-                    loading="eager">
+                <picture>
+                    <source srcset="{{ asset('assets/images/hero-image.png'|webp_path) }}" type="image/webp">
+                    <img
+                        src="{{ asset('assets/images/hero-image.png') }}"
+                        alt="Animaux heureux"
+                        class="hero-image"
+                        loading="eager"
+                        fetchpriority="high">
+                </picture>
             </div>
         </div>
     </div>

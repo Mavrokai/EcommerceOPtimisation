@@ -1,6 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ product.name }} - Détails du produit{% endblock %}
+{% block title %}{{ product.name }} | Clochette&CO{% endblock %}
+{% block meta_description %}{{ product.description|striptags|slice(0, 160) }}{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_title %}{{ product.name }} | Clochette&CO{% endblock %}
+{% block og_description %}{{ product.description|striptags|slice(0, 200) }}{% endblock %}
+{% block og_image %}{{ app.request.schemeAndHttpHost ~ asset('assets/images/' ~ product.imageUrl) }}{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ product.name|escape('js') }}",
+  "description": "{{ product.description|striptags|escape('js') }}",
+  "image": "{{ app.request.schemeAndHttpHost ~ asset('assets/images/' ~ product.imageUrl) }}",
+  "offers": {
+    "@type": "Offer",
+    "price": "{{ product.price }}",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "Clochette&CO"
+    }
+  }
+}
+</script>
+{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -706,10 +733,14 @@ body {
             <!-- Image du produit -->
             <div class="product-image">
                 {% if product.imageUrl and product.imageUrl is not empty %}
-                    <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" 
-                         alt="{{ product.name }}"
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                         style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    {% set imgRelPath = 'assets/images/' ~ product.imageUrl %}
+                    <picture>
+                        <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                        <img src="{{ asset(imgRelPath) }}"
+                             alt="{{ product.name }}"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </picture>
                     <!-- Fallback SVG (caché par défaut) -->
                     <svg width="200" height="200" viewBox="0 0 200 200" fill="none" style="display: none;">
                         <rect width="200" height="200" fill="#f1f3f4"/>

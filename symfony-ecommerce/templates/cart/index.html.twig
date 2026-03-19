@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% block robots %}noindex, nofollow{% endblock %}
 
 {% block title %}Mon panier{% endblock %}
 
@@ -741,10 +742,14 @@
           <div class="product-item">
             <div class="product-image">
 
-                <img src="{{ asset('assets/images/' ~ item.product.imageUrl) }}" 
-                     alt="{{ item.product.name }}" 
-                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;"
-                     onerror="this.src='{{ asset('assets/images/hero-image.png') }}'">
+                {% set imgRelPath = 'assets/images/' ~ item.product.imageUrl %}
+                <picture>
+                    <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                    <img src="{{ asset(imgRelPath) }}"
+                         alt="{{ item.product.name }}"
+                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;"
+                         onerror="this.src='{{ asset('assets/images/hero-image.png') }}'">
+                </picture>
 
             </div>
 
