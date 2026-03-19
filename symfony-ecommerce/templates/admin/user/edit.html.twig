@@ -1,0 +1,282 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Modifier l'Utilisateur{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item">
+        <a href="{{ path('admin_user_index') }}">Utilisateurs</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ path('admin_user_show', {'id': user.id}) }}">{{ user.email }}</a>
+    </li>
+    <li class="breadcrumb-item active">Modifier</li>
+{% endblock %}
+
+{% block header_actions %}
+    <div class="btn-group">
+        <a href="{{ path('admin_user_show', {'id': user.id}) }}" class="btn btn-info">
+            <i class="fas fa-eye me-2"></i>
+            Voir les détails
+        </a>
+        <a href="{{ path('admin_user_index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>
+            Retour à la liste
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-user-edit me-2"></i>
+                    Modifier l'Utilisateur : {{ user.email }}
+                </h5>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                
+                <!-- Informations de base -->
+                <div class="mb-4">
+                    <h6 class="text-muted border-bottom pb-2 mb-3">
+                        <i class="fas fa-user me-2"></i>
+                        Informations Personnelles
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Email -->
+                            <div class="mb-3">
+                                {{ form_label(form.email, null, {'label_attr': {'class': 'form-label required'}}) }}
+                                {{ form_widget(form.email) }}
+                                {{ form_errors(form.email) }}
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    L'adresse email sert d'identifiant de connexion
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Prénom -->
+                            <div class="mb-3">
+                                {{ form_label(form.firstName) }}
+                                {{ form_widget(form.firstName) }}
+                                {{ form_errors(form.firstName) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Nom -->
+                            <div class="mb-3">
+                                {{ form_label(form.lastName) }}
+                                {{ form_widget(form.lastName) }}
+                                {{ form_errors(form.lastName) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="mb-4">
+                    <h6 class="text-muted border-bottom pb-2 mb-3">
+                        <i class="fas fa-lock me-2"></i>
+                        Mot de Passe
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Nouveau mot de passe -->
+                            <div class="mb-3">
+                                {{ form_label(form.plainPassword.first) }}
+                                {{ form_widget(form.plainPassword.first) }}
+                                {{ form_errors(form.plainPassword.first) }}
+                                <div class="form-text">
+                                    {{ form_help(form.plainPassword.first) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Confirmation mot de passe -->
+                            <div class="mb-3">
+                                {{ form_label(form.plainPassword.second) }}
+                                {{ form_widget(form.plainPassword.second) }}
+                                {{ form_errors(form.plainPassword.second) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Options du compte -->
+                <div class="mb-4">
+                    <h6 class="text-muted border-bottom pb-2 mb-3">
+                        <i class="fas fa-cogs me-2"></i>
+                        Options du Compte
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form_widget(form.isAdmin) }}
+                                    {{ form_label(form.isAdmin) }}
+                                </div>
+                                <div class="form-text">
+                                    {{ form_help(form.isAdmin) }}
+                                </div>
+                                {{ form_errors(form.isAdmin) }}
+                                
+                                {% if user.isAdmin and user == app.user %}
+                                    <div class="alert alert-warning mt-2 mb-0">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <small>Vous ne pouvez pas retirer vos propres droits d'administrateur</small>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    {{ form_widget(form.isVerified) }}
+                                    {{ form_label(form.isVerified) }}
+                                </div>
+                                <div class="form-text">
+                                    {{ form_help(form.isVerified) }}
+                                </div>
+                                {{ form_errors(form.isVerified) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{{ path('admin_user_show', {'id': user.id}) }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>
+                            Annuler
+                        </a>
+                    </div>
+                    
+                    <div>
+                        {% if user != app.user %}
+                            <form method="post" 
+                                  action="{{ path('admin_user_delete', {'id': user.id}) }}" 
+                                  class="d-inline me-2"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="fas fa-trash me-2"></i>
+                                    Supprimer
+                                </button>
+                            </form>
+                        {% endif %}
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Enregistrer les Modifications
+                        </button>
+                    </div>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <!-- Informations sur l'utilisateur -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Informations Système
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-muted">ID Utilisateur</div>
+                        <div class="fw-bold">#{{ user.id }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-muted">Créé le</div>
+                        <div class="fw-bold">{{ user.createdAt|date('d/m/Y à H:i') }}</div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-muted">Modifié le</div>
+                        <div class="fw-bold">
+                            {% if user.updatedAt %}
+                                {{ user.updatedAt|date('d/m/Y à H:i') }}
+                            {% else %}
+                                <span class="text-muted fst-italic">Jamais</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="text-muted">Commandes</div>
+                        <div class="fs-5 fw-bold text-primary">{{ user.orders|length }}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted">Adresses</div>
+                        <div class="fs-5 fw-bold text-info">{{ user.addresses|length }}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted">Avis</div>
+                        <div class="fs-5 fw-bold text-warning">{{ user.reviews|length }}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-muted">Paniers</div>
+                        <div class="fs-5 fw-bold text-success">{{ user.userCarts|length }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conseils -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Conseils pour la modification
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li><strong>Mot de passe :</strong> Laisser vide pour conserver le mot de passe actuel.</li>
+                    <li><strong>Email :</strong> Vérifiez que le nouvel email est valide avant de sauvegarder.</li>
+                    <li><strong>Droits admin :</strong> Soyez prudent lors de la modification des droits d'administrateur.</li>
+                    <li><strong>Compte vérifié :</strong> Décocher annulera la vérification du compte.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-label.required::after {
+    content: " *";
+    color: #dc3545;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Désactiver le champ admin si c'est le propre compte de l'utilisateur
+    {% if user == app.user %}
+        const adminCheckbox = document.getElementById('{{ form.isAdmin.vars.id }}');
+        if (adminCheckbox && adminCheckbox.checked) {
+            adminCheckbox.disabled = true;
+            adminCheckbox.title = 'Vous ne pouvez pas retirer vos propres droits d\'administrateur';
+        }
+    {% endif %}
+});
+</script>
+{% endblock %}

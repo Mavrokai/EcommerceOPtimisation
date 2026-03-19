@@ -1,0 +1,545 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmation - Commande validée{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .confirmation-page {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      padding: 2rem 0;
+    }
+
+    .confirmation-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .confirmation-header {
+      background: white;
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .confirmation-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 40%, rgba(255, 140, 66, 0.1) 50%, transparent 60%);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #28a745, #20c997);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 50px;
+      color: white;
+      box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+      animation: bounce 2s infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    .confirmation-title {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      font-weight: bold;
+      position: relative;
+      z-index: 1;
+    }
+
+    .confirmation-subtitle {
+      font-size: 1.2rem;
+      color: #6c757d;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .order-number-badge {
+      display: inline-block;
+      background: var(--primary-orange);
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    .confirmation-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .order-details-card, .summary-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 140, 66, 0.1);
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      color: var(--primary-orange);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .order-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #f8f9fa;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.25rem;
+    }
+
+    .item-quantity {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .item-price {
+      font-weight: bold;
+      color: var(--primary-orange);
+      font-size: 1.1rem;
+    }
+
+    .info-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--primary-orange);
+    }
+
+    .info-section h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      color: var(--primary-orange);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-section p {
+      margin: 0.5rem 0;
+      font-size: 0.95rem;
+      color: #495057;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 0;
+    }
+
+    .summary-row:not(:last-child) {
+      border-bottom: 1px solid #f8f9fa;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--primary-orange);
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--primary-orange);
+    }
+
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 50px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      font-size: 0.9rem;
+      color: #6c757d;
+      font-weight: 600;
+    }
+
+    .step::before {
+      content: '';
+      display: block;
+      width: 30px;
+      height: 30px;
+      background: #e9ecef;
+      border-radius: 50%;
+      margin: 0 auto 0.5rem;
+      border: 3px solid #e9ecef;
+      transition: all 0.3s ease;
+    }
+
+    .step.completed::before {
+      background: #28a745;
+      border-color: #28a745;
+    }
+
+    .step.active::before {
+      background: var(--primary-orange);
+      border-color: var(--primary-orange);
+      box-shadow: 0 0 20px rgba(255, 140, 66, 0.4);
+    }
+
+    .step::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 60%;
+      width: 80%;
+      height: 3px;
+      background: #e9ecef;
+      z-index: -1;
+      transition: all 0.3s ease;
+    }
+
+    .step:last-child::after {
+      display: none;
+    }
+
+    .step.completed::after {
+      background: #28a745;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+      color: white;
+      box-shadow: 0 8px 25px rgba(255, 140, 66, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(255, 140, 66, 0.4);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #6c757d;
+      border: 2px solid #e9ecef;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: #f8f9fa;
+      transform: translateY(-2px);
+      border-color: var(--primary-orange);
+      color: var(--primary-orange);
+    }
+
+    .btn-disabled {
+      background: #e9ecef !important;
+      color: #6c757d !important;
+      cursor: not-allowed !important;
+      box-shadow: none !important;
+    }
+
+    .btn-disabled:hover {
+      transform: none !important;
+    }
+
+    .floating-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .floating-element {
+      position: absolute;
+      color: rgba(255, 140, 66, 0.1);
+      font-size: 2rem;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .floating-element:nth-child(2) { top: 20%; right: 10%; animation-delay: 1s; }
+    .floating-element:nth-child(3) { bottom: 20%; left: 15%; animation-delay: 2s; }
+    .floating-element:nth-child(4) { bottom: 30%; right: 20%; animation-delay: 3s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    @media (max-width: 768px) {
+      .confirmation-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .confirmation-header {
+        padding: 2rem 1rem;
+      }
+      
+      .confirmation-title {
+        font-size: 2rem;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="floating-elements">
+  <div class="floating-element">🐾</div>
+  <div class="floating-element">🎉</div>
+  <div class="floating-element">✨</div>
+  <div class="floating-element">🎊</div>
+</div>
+
+<div class="confirmation-page">
+  <div class="progress-bar">
+    <div class="step completed">
+      <span>Panier</span>
+    </div>
+    <div class="step completed">
+      <span>Paiement</span>
+    </div>
+    <div class="step active">
+      <span>Confirmation</span>
+    </div>
+  </div>
+
+  <div class="confirmation-container">
+    <div class="confirmation-header">
+      <div class="success-icon">🎉</div>
+      
+      <h1 class="confirmation-title">Félicitations !</h1>
+      <p class="confirmation-subtitle">Votre commande a été confirmée et sera traitée dans les plus brefs délais.</p>
+      
+      <div class="order-number-badge">
+        {% if order and order.id %}
+          Commande n°{{ order.id }}
+        {% else %}
+          Commande confirmée
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="confirmation-content">
+      <div class="order-details-card">
+        <h2 class="card-title">
+          <i class="fas fa-shopping-bag"></i>
+          Vos articles
+        </h2>
+        
+        {% if cartItems is defined and cartItems|length > 0 %}
+          {% for item in cartItems %}
+            <div class="order-item">
+              <img src="{{ item.product.imageUrl ? asset('assets/images/' ~ item.product.imageUrl) : asset('assets/images/default.jpg') }}" 
+                   alt="{{ item.product.name }}" class="item-image"
+                   onerror="this.src='{{ asset('assets/images/default.jpg') }}'">
+              <div class="item-details">
+                <div class="item-name">{{ item.product.name }}</div>
+                <div class="item-quantity">Quantité: {{ item.quantity }}</div>
+              </div>
+              <div class="item-price">{{ item.total_ligne|number_format(2, ',', ' ') }}€</div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="order-item">
+            <img src="{{ asset('assets/images/default.jpg') }}" alt="Produit" class="item-image">
+            <div class="item-details">
+              <div class="item-name">Collier GPS</div>
+              <div class="item-quantity">Quantité: 1</div>
+            </div>
+            <div class="item-price">52,00€</div>
+          </div>
+        {% endif %}
+
+        <div class="info-section">
+          <h3><i class="fas fa-user"></i> Informations client</h3>
+          {% if order and order.guestEmail %}
+            <p><strong>Email :</strong> {{ order.guestEmail }}</p>
+          {% endif %}
+          <p><strong>Mode de livraison :</strong> Standard - 3 à 6 jours</p>
+        </div>
+
+        <div class="info-section">
+          <h3><i class="fas fa-truck"></i> Suivi de commande</h3>
+          <p>📧 Un email de confirmation avec les détails de suivi vous sera envoyé sous peu.</p>
+          <p>📱 Vous pourrez suivre votre commande directement depuis votre email.</p>
+          <p>⏰ Délai de livraison estimé : 3-6 jours ouvrés</p>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <h2 class="card-title">
+          <i class="fas fa-receipt"></i>
+          Récapitulatif
+        </h2>
+
+        <div class="summary-row">
+          <span>Sous-total HT</span>
+          <span>{{ totalHT|number_format(2, ',', ' ') }}€</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>TVA ({{ tauxTVA }}%)</span>
+          <span>{{ montantTVA|number_format(2, ',', ' ') }}€</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Livraison</span>
+          <span>{% if fraisLivraison == 0 %}Gratuite{% else %}{{ fraisLivraison|number_format(2, ',', ' ') }}€{% endif %}</span>
+        </div>
+        
+        {% if order.gift_wrap|default(false) %}
+        <div class="summary-row">
+          <span>🎁 Emballage cadeau</span>
+          <span>2,50€</span>
+        </div>
+        {% endif %}
+        
+        <div class="summary-total">
+          <span>Total TTC</span>
+          {% if order and order.total %}
+            <span>{{ order.total|number_format(2, ',', ' ') }}€</span>
+          {% else %}
+            <span>{{ (totalHT + montantTVA)|number_format(2, ',', ' ') }}€</span>
+          {% endif %}
+        </div>
+
+        <div class="info-section">
+          <h3><i class="fas fa-shield-alt"></i> Garanties</h3>
+          <p>✅ Paiement sécurisé SSL</p>
+          <p>✅ Retour gratuit 30 jours</p>
+          <p>✅ Garantie satisfaction</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <a href="/" class="btn-primary">
+        <i class="fas fa-shopping-bag"></i>
+        Continuer mes achats
+      </a>
+      
+      {% if order and order.id %}
+        <a href="{{ path('app_historique_facture', { id: order.id }) }}" class="btn-secondary">
+          <i class="fas fa-download"></i>
+          Télécharger la facture
+        </a>
+      {% else %}
+        <span class="btn-secondary btn-disabled" title="Facture non disponible">
+          <i class="fas fa-exclamation-triangle"></i>
+          Facture indisponible
+        </span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+{% endblock %}

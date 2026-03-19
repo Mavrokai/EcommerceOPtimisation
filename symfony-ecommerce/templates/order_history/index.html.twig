@@ -1,0 +1,293 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Commandes{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .order-history-container {
+            background: linear-gradient(135deg, #FFF8F0 0%, #FFF5E6 100%);
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .order-header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .order-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%);
+            background-size: 20px 20px;
+        }
+        
+        .order-number {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .order-date {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .order-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-en_attente {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+            border: 2px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .status-confirmee {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+            border: 2px solid rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-expediee {
+            background: rgba(0, 123, 255, 0.2);
+            color: #004085;
+            border: 2px solid rgba(0, 123, 255, 0.3);
+        }
+        
+        .status-livree {
+            background: rgba(40, 167, 69, 0.2);
+            color: #155724;
+            border: 2px solid rgba(40, 167, 69, 0.3);
+        }
+        
+        .status-annulee {
+            background: rgba(220, 53, 69, 0.2);
+            color: #721c24;
+            border: 2px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        .order-body {
+            padding: 25px;
+        }
+        
+        .order-summary {
+            margin-bottom: 20px;
+        }
+        
+        .product-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .product-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .product-quantity {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .order-total {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-orange);
+        }
+        
+        .order-actions {
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-detail {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-detail:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(251, 150, 41, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-invoice {
+            background: white;
+            border: 2px solid var(--primary-orange);
+            color: var(--primary-orange);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-invoice:hover {
+            background: var(--primary-orange);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="order-history-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center mb-5" style="color: var(--primary-orange); font-family: var(--font-heading);">
+                    <i class="fas fa-history me-3"></i>
+                    Mes Commandes
+                </h1>
+                
+                {% if orders is empty %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <h3>Aucune commande trouvée</h3>
+                        <p class="text-muted">Vous n'avez pas encore passé de commande.</p>
+                        <a href="{{ path('homepage') }}" class="btn-detail">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Commencer mes achats
+                        </a>
+                    </div>
+                {% else %}
+                    {% for order in orders %}
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-number">
+                                    Commande #{{ order.id }}
+                                </div>
+                                <div class="order-date">
+                                    Commandé le {{ order.createdAt|date('d/m/Y à H:i') }}
+                                </div>
+                                <div class="order-status status-{{ order.status }}">
+                                    {{ order.status|replace({'_': ' '})|title }}
+                                </div>
+                            </div>
+                            
+                            <div class="order-body">
+                                <div class="order-summary">
+                                    <h5>Produits commandés :</h5>
+                                    <ul class="product-list">
+                                        {% for item in order.orderItems %}
+                                            <li class="product-item">
+                                                <div>
+                                                    <div class="product-name">{{ item.displayName }}</div>
+                                                    <div class="product-quantity">Quantité : {{ item.quantity }}</div>
+                                                </div>
+                                                <div>
+                                                    <strong>{{ item.totalPrice }}€</strong>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                
+                                <div class="order-total">
+                                    <div>Total de la commande</div>
+                                    <div class="total-amount">{{ order.total }}€</div>
+                                </div>
+                                
+                                {% if order.deliveryAddress %}
+                                    <div class="mb-3">
+                                        <strong>Adresse de livraison :</strong>
+                                        <div class="text-muted">{{ order.deliveryAddress|slice(0, 100) }}...</div>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="order-actions">
+                                    <a href="{{ path('order_history_show', {id: order.id}) }}" class="btn-detail">
+                                        <i class="fas fa-eye me-2"></i>
+                                        Voir les détails
+                                    </a>
+                                    <a href="{{ path('order_history_invoice', {id: order.id}) }}" class="btn-invoice">
+                                        <i class="fas fa-file-invoice me-2"></i>
+                                        Facture
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

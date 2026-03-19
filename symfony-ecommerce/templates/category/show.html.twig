@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">📂 {{ category.name }}</h3>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">ID:</dt>
+                        <dd class="col-sm-9">{{ category.id }}</dd>
+
+                        <dt class="col-sm-3">Nom:</dt>
+                        <dd class="col-sm-9">{{ category.name }}</dd>
+
+                        <dt class="col-sm-3">Créée le:</dt>
+                        <dd class="col-sm-9">{{ category.createdAt|date('d/m/Y à H:i') }}</dd>
+
+                        <dt class="col-sm-3">Sous-catégories:</dt>
+                        <dd class="col-sm-9">
+                            {% if category.subCategories|length > 0 %}
+                                <ul class="list-unstyled">
+                                    {% for subCategory in category.subCategories %}
+                                        <li>
+                                            <span class="badge bg-secondary">{{ subCategory.name }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <em>Aucune sous-catégorie</em>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{{ path('app_category_index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+        <a href="{{ path('app_category_edit', {'id': category.id}) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Modifier
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Commande #{{ order.id }}{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('admin_orders_index') }}">Commandes</a></li>
+    <li class="breadcrumb-item active">Commande #{{ order.id }}</li>
+{% endblock %}
+
+{% block content %}
+<!-- Messages flash -->
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<!-- En-tête de la commande -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1">
+                            <i class="fas fa-receipt me-2"></i>
+                            Commande #{{ order.id }}
+                        </h4>
+                        <small class="text-light">
+                            Commandé le {{ order.createdAt|date('d/m/Y à H:i') }} par {{ order.customerEmail }}
+                        </small>
+                    </div>
+                    <div class="text-end">
+                        {% set statusClass = {
+                            'en_attente': 'warning',
+                            'confirmee': 'success',
+                            'expediee': 'primary',
+                            'livree': 'info',
+                            'annulee': 'danger'
+                        } %}
+                        <span class="badge bg-{{ statusClass[order.status] ?? 'secondary' }} fs-6 px-3 py-2">
+                            {{ order.statusLabel }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Formulaire de changement de statut -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-info-circle me-2"></i>Informations générales</h6>
+                        <p><strong>Total :</strong> <span class="text-success">{{ order.total }}€</span></p>
+                        <p><strong>Nombre d'articles :</strong> {{ order.totalItemsCount }}</p>
+                        {% if order.deliveryMethod %}
+                            <p><strong>Méthode de livraison :</strong> {{ order.deliveryMethod }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-edit me-2"></i>Changer le statut</h6>
+                        <form action="{{ path('admin_orders_update_status', {id: order.id}) }}" method="POST">
+                            <div class="input-group">
+                                <select name="status" class="form-select" required>
+                                    <option value="">Sélectionner un nouveau statut...</option>
+                                    <option value="en_attente" {{ order.status == 'en_attente' ? 'selected' : '' }}>
+                                        En attente de validation
+                                    </option>
+                                    <option value="confirmee" {{ order.status == 'confirmee' ? 'selected' : '' }}>
+                                        Confirmée
+                                    </option>
+                                    <option value="expediee" {{ order.status == 'expediee' ? 'selected' : '' }}>
+                                        Expédiée
+                                    </option>
+                                    <option value="livree" {{ order.status == 'livree' ? 'selected' : '' }}>
+                                        Livrée
+                                    </option>
+                                    <option value="annulee" {{ order.status == 'annulee' ? 'selected' : '' }}>
+                                        Annulée
+                                    </option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Mettre à jour
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Détail des produits -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-shopping-basket me-2"></i>
+                    Produits commandés
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Quantité</th>
+                                <th>Prix unitaire</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.orderItems %}
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong>{{ item.displayName }}</strong>
+                                            {% if item.product %}
+                                                <br><small class="text-muted">
+                                                    <i class="fas fa-tag"></i> ID: #{{ item.product.id }}
+                                                </small>
+                                            {% endif %}
+                                            {% if item.variantName %}
+                                                <br><small class="text-info">
+                                                    <i class="fas fa-palette"></i> {{ item.variantName }}
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark">{{ item.quantity }}</span>
+                                    </td>
+                                    <td>{{ item.unitPrice }}€</td>
+                                    <td><strong class="text-success">{{ item.totalPrice }}€</strong></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <th colspan="3">Total de la commande</th>
+                                <th class="text-success">{{ order.total }}€</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Adresses -->
+{% if order.deliveryAddress or order.billingAddress %}
+<div class="row mb-4">
+    {% if order.deliveryAddress %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-shipping-fast me-2"></i>
+                    Adresse de livraison
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="border-start border-primary ps-3">
+                    {{ order.deliveryAddress|nl2br }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if order.billingAddress and order.billingAddress != order.deliveryAddress %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-file-invoice me-2"></i>
+                    Adresse de facturation
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="border-start border-success ps-3">
+                    {{ order.billingAddress|nl2br }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Code promo -->
+{% if order.promoCode %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-percent me-2"></i>
+                    Code promotionnel utilisé
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info mb-0">
+                    <strong>{{ order.promoCode.code }}</strong>
+                    {% if order.promoCode.description %}
+                        - {{ order.promoCode.description }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Actions -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <a href="{{ path('admin_orders_index') }}" class="btn btn-secondary me-2">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Retour à la liste
+                </a>
+                <button onclick="window.print()" class="btn btn-info">
+                    <i class="fas fa-print me-2"></i>
+                    Imprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

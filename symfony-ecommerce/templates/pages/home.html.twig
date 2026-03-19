@@ -1,0 +1,1547 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'Animalerie en ligne - Produits pour chiens, chats et plus' }}{% endblock %}
+
+{% block description %}
+    {{ 'Découvrez notre large sélection de produits pour animaux : nourriture, jouets, accessoires pour chiens, chats, oiseaux et plus. Livraison rapide et prix compétitifs.' }}
+{% endblock %}
+
+{% block keywords %}
+    {{ 'animalerie, produits animaux, chien, chat, nourriture animaux, jouets animaux, accessoires animaux, livraison' }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .page-main-wrapper {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--cream) 0%, #f8f5f0 100%);
+        }
+
+        .banner-hero-area {
+            margin-bottom: 3rem;
+        }
+
+        .product-category-container {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f8f5f0 0%, #fff8f0 100%);
+            margin: 2rem 0;
+            border-radius: 30px;
+            box-shadow: 0 15px 50px rgba(255, 140, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-main-heading {
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 2.8rem;
+            color: var(--primary-orange);
+            margin-bottom: 3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .category-items-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .single-category-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            width: 100%;
+        }
+
+        .animated-shape-element {
+            position: absolute;
+            width: 280px;
+            height: 220px;
+            z-index: 1;
+            border-radius: 60% 40% 30% 70%;
+            animation: morphingAnimation 12s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        .gradient-color-0 {
+            background: linear-gradient(135deg, #d4a574 0%, #c4956a 50%, #b8845a 100%);
+            animation-delay: 0s;
+        }
+
+        .gradient-color-1 {
+            background: linear-gradient(135deg, #dab76f 0%, #c4a853 50%, #b8954a 100%);
+            animation-delay: -2s;
+        }
+
+        .gradient-color-2 {
+            background: linear-gradient(135deg, #8fa4b3 0%, #7a8fa0 50%, #6b7d8c 100%);
+            animation-delay: -4s;
+        }
+
+        .gradient-color-3 {
+            background: linear-gradient(135deg, #a8c686 0%, #95b36d 50%, #829f5a 100%);
+            animation-delay: -6s;
+        }
+
+        .gradient-color-4 {
+            background: linear-gradient(135deg, #d4a6b8 0%, #c4939f 50%, #b8808c 100%);
+            animation-delay: -8s;
+        }
+
+        .gradient-color-5 {
+            background: linear-gradient(135deg, #9bb8d4 0%, #88a5c4 50%, #7592b8 100%);
+            animation-delay: -10s;
+        }
+
+        @keyframes morphingAnimation {
+            0%, 100% {
+                border-radius: 60% 40% 30% 70%;
+                transform: rotate(0deg) scale(1);
+            }
+            25% {
+                border-radius: 30% 60% 70% 40%;
+                transform: rotate(5deg) scale(1.1);
+            }
+            50% {
+                border-radius: 70% 30% 40% 60%;
+                transform: rotate(-3deg) scale(0.9);
+            }
+            75% {
+                border-radius: 40% 70% 60% 30%;
+                transform: rotate(8deg) scale(1.05);
+            }
+        }
+
+        .single-category-wrapper .category-card,
+        .single-category-wrapper > div:not(.animated-shape-element) {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        /* Assurer que les cartes sont centrées */
+        .single-category-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* Promotions section */
+        .special-deals-area {
+            padding: 3rem 0;
+            background: linear-gradient(45deg, #ffeaa7, #fab1a0);
+            margin: 2rem 0;
+            border-radius: 20px;
+        }
+
+        .deals-main-title {
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            color: var(--primary-orange);
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .deals-grid-layout {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            overflow: hidden;
+        }
+
+        .deals-carousel {
+            display: flex;
+            gap: 1.5rem;
+            transition: transform 0.3s ease;
+            padding: 1rem 0;
+        }
+
+        .deals-carousel .promo-grid-item {
+            flex: 0 0 280px;
+            height: auto;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .carousel-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .carousel-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-btn:focus {
+            outline: 3px solid #4299e1;
+            outline-offset: 2px;
+        }
+
+        .carousel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .carousel-btn svg {
+            fill: #333;
+            width: 20px;
+            height: 20px;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        .carousel-dot.active {
+            background: var(--secondary-orange, #ff6b35);
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 1024px) {
+            .deals-carousel .promo-grid-item {
+                flex: 0 0 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .deals-grid-layout {
+                padding: 0 1rem;
+            }
+            
+            .deals-carousel .promo-grid-item {
+                flex: 0 0 220px;
+            }
+            
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .carousel-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .category-items-layout {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 1.5rem;
+                padding: 0 1.5rem;
+            }
+            
+            .single-category-wrapper {
+                min-height: 280px;
+            }
+            
+            .animated-shape-element {
+                width: 250px;
+                height: 200px;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .category-items-layout {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.4rem;
+                padding: 0 1.5rem;
+            }
+            
+            .single-category-wrapper {
+                min-height: 260px;
+                padding: 0.8rem;
+            }
+            
+            .animated-shape-element {
+                width: 240px;
+                height: 190px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .product-category-container {
+                padding: 3rem 0;
+                margin: 1.5rem 0;
+                border-radius: 25px;
+            }
+            
+            .category-main-heading {
+                font-size: 2.4rem;
+                margin-bottom: 2.5rem;
+            }
+            
+            .category-items-layout {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.3rem;
+                padding: 0 1.5rem;
+            }
+            
+            .single-category-wrapper {
+                min-height: 250px;
+            }
+            
+            .animated-shape-element {
+                width: 230px;
+                height: 180px;
+            }
+            
+            .special-deals-area {
+                padding: 2.5rem 0;
+            }
+            
+            .deals-main-title {
+                font-size: 2.2rem;
+                margin-bottom: 1.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-main-wrapper {
+                padding: 0;
+            }
+
+            .product-category-container,
+            .special-deals-area {
+                margin: 1rem 0;
+                border-radius: 20px;
+                padding: 2rem 0;
+            }
+
+            .category-items-layout {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.2rem;
+                padding: 0 1rem;
+            }
+
+            .single-category-wrapper {
+                min-height: 220px;
+            }
+
+            .animated-shape-element {
+                width: 200px;
+                height: 160px;
+            }
+
+            .category-main-heading,
+            .deals-main-title {
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .deals-grid-layout {
+                padding: 0 1rem;
+            }
+            
+            .deals-carousel .promo-grid-item {
+                flex: 0 0 240px;
+            }
+            
+            .carousel-btn {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .carousel-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .product-category-container {
+                padding: 1.5rem 0;
+                margin: 0.8rem 0;
+                border-radius: 15px;
+            }
+            
+            .category-items-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 0 0.8rem;
+            }
+
+            .single-category-wrapper {
+                min-height: 200px;
+            }
+
+            .animated-shape-element {
+                width: 180px;
+                height: 140px;
+            }
+
+            .category-main-heading {
+                font-size: 1.8rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .deals-main-title {
+                font-size: 1.8rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .deals-carousel .promo-grid-item {
+                flex: 0 0 220px;
+            }
+            
+            .carousel-btn {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .carousel-btn svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .deals-carousel .promo-grid-item {
+                flex: 0 0 200px;
+            }
+
+            .category-main-heading,
+            .deals-main-title {
+                font-size: 1.6rem;
+                margin-bottom: 1rem;
+            }
+            
+            .product-category-container,
+            .special-deals-area {
+                padding: 1.2rem 0;
+                margin: 0.6rem 0;
+            }
+            
+            .category-items-layout {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+                padding: 0 0.6rem;
+            }
+
+            .single-category-wrapper {
+                min-height: 180px;
+            }
+
+            .animated-shape-element {
+                width: 160px;
+                height: 120px;
+            }
+            
+            .deals-grid-layout {
+                padding: 0 0.5rem;
+            }
+            
+            .carousel-controls {
+                gap: 0.5rem;
+                margin-top: 1.5rem;
+            }
+            
+            .carousel-btn {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .carousel-btn svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        
+        .category-items-layout,
+        .deals-grid-layout {
+            will-change: transform;
+        }
+
+        
+        .product-category-container,
+        .special-deals-area {
+            transition: transform 0.3s ease;
+        }
+
+        .product-category-container:hover,
+        .special-deals-area:hover {
+            transform: translateY(-2px);
+        }
+
+        
+        @media (prefers-reduced-motion: reduce) {
+            .product-category-container,
+            .special-deals-area {
+                transition: none;
+            }
+
+            .product-category-container:hover,
+            .special-deals-area:hover {
+                transform: none;
+            }
+        }
+
+        
+        .category-loading-spinner,
+        .deals-loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-family: var(--font-body);
+            color: var(--orange);
+            font-size: 1.2rem;
+        }
+
+        
+        .category-error-message,
+        .deals-error-message {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            font-family: var(--font-body);
+            color: #e74c3c;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        /* === SECTION PRODUITS PHARES ET AVIS === */
+        .featured-section {
+            padding: 5rem 0;
+            background: #f6f3e1;
+            margin: 3rem 0;
+        }
+
+        .featured-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .featured-main-heading {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff7b2e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .featured-main-heading i {
+            margin-right: 0.5rem;
+            color: #ffd700;
+        }
+
+        .featured-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 3rem;
+        }
+
+        .featured-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .featured-product-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .featured-product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            z-index: 2;
+            letter-spacing: 0.5px;
+        }
+
+        .product-badge.bestseller {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .product-badge.top {
+            background: linear-gradient(135deg, #4ecdc4 0%, #45b7aa 100%);
+            color: white;
+        }
+
+        .product-badge.promo {
+            background: linear-gradient(135deg, #ffd93d 0%, #ff9500 100%);
+            color: white;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .featured-product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 25px;
+        }
+
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .product-description {
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .product-rating .fas.fa-star {
+            color: #ddd;
+            margin-right: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .product-rating .fas.fa-star.active {
+            color: #ffd700;
+        }
+
+        .rating-text {
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .product-price {
+            margin-bottom: 20px;
+        }
+
+        .old-price {
+            color: #6c757d;
+            text-decoration: line-through;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .current-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ff8c42;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-add-to-cart {
+            flex: 1;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff7b2e 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-add-to-cart::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .btn-add-to-cart:hover::before {
+            left: 100%;
+        }
+
+        .btn-add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 140, 66, 0.3);
+        }
+
+        .btn-view-details {
+            padding: 12px 24px;
+            border: 2px solid #e9ecef;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .btn-view-details:hover {
+            background: #ff8c42;
+            color: white;
+            border-color: #ff8c42;
+            transform: translateY(-2px);
+        }
+
+        .btn-view-details-full {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff7b2e 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .btn-view-details-full::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .btn-view-details-full:hover::before {
+            left: 100%;
+        }
+
+        .btn-view-details-full:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 140, 66, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* === SECTION AVIS CLIENTS === */
+        .customer-reviews-section {
+            margin-top: 4rem;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+
+        .reviews-heading {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff7b2e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+
+        .reviews-heading i {
+            margin-right: 0.5rem;
+            color: #ff7b2e;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .review-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #ff8c42;
+            transition: all 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .customer-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 1rem;
+            border: 2px solid #ff8c42;
+        }
+
+        .customer-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .customer-info {
+            flex: 1;
+        }
+
+        .customer-name {
+            font-weight: 700;
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .review-rating .fas.fa-star {
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        .review-rating .fas.fa-star.active {
+            color: #ffd700;
+        }
+
+        .review-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .review-comment {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .review-product {
+            font-size: 0.9rem;
+            color: #ff8c42;
+            font-weight: 600;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 1200px) {
+            .featured-products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .featured-container {
+                padding: 0 15px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .featured-section {
+                padding: 3.5rem 0;
+                margin: 2rem 0;
+            }
+            
+            .featured-main-heading {
+                font-size: 2.5rem;
+            }
+            
+            .featured-products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.3rem;
+            }
+            
+            .reviews-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .featured-section {
+                padding: 3rem 0;
+                margin: 1.5rem 0;
+            }
+            
+            .featured-container {
+                padding: 0 10px;
+            }
+            
+            .featured-products-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .reviews-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .featured-main-heading {
+                font-size: 2.2rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .reviews-heading {
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .featured-subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 2.5rem;
+            }
+
+            .product-actions {
+                margin-top: 1rem;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn-add-to-cart,
+            .btn-view-details {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .btn-view-details-full {
+                padding: 14px 24px;
+                font-size: 1rem;
+            }
+
+            .review-header {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .customer-avatar {
+                margin-bottom: 0;
+                margin-right: 1rem;
+                width: 45px;
+                height: 45px;
+            }
+
+            .customer-reviews-section {
+                padding: 2.5rem 1.5rem;
+                margin-top: 3rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .featured-section {
+                padding: 2.5rem 0;
+            }
+            
+            .featured-main-heading {
+                font-size: 2rem;
+                letter-spacing: -1px;
+            }
+            
+            .reviews-heading {
+                font-size: 1.8rem;
+            }
+            
+            .featured-subtitle {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .featured-product-card {
+                border-radius: 15px;
+            }
+            
+            .product-info {
+                padding: 20px;
+            }
+            
+            .product-name {
+                font-size: 1.1rem;
+            }
+            
+            .product-image {
+                height: 220px;
+            }
+            
+            .current-price {
+                font-size: 1.3rem;
+            }
+            
+            .customer-reviews-section {
+                padding: 2rem 1rem;
+                border-radius: 15px;
+            }
+            
+            .review-card {
+                padding: 1.2rem;
+                border-radius: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .featured-main-heading {
+                font-size: 1.8rem;
+                margin-bottom: 0.6rem;
+            }
+            
+            .reviews-heading {
+                font-size: 1.6rem;
+                margin-bottom: 1.2rem;
+            }
+            
+            .featured-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 1.8rem;
+            }
+            
+            .product-image {
+                height: 200px;
+            }
+            
+            .product-info {
+                padding: 15px;
+            }
+            
+            .product-name {
+                font-size: 1rem;
+                margin-bottom: 6px;
+            }
+            
+            .product-description {
+                font-size: 0.85rem;
+                margin-bottom: 12px;
+            }
+            
+            .current-price {
+                font-size: 1.2rem;
+            }
+            
+            .btn-view-details-full {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .customer-reviews-section {
+                padding: 1.5rem 0.8rem;
+            }
+            
+            .review-card {
+                padding: 1rem;
+            }
+            
+            .customer-avatar {
+                width: 40px;
+                height: 40px;
+                margin-right: 0.8rem;
+            }
+            
+            .customer-name {
+                font-size: 0.9rem;
+            }
+            
+            .review-comment {
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            .review-product {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="page-main-wrapper">
+        <section class="banner-hero-area" role="banner">
+            {% include 'components/hero_banner.html.twig' with {
+                'title': 'Tout pour le bonheur de vos animaux',
+                'subtitle': 'Découvrez notre sélection premium de produits pour chiens, chats et bien plus',
+                'buttonText': 'Découvrir nos produits',
+                'buttonUrl': path('products'),
+                'background_image': '{{ asset("assets/images/hero-image.png") }}'
+            } %}
+        </section>
+
+        <section class="product-category-container" role="region" aria-labelledby="categories-title">
+            <h2 id="categories-title" class="category-main-heading">Nos Catégories</h2>
+            
+            {% if categories is defined and categories|length > 0 %}
+                <div class="category-items-layout">
+                    {% for category in categories %}
+                        <div class="single-category-wrapper">
+                            <div class="animated-shape-element gradient-color-{{ loop.index0 % 6 }}"></div>
+                            
+                            {% include 'components/category_card.html.twig' with {
+                                'category': category
+                            } %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="category-loading-spinner">
+                    <p>Chargement des catégories...</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Section Produits Phares et Avis Clients -->
+        <section class="featured-section" role="region" aria-labelledby="featured-title">
+            <div class="featured-container">
+                <h2 id="featured-title" class="featured-main-heading">
+                    <i class="fas fa-star"></i>
+                    Nos Produits Phares
+                </h2>
+                <p class="featured-subtitle">Découvrez nos bestsellers plébiscités par nos clients</p>
+                
+                <div class="featured-products-grid">
+                    {% if featuredProducts is defined and featuredProducts|length > 0 %}
+                        {% for product in featuredProducts %}
+                            <div class="featured-product-card">
+                                <div class="product-badge {{ product.badge|lower }}">{{ product.badge }}</div>
+                                <div class="product-image">
+                                    <img src="{{ asset('assets/images/' ~ product.image) }}" 
+                                         alt="{{ product.name }}" 
+                                         onerror="this.src='{{ asset('assets/images/default-product.svg') }}'">>
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-name">{{ product.name }}</h3>
+                                    <p class="product-description">{{ product.description }}</p>
+                                    <div class="product-rating">
+                                        {% for i in 1..5 %}
+                                            <i class="fas fa-star {{ i <= product.rating ? 'active' : '' }}"></i>
+                                        {% endfor %}
+                                        <span class="rating-text">({{ product.reviewCount }} avis)</span>
+                                    </div>
+                                    <div class="product-price">
+                                        {% if product.oldPrice is defined %}
+                                            <span class="old-price">{{ product.oldPrice }}€</span>
+                                        {% endif %}
+                                        <span class="current-price">{{ product.price }}€</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <a href="{{ path('product_detail', {'id': product.id}) }}" class="btn-view-details-full">
+                                            <i class="fas fa-eye"></i>
+                                            Voir les détails
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Section Avis Clients -->
+                <div class="customer-reviews-section">
+                    <h3 class="reviews-heading">
+                        <i class="fas fa-comments"></i>
+                        Ce que disent nos clients
+                    </h3>
+                    <div class="reviews-grid">
+                        {% if customerReviews is defined and customerReviews|length > 0 %}
+                            {% for review in customerReviews %}
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <div class="customer-avatar">
+                                            <img src="{{ asset('assets/images/' ~ review.avatar) }}" 
+                                                 alt="{{ review.name }}" 
+                                                 onerror="this.src='{{ asset('assets/images/default-avatar.svg') }}'">>
+                                        </div>
+                                        <div class="customer-info">
+                                            <h4 class="customer-name">{{ review.name }}</h4>
+                                            <div class="review-rating">
+                                                {% for i in 1..5 %}
+                                                    <i class="fas fa-star {{ i <= review.rating ? 'active' : '' }}"></i>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                        <span class="review-date">Il y a {{ review.date }}</span>
+                                    </div>
+                                    <p class="review-comment">"{{ review.comment }}"</p>
+                                    <span class="review-product">Produit: {{ review.product }}</span>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="special-deals-area" role="region" aria-labelledby="promotions-title">
+            <h2 id="promotions-title" class="deals-main-title">Offres Spéciales</h2>
+            
+            {% if promotions is defined and promotions|length > 0 %}
+                <div class="deals-grid-layout" role="region" aria-label="Carousel de promotions">
+                    <div class="deals-carousel" id="dealsCarousel" aria-live="polite">
+                        {% for promotion in promotions %}
+                            <div class="promo-grid-item" role="tabpanel" aria-label="Promotion {{ loop.index }} : {{ promotion.title }}">
+                                {% include 'components/promo_card.html.twig' with {
+                                    'promotion': promotion,
+                                    'size': promotion.size
+                                } %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="carousel-controls" role="toolbar" aria-label="Contrôles du carousel">
+                        <button class="carousel-btn" id="prevBtn" aria-label="Promotion précédente (navigation circulaire)" type="button">
+                            <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-hidden="true">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                            </svg>
+                        </button>
+                        <button class="carousel-btn" id="nextBtn" aria-label="Promotion suivante (navigation circulaire)" type="button">
+                            <svg viewBox="0 0 24 24" fill="currentColor" role="img" aria-hidden="true">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="carousel-dots" id="carouselDots"></div>
+                </div>
+            {% else %}
+                <div class="deals-loading-spinner">
+                    <p>Chargement des promotions...</p>
+                </div>
+            {% endif %}
+        </section>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const promoImages = document.querySelectorAll('.promo-card img');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                                observer.unobserve(img);
+                            }
+                        }
+                    });
+                });
+
+                promoImages.forEach(img => imageObserver.observe(img));
+            }
+
+            const promoCards = document.querySelectorAll('.promo-card');
+            promoCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('h3')?.textContent || 'Unknown';
+                    console.log(`Promotion clicked: ${title}`);
+                    
+                    
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'promotion_click', {
+                            'promotion_name': title,
+                            'page_location': window.location.href
+                        });
+                    }
+                });
+            });
+
+            
+            const categoryCards = document.querySelectorAll('.category-card');
+            categoryCards.forEach(card => {
+                // Interactions souris/touch
+                const addInteraction = (event) => {
+                    card.style.transform = 'translateY(-8px) scale(1.02)';
+                };
+                
+                const removeInteraction = (event) => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                };
+                
+                // Événements souris
+                card.addEventListener('mouseenter', addInteraction);
+                card.addEventListener('mouseleave', removeInteraction);
+                
+                // Événements touch pour mobile
+                card.addEventListener('touchstart', addInteraction, { passive: true });
+                card.addEventListener('touchend', removeInteraction, { passive: true });
+                card.addEventListener('touchcancel', removeInteraction, { passive: true });
+            });
+
+            const allImages = document.querySelectorAll('img');
+            allImages.forEach(img => {
+                img.addEventListener('error', function() {
+                    if (this.classList.contains('category-image')) {
+                        this.src = '{{ asset("assets/images/category-dog.png") }}';
+                        this.alt = 'Image de catégorie non disponible';
+                    }
+                    else if (this.classList.contains('promo-image')) {
+                        this.src = '{{ asset("assets/images/promo-image.png") }}';
+                        this.alt = 'Image de promotion non disponible';
+                    }
+                    else {
+                        this.src = '{{ asset("assets/images/category-dog.png") }}';
+                        this.alt = 'Image non disponible';
+                    }
+                });
+            });
+
+            if ('PerformanceObserver' in window) {
+                const observerPerf = new PerformanceObserver((list) => {
+                    const entries = list.getEntries();
+                    entries.forEach(entry => {
+                        if (entry.entryType === 'largest-contentful-paint') {
+                            console.log('LCP:', entry.startTime);
+                        }
+                    });
+                });
+                
+                observerPerf.observe({ entryTypes: ['largest-contentful-paint'] });
+            }
+
+            
+            const carousel = document.getElementById('dealsCarousel');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const dotsContainer = document.getElementById('carouselDots');
+            
+            if (carousel && prevBtn && nextBtn) {
+                const items = carousel.querySelectorAll('.promo-grid-item');
+                const totalItems = items.length;
+                let currentIndex = 0;
+                
+                
+                // Gestion responsive du carousel
+                const getItemsPerView = () => {
+                    const containerWidth = carousel.parentElement.offsetWidth;
+                    const itemWidth = window.innerWidth <= 480 ? 200 : 
+                                     window.innerWidth <= 600 ? 220 :
+                                     window.innerWidth <= 768 ? 240 :
+                                     window.innerWidth <= 1024 ? 250 : 280;
+                    const gap = 24;
+                    return Math.max(1, Math.floor((containerWidth - 64) / (itemWidth + gap)));
+                };
+                
+                let itemsPerView = getItemsPerView();
+                const maxIndex = Math.max(0, totalItems - itemsPerView);
+                
+                
+                const createDots = () => {
+                    dotsContainer.innerHTML = '';
+                    for (let i = 0; i <= maxIndex; i++) {
+                        const dot = document.createElement('div');
+                        dot.className = 'carousel-dot';
+                        if (i === 0) dot.classList.add('active');
+                        dot.addEventListener('click', () => goToSlide(i));
+                        dotsContainer.appendChild(dot);
+                    }
+                };
+                
+                
+                const updateCarousel = () => {
+                    const itemWidth = window.innerWidth <= 480 ? 200 : 
+                                     window.innerWidth <= 600 ? 220 :
+                                     window.innerWidth <= 768 ? 240 :
+                                     window.innerWidth <= 1024 ? 250 : 280;
+                    const gap = 24;
+                    const offset = currentIndex * (itemWidth + gap);
+                    carousel.style.transform = `translateX(-${offset}px)`;
+                    
+                    
+                    document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentIndex);
+                    });
+                    
+                    prevBtn.disabled = false;
+                    nextBtn.disabled = false;
+                };
+                
+                const goToSlide = (index) => {
+                    currentIndex = Math.max(0, Math.min(index, maxIndex));
+                    updateCarousel();
+                };
+                
+                const nextSlide = () => {
+                    if (currentIndex < maxIndex) {
+                        currentIndex++;
+                    } else {
+                        currentIndex = 0; 
+                    }
+                    updateCarousel();
+                };
+                
+                const prevSlide = () => {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                    } else {
+                        currentIndex = maxIndex; 
+                    }
+                    updateCarousel();
+                };
+                
+                nextBtn.addEventListener('click', nextSlide);
+                prevBtn.addEventListener('click', prevSlide);
+                
+                let autoPlayInterval;
+                const startAutoPlay = () => {
+                    autoPlayInterval = setInterval(() => {
+                        if (currentIndex >= maxIndex) {
+                            currentIndex = 0;
+                        } else {
+                            currentIndex++;
+                        }
+                        updateCarousel();
+                    }, 6000);
+                };
+                
+                const stopAutoPlay = () => {
+                    clearInterval(autoPlayInterval);
+                };
+                
+                
+                carousel.addEventListener('mouseenter', stopAutoPlay);
+                carousel.addEventListener('mouseleave', startAutoPlay);
+                
+                let startX = 0;
+                let endX = 0;
+                
+                carousel.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+                
+                carousel.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) { 
+                        if (diff > 0) {
+                            nextSlide(); 
+                        } else {
+                            prevSlide();
+                        }
+                    }
+                });
+                
+                createDots();
+                updateCarousel();
+                startAutoPlay();
+                
+                window.addEventListener('resize', () => {
+                    const newItemsPerView = getItemsPerView();
+                    if (newItemsPerView !== itemsPerView) {
+                        itemsPerView = newItemsPerView;
+                        const newMaxIndex = Math.max(0, totalItems - itemsPerView);
+                        currentIndex = Math.min(currentIndex, newMaxIndex);
+                        createDots();
+                        updateCarousel();
+                    }
+                });
+            }
+        });
+
+        
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                const dealsGridLayout = document.querySelector('.deals-grid-layout');
+                if (dealsGridLayout) {
+                    dealsGridLayout.style.display = 'none';
+                    dealsGridLayout.offsetHeight;
+                    dealsGridLayout.style.display = 'grid';
+                }
+            }, 250);
+        });
+    </script>
+{% endblock %}

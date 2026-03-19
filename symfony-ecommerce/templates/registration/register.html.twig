@@ -1,0 +1,258 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+/* Styles globaux pour la page d'inscription */
+body {
+    background: linear-gradient(135deg, var(--cream) 0%, #f8f9fa 100%);
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Container principal du formulaire */
+.form-container {
+    max-width: 450px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.form-container h1 {
+    color: var(--dark-gray);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* Styles des groupes de formulaire */
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styles des labels */
+.form-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--dark-gray);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Styles des inputs */
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-container input[type="text"]:focus,
+.form-container input[type="email"]:focus,
+.form-container input[type="password"]:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(251, 150, 41, 0.1);
+}
+
+/* Styles du bouton */
+.form-container button {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: var(--primary-orange);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.form-container button:hover {
+    background: var(--secondary-orange);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 150, 41, 0.3);
+}
+
+/* Styles des alertes */
+.alert {
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+/* Styles pour les messages d'erreur */
+.form-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group .form-error {
+    margin-top: 0.5rem;
+}
+
+/* Style global des erreurs de formulaire */
+ul.form-error {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+}
+
+ul.form-error li {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.5rem;
+    border-radius: 5px;
+    margin-bottom: 0.25rem;
+    border: 1px solid #f5c6cb;
+    font-size: 0.875rem;
+}
+
+/* Lien de connexion */
+.login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.login-link p {
+    margin: 0;
+    color: var(--medium-gray);
+    font-size: 0.95rem;
+}
+
+.login-link a {
+    color: var(--primary-orange);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+    color: var(--secondary-orange);
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-container,
+    .login-link {
+        margin: 1rem;
+        max-width: none;
+    }
+    
+    .form-container {
+        padding: 1.5rem;
+    }
+    
+    .form-container h1 {
+        font-size: 1.75rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+  <div class="form-container">
+
+    {# Affichage des flash messages #}
+    {% for label, messages in app.flashes %}
+      {% for message in messages %}
+        {% if label == 'error' %}
+          <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #f5c6cb;">
+            <strong>Erreur :</strong> {{ message }}
+          </div>
+        {% elseif label == 'success' %}
+          <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #c3e6cb;">
+            <strong>Succès :</strong> {{ message }}
+          </div>
+        {% else %}
+          <div class="alert alert-{{ label }}" style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+            {{ message }}
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+
+    <h1>Inscription</h1>
+    {{ form_start(registrationForm) }}
+
+      <div class="form-group">
+        {{ form_label(registrationForm.lastName, 'Nom') }}
+        {{ form_widget(registrationForm.lastName, {'attr': {'placeholder': 'Nom'}}) }}
+        {{ form_errors(registrationForm.lastName) }}
+      </div>
+
+      <div class="form-group">
+        {{ form_label(registrationForm.firstName, 'Prénom') }}
+        {{ form_widget(registrationForm.firstName, {'attr': {'placeholder': 'Prénom'}}) }}
+        {{ form_errors(registrationForm.firstName) }}
+      </div>
+
+      <div class="form-group">
+        {{ form_label(registrationForm.email, 'Email') }}
+        {{ form_widget(registrationForm.email, {'attr': {'placeholder': 'Email'}}) }}
+        {{ form_errors(registrationForm.email) }}
+      </div>
+
+      <div class="form-group">
+        {{ form_label(registrationForm.plainPassword.first, 'Mot de passe') }}
+        {{ form_widget(registrationForm.plainPassword.first, {'attr': {'placeholder': 'Mot de passe'}}) }}
+        {{ form_errors(registrationForm.plainPassword.first) }}
+      </div>
+
+      <div class="form-group">
+        {{ form_label(registrationForm.plainPassword.second, 'Confirmez le mot de passe') }}
+        {{ form_widget(registrationForm.plainPassword.second, {'attr': {'placeholder': 'Confirmez le mot de passe'}}) }}
+        {{ form_errors(registrationForm.plainPassword.second) }}
+      </div>
+
+      {# Affichage des erreurs globales du champ plainPassword #}
+      {{ form_errors(registrationForm.plainPassword) }}
+
+      <button type="submit">Inscription</button>
+
+    {{ form_end(registrationForm) }}
+  </div>
+
+  <div class="login-link">
+    <p>
+      Déjà inscrit ? 
+      <a href="{{ path('app_login') }}">
+        Connectez-vous ici
+      </a>
+    </p>
+  </div>
+{% endblock %}

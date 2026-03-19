@@ -1,0 +1,947 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Finaliser ma commande - {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+.checkout-page {
+    background: linear-gradient(135deg, var(--cream) 0%, #faf5f0 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.checkout-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.checkout-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--dark-orange);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.checkout-subtitle {
+    color: var(--medium-gray);
+    font-size: 1.1rem;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+    gap: 2rem;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--medium-gray);
+    font-weight: 600;
+}
+
+.step.active {
+    color: var(--primary-orange);
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--light-gray);
+    color: var(--medium-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.step.active .step-number {
+    background: var(--primary-orange);
+    color: white;
+}
+
+.checkout-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 3rem;
+    align-items: start;
+}
+
+.checkout-form {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(251, 150, 41, 0.1);
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+}
+
+.form-section:last-child {
+    margin-bottom: 0;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: var(--dark-orange);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: var(--font-body);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(251, 150, 41, 0.1);
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+.delivery-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.delivery-option {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.delivery-option:hover {
+    border-color: var(--light-orange);
+    background: #fef7ed;
+}
+
+.delivery-option.selected {
+    border-color: var(--primary-orange);
+    background: #fef7ed;
+    box-shadow: 0 4px 12px rgba(251, 150, 41, 0.15);
+}
+
+.delivery-option input[type="radio"] {
+    display: none;
+}
+
+.delivery-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.delivery-name {
+    font-weight: 600;
+    color: var(--dark-gray);
+    flex: 1;
+}
+
+.delivery-price {
+    font-weight: bold;
+    color: var(--primary-orange);
+    font-size: 1.1rem;
+}
+
+.delivery-details {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.gift-wrap {
+    background: linear-gradient(135deg, #fef7ed 0%, #fff7ed 100%);
+    border: 2px dashed var(--light-orange);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.gift-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.gift-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary-orange);
+}
+
+.gift-message {
+    width: 100%;
+    min-height: 80px;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    resize: vertical;
+    font-family: var(--font-body);
+}
+
+.order-summary {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border: 1px solid rgba(251, 150, 41, 0.1);
+    position: sticky;
+    top: 2rem;
+}
+
+.summary-title {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: var(--dark-orange);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.cart-items {
+    margin-bottom: 1.5rem;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--light-gray);
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.item-quantity {
+    color: var(--medium-gray);
+    font-size: 0.8rem;
+}
+
+.item-price {
+    font-weight: bold;
+    color: var(--primary-orange);
+}
+
+.summary-breakdown {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.summary-row:last-child {
+    margin-bottom: 0;
+}
+
+.summary-label {
+    color: var(--medium-gray);
+}
+
+.summary-value {
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.summary-row.total {
+    border-top: 2px solid var(--primary-orange);
+    padding-top: 1rem;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+}
+
+.summary-row.total .summary-label {
+    color: var(--dark-gray);
+    font-weight: bold;
+}
+
+.summary-row.total .summary-value {
+    color: var(--primary-orange);
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.free-shipping-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.shipping-progress {
+    background: #fef7ed;
+    border: 1px solid var(--light-orange);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+}
+
+.shipping-progress-bar {
+    background: #f1f5f9;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.shipping-progress-fill {
+    background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange));
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.shipping-progress-text {
+    font-size: 0.85rem;
+    color: var(--dark-orange);
+    margin-top: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.payment-methods {
+    margin-top: 1.5rem;
+}
+
+.payment-option {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.payment-option:hover {
+    border-color: var(--light-orange);
+}
+
+.payment-option.selected {
+    border-color: var(--primary-orange);
+    background: #fef7ed;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: var(--light-gray);
+    color: var(--medium-gray);
+}
+
+.btn-checkout {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(251, 150, 41, 0.3);
+}
+
+.btn-checkout:active {
+    transform: translateY(0);
+}
+
+.security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    opacity: 0.7;
+}
+
+.security-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--medium-gray);
+}
+
+@media (max-width: 768px) {
+    .checkout-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkout-title {
+        font-size: 2rem;
+    }
+    
+    .progress-steps {
+        gap: 1rem;
+    }
+    
+    .step-text {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="checkout-page">
+    <div class="checkout-container">
+        <!-- Messages flash -->
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'error' ? 'danger' : (type == 'success' ? 'success' : 'info') }} alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; padding: 1rem; border-radius: 8px; background-color: {{ type == 'error' ? '#f8d7da' : (type == 'success' ? '#d4edda' : '#d1ecf1') }}; color: {{ type == 'error' ? '#721c24' : (type == 'success' ? '#155724' : '#0c5460') }}; border: 1px solid {{ type == 'error' ? '#f5c6cb' : (type == 'success' ? '#c3e6cb' : '#bee5eb') }};">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float: right; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: inherit;" onclick="this.parentElement.style.display='none'">×</button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <!-- Header -->
+        <div class="checkout-header">
+            <h1 class="checkout-title">
+                <i class="fas fa-shopping-cart"></i>
+                Finaliser ma commande
+            </h1>
+            <p class="checkout-subtitle">Quelques informations et c'est terminé !</p>
+            
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="step">
+                    <span class="step-number">✓</span>
+                    <span class="step-text">Panier</span>
+                </div>
+                <div class="step active">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Livraison</span>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Paiement</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-content">
+            <!-- Formulaire principal -->
+            <div class="checkout-form">
+                <form action="{{ path('app_cart_process') }}" method="POST" id="checkout-form">
+                    
+                    <!-- Informations de contact -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-envelope"></i>
+                            Informations de contact
+                        </h2>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Adresse e-mail *</label>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="votre@email.com" required>
+                        </div>
+                    </div>
+
+                    <!-- Adresse de livraison -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Adresse de livraison
+                        </h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="prenom">Prénom *</label>
+                                <input type="text" id="prenom" name="prenom" class="form-input" placeholder="Votre prénom" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="nom">Nom *</label>
+                                <input type="text" id="nom" name="nom" class="form-input" placeholder="Votre nom" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="adresse">Adresse *</label>
+                            <input type="text" id="adresse" name="adresse" class="form-input" placeholder="Numéro et nom de rue" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="code_postal">Code postal *</label>
+                                <input type="text" id="code_postal" name="code_postal" class="form-input" placeholder="75000" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="ville">Ville *</label>
+                                <input type="text" id="ville" name="ville" class="form-input" placeholder="Votre ville" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="pays">Pays *</label>
+                            <select id="pays" name="pays" class="form-input form-select" required>
+                                <option value="">Sélectionner un pays</option>
+                                <option value="france" selected>France</option>
+                                <option value="belgique">Belgique</option>
+                                <option value="suisse">Suisse</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Mode de livraison -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-truck"></i>
+                            Mode de livraison
+                        </h2>
+                        <div class="delivery-options">
+                            {% for t in transporteurs %}
+                            <label class="delivery-option" for="delivery_{{ loop.index }}">
+                                <input type="radio" name="delivery" id="delivery_{{ loop.index }}" value="{{ t.name }}" 
+                                       data-price="{{ t.price }}" data-days="{{ t.days }}" {% if loop.first %}checked{% endif %}>
+                                <div style="flex: 1;">
+                                    <div class="delivery-header">
+                                        <span class="delivery-name">{{ t.name }}</span>
+                                        <span class="delivery-price">
+                                            {% if t.price == 0 %}
+                                                <span class="free-shipping-badge">Gratuit</span>
+                                            {% else %}
+                                                <span class="price-original">{{ t.price|number_format(2, ',', ' ') }} €</span>
+                                                <span class="price-free" style="display: none; color: var(--primary-orange); font-weight: bold;">Gratuit</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="delivery-details">
+                                        <span><i class="fas fa-clock"></i> {{ t.days }} jours ouvrés</span>
+                                        {% if 'Express' in t.name %}
+                                            <span><i class="fas fa-bolt" style="color: #f59e0b;"></i> Livraison rapide</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Progression vers livraison gratuite -->
+                        {% if totalPanier < 200 %}
+                        <div class="shipping-progress">
+                            <div class="shipping-progress-bar">
+                                <div class="shipping-progress-fill" style="width: {{ (totalPanier / 200 * 100)|round }}%"></div>
+                            </div>
+                            <div class="shipping-progress-text">
+                                Plus que {{ (200 - totalPanier)|number_format(2, ',', ' ') }}€ pour la livraison gratuite !
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Emballage cadeau -->
+                        {% if totalPanier >= 100 %}
+                        <div class="gift-wrap">
+                            <div class="gift-checkbox">
+                                <input type="checkbox" id="gift-wrap-checkbox" name="gift_wrap" value="1">
+                                <label for="gift-wrap-checkbox">
+                                    <i class="fas fa-gift" style="color: var(--primary-orange);"></i>
+                                    <strong>Emballage cadeau gratuit</strong>
+                                    <span style="color: var(--medium-gray);">(disponible à partir de 100€)</span>
+                                </label>
+                            </div>
+                            <textarea name="gift_message" class="gift-message" placeholder="Votre message personnalisé (optionnel)..."></textarea>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Méthode de paiement -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-credit-card"></i>
+                            Méthode de paiement
+                        </h2>
+                        <div class="payment-methods">
+                            <label class="payment-option" for="payment_card">
+                                <input type="radio" name="payment" id="payment_card" value="carte" checked>
+                                <div class="payment-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </div>
+                                <div>
+                                    <strong>Carte bancaire</strong>
+                                    <div style="font-size: 0.8rem; color: var(--medium-gray);">Visa, Mastercard, CB</div>
+                                </div>
+                            </label>
+                            <label class="payment-option" for="payment_paypal">
+                                <input type="radio" name="payment" id="payment_paypal" value="paypal">
+                                <div class="payment-icon" style="background: #0070ba; color: white;">
+                                    <i class="fab fa-paypal"></i>
+                                </div>
+                                <div>
+                                    <strong>PayPal</strong>
+                                    <div style="font-size: 0.8rem; color: var(--medium-gray);">Paiement sécurisé</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Récapitulatif de commande -->
+            <div class="order-summary">
+                <h3 class="summary-title">
+                    <i class="fas fa-receipt"></i>
+                    Récapitulatif
+                </h3>
+                
+                <!-- Articles du panier -->
+                <div class="cart-items">
+                    {% for item in cartItems %}
+                    <div class="cart-item">
+                        {% if item.product.imageUrl %}
+                            <img src="{{ asset('assets/images/' ~ item.product.imageUrl) }}" 
+                                 alt="{{ item.product.name }}" class="item-image"
+                                 onerror="this.src='{{ asset('assets/images/hero-image.png') }}'">
+                        {% else %}
+                            <div class="item-image" style="background: var(--light-gray); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-paw" style="color: var(--medium-gray);"></i>
+                            </div>
+                        {% endif %}
+                        <div class="item-details">
+                            <div class="item-name">{{ item.product.name }}</div>
+                            <div class="item-quantity">Quantité : {{ item.quantity }}</div>
+                        </div>
+                        <div class="item-price">{{ item.total_ligne|number_format(2, ',', ' ') }}€</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Détail des prix -->
+                <div class="summary-breakdown">
+                    <div class="summary-row">
+                        <span class="summary-label">Sous-total HT</span>
+                        <span class="summary-value">{{ totalProduitsHT|number_format(2, ',', ' ') }}€</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Livraison</span>
+                        <span class="summary-value" id="livraison-summary">
+                            {% if fraisLivraison == 0 %}
+                                <span class="free-shipping-badge">Gratuite</span>
+                            {% else %}
+                                {{ fraisLivraison|number_format(2, ',', ' ') }}€
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">TVA ({{ tauxTVA }}%)</span>
+                        <span class="summary-value" id="tva-value">{{ montantTVA|number_format(2, ',', ' ') }}€</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="summary-label">Total TTC</span>
+                        <span class="summary-value" id="total-final">{{ totalFinal|number_format(2, ',', ' ') }}€</span>
+                    </div>
+                </div>
+
+                <!-- Bouton de paiement -->
+                <button type="submit" form="checkout-form" class="btn-checkout">
+                    <i class="fas fa-lock"></i>
+                    Finaliser la commande
+                </button>
+
+                <!-- Badges de sécurité -->
+                <div class="security-badges">
+                    <div class="security-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        Paiement sécurisé
+                    </div>
+                    <div class="security-badge">
+                        <i class="fas fa-undo"></i>
+                        Retour gratuit
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elements
+    const deliveryOptions = document.querySelectorAll('input[name="delivery"]');
+    const paymentOptions = document.querySelectorAll('input[name="payment"]');
+    const giftWrapCheckbox = document.getElementById('gift-wrap-checkbox');
+    const totalFinalElement = document.getElementById('total-final');
+    const livraisonSummary = document.getElementById('livraison-summary');
+    
+    // Prix de base
+    let baseHT = {{ totalHT }};
+    let montantTVA = {{ montantTVA }};
+    let fraisLivraison = {{ fraisLivraison }};
+    const tauxTVA = {{ tauxTVA }};
+    const giftWrapPrice = {{ giftWrapPrice|default(0) }};
+    
+    // Fonction pour mettre à jour l'affichage des prix de livraison
+    function updateDeliveryPricesDisplay() {
+        const isShippingFree = baseHT >= livraisonGratuiteSeuil;
+        
+        deliveryOptions.forEach(radio => {
+            const deliveryOption = radio.closest('.delivery-option');
+            const priceOriginal = deliveryOption.querySelector('.price-original');
+            const priceFree = deliveryOption.querySelector('.price-free');
+            
+            if (priceOriginal && priceFree) {
+                if (isShippingFree && parseFloat(radio.dataset.price) > 0) {
+                    priceOriginal.classList.add('crossed');
+                    priceFree.style.display = 'inline';
+                } else {
+                    // Affichage normal
+                    priceOriginal.classList.remove('crossed');
+                    priceFree.style.display = 'none';
+                }
+            }
+        });
+    }
+    
+    // Seuils
+    const livraisonGratuiteSeuil = 200;
+    
+    // Gestion des options de livraison
+    deliveryOptions.forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.delivery-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            this.closest('.delivery-option').classList.add('selected');
+                        fraisLivraison = parseFloat(this.dataset.price) || 0;
+            
+            if (baseHT >= livraisonGratuiteSeuil) {
+                fraisLivraison = 0;
+            }
+            
+            updateTotals();
+        });
+    });
+    
+    // Gestion des options de paiement
+    paymentOptions.forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            this.closest('.payment-option').classList.add('selected');
+        });
+    });
+    
+    // Gestion emballage cadeau
+    if (giftWrapCheckbox) {
+        giftWrapCheckbox.addEventListener('change', updateTotals);
+    }
+    
+    // Fonction de mise à jour des totaux
+    function updateTotals() {
+        let totalProduitsHT = {{ totalProduitsHT }};
+        let livraison = fraisLivraison;
+        if (giftWrapCheckbox && giftWrapCheckbox.checked) {
+            livraison += giftWrapPrice;
+        }
+        
+        let totalHTAvecServices = totalProduitsHT + livraison;
+        let totalTTC = totalHTAvecServices * (1 + tauxTVA / 100);
+        let montantTVARecalc = totalTTC - totalHTAvecServices;
+
+        // Livraison
+        if (livraisonSummary) {
+            if (fraisLivraison === 0) {
+                livraisonSummary.innerHTML = '<span class="free-shipping-badge">Gratuite</span>';
+            } else {
+                livraisonSummary.textContent = fraisLivraison.toLocaleString('fr-FR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }) + '€';
+            }
+        }
+
+        const tvaLabel = document.getElementById('tva-value');
+        if (tvaLabel) {
+            tvaLabel.textContent = montantTVARecalc.toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + '€';
+        }
+
+        // Total
+        if (totalFinalElement) {
+            totalFinalElement.textContent = totalTTC.toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + '€';
+        }
+    }
+    
+    // Sélection initiale et mise à jour des prix
+    const initialSelectedDelivery = document.querySelector('input[name="delivery"]:checked');
+    if (initialSelectedDelivery) {
+        fraisLivraison = parseFloat(initialSelectedDelivery.dataset.price) || 0;
+        if (baseHT >= livraisonGratuiteSeuil) {
+            fraisLivraison = 0;
+        }
+        initialSelectedDelivery.closest('.delivery-option').classList.add('selected');
+    }
+    
+    const initialSelectedPayment = document.querySelector('input[name="payment"]:checked');
+    if (initialSelectedPayment) {
+        initialSelectedPayment.closest('.payment-option').classList.add('selected');
+    }
+    
+    // Animation au scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Animation des sections
+    document.querySelectorAll('.form-section, .order-summary').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
+    });
+    
+    // Validation du formulaire
+    document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        const btn = document.querySelector('.btn-checkout');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement en cours...';
+        btn.disabled = true;
+        
+        // Validation basique
+        const email = document.getElementById('email').value;
+        const prenom = document.getElementById('prenom').value;
+        const nom = document.getElementById('nom').value;
+        
+        if (!email || !prenom || !nom) {
+            e.preventDefault();
+            alert('Veuillez remplir tous les champs obligatoires.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            return;
+        }
+        
+    });
+    
+    // Initialisation
+    updateDeliveryPricesDisplay();
+    updateTotals();
+});
+</script>
+{% endblock %}
+
+

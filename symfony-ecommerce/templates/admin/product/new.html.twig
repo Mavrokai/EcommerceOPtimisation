@@ -1,0 +1,382 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Administration - Nouveau Produit{% endblock %}
+
+{% block page_title %}Nouveau Produit{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('admin_product_index') }}">Produits</a></li>
+    <li class="breadcrumb-item active">Nouveau</li>
+{% endblock %}
+
+{% block header_actions %}
+    <a href="{{ path('admin_product_index') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>
+        Retour à la liste
+    </a>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0 py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-plus text-success me-2"></i>
+                        <h5 class="mb-0 fw-semibold">Informations du nouveau produit</h5>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data', 'class': 'modern-form'}}) }}
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            {{ form_label(form.name, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Nom du produit'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Description détaillée du produit...'}}) }}
+                            {{ form_errors(form.description) }}
+                            <div class="form-text">Description détaillée du produit (optionnel)</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.price, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(form.price, {'attr': {'class': 'form-control', 'step': '0.01', 'placeholder': '0.00'}}) }}
+                                <span class="input-group-text bg-light border-start-0">
+                                    <i class="fas fa-euro-sign text-success"></i>
+                                </span>
+                            </div>
+                            {{ form_errors(form.price) }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.stock, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
+                                <span class="input-group-text bg-light border-start-0">
+                                    <i class="fas fa-boxes text-primary"></i>
+                                </span>
+                            </div>
+                            {{ form_errors(form.stock) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.weight, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(form.weight, {'attr': {'class': 'form-control', 'step': '0.01', 'placeholder': '0.00'}}) }}
+                                <span class="input-group-text bg-light border-start-0">kg</span>
+                            </div>
+                            {{ form_errors(form.weight) }}
+                            <div class="form-text">Poids du produit (optionnel)</div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            {{ form_label(form.imageUrl, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                            {{ form_widget(form.imageUrl, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
+                            {{ form_errors(form.imageUrl) }}
+                            <div class="form-text">Image du produit - Max 5MB</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            {{ form_label(form.subCategory, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                            {{ form_widget(form.subCategory, {'attr': {'class': 'form-select form-select-lg'}}) }}
+                            {{ form_errors(form.subCategory) }}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Choisissez la catégorie et sous-catégorie appropriées
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-muted mb-3">Options du produit</label>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-check form-switch form-check-lg">
+                                        {{ form_widget(form.isPromo, {'attr': {'class': 'form-check-input', 'role': 'switch', 'id': 'isPromoSwitch'}}) }}
+                                        {{ form_label(form.isPromo, null, {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
+                                        <div class="form-text">
+                                            <i class="fas fa-percentage me-1"></i>Marquer ce produit comme étant en promotion
+                                        </div>
+                                    </div>
+                                    {{ form_errors(form.isPromo) }}
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <div id="promoPercentageField" class="promo-percentage-field" style="display: none;">
+                                        {{ form_label(form.promoPercentage, null, {'label_attr': {'class': 'form-label fw-semibold text-muted mb-2'}}) }}
+                                        <div class="input-group">
+                                            {{ form_widget(form.promoPercentage, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
+                                            <span class="input-group-text bg-light border-start-0">
+                                                <i class="fas fa-percentage text-warning"></i>
+                                            </span>
+                                        </div>
+                                        {{ form_errors(form.promoPercentage) }}
+                                        <div class="form-text">
+                                            <i class="fas fa-info-circle me-1"></i>Pourcentage de réduction (0-100%)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-check form-switch form-check-lg">
+                                        {{ form_widget(form.isNew, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                        {{ form_label(form.isNew, null, {'label_attr': {'class': 'form-check-label fw-semibold'}}) }}
+                                        <div class="form-text">
+                                            <i class="fas fa-star me-1"></i>Marquer ce produit comme nouveauté
+                                        </div>
+                                    </div>
+                                    {{ form_errors(form.isNew) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                        <a href="{{ path('admin_product_index') }}" class="btn btn-light">
+                            <i class="fas fa-times me-2"></i>
+                            Annuler
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg shadow-sm">
+                            <i class="fas fa-save me-2"></i>
+                            Créer le produit
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Aide et conseils -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0 py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        <h6 class="mb-0 fw-semibold">Conseils</h6>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                        <div>
+                            <strong class="small">Nom descriptif</strong>
+                            <p class="small text-muted mb-0">Utilisez un nom clair et descriptif pour votre produit</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="fas fa-image text-info me-2 mt-1"></i>
+                        <div>
+                            <strong class="small">Image de qualité</strong>
+                            <p class="small text-muted mb-0">Ajoutez une image claire et attrayante (JPG, PNG, WebP)</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <i class="fas fa-percentage text-warning me-2 mt-1"></i>
+                        <div>
+                            <strong class="small">Promotions</strong>
+                            <p class="small text-muted mb-0">Définissez un pourcentage de réduction si le produit est en promotion</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-tags text-primary me-2 mt-1"></i>
+                        <div>
+                            <strong class="small">Catégorisation</strong>
+                            <p class="small text-muted mb-0">Choisissez la bonne catégorie pour faciliter la recherche</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Formulaire moderne */
+        .modern-form .form-control,
+        .modern-form .form-select {
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        
+        .modern-form .form-control:focus,
+        .modern-form .form-select:focus {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .modern-form .form-control-lg {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .modern-form .input-group-text {
+            border: 1px solid #e1e5e9;
+            background: #f8f9fa;
+        }
+        
+        /* Champ de pourcentage de promotion */
+        .promo-percentage-field {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        
+        .promo-percentage-field[style*="block"] {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Switch moderne */
+        .form-check-lg .form-check-input {
+            width: 2.5rem;
+            height: 1.25rem;
+            border-radius: 2rem;
+        }
+        
+        .form-check-lg .form-check-input:checked {
+            background-color: var(--bs-success);
+            border-color: var(--bs-success);
+        }
+        
+        /* Boutons */
+        .btn {
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-lg {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+        }
+        
+        /* Cards avec animation */
+        .card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Labels améliorés */
+        .form-label {
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion du champ pourcentage de promotion
+            const promoSwitch = document.getElementById('isPromoSwitch');
+            const promoPercentageField = document.getElementById('promoPercentageField');
+            
+            if (promoSwitch && promoPercentageField) {
+                promoSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        promoPercentageField.style.display = 'block';
+                        setTimeout(() => {
+                            promoPercentageField.style.opacity = '1';
+                            promoPercentageField.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        promoPercentageField.style.opacity = '0';
+                        promoPercentageField.style.transform = 'translateY(-10px)';
+                        setTimeout(() => {
+                            promoPercentageField.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            }
+            
+            // Preview de l'image
+            const imageInput = document.querySelector('input[type="file"]');
+            if (imageInput) {
+                imageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            let preview = document.getElementById('image-preview');
+                            if (!preview) {
+                                preview = document.createElement('div');
+                                preview.id = 'image-preview';
+                                preview.className = 'mt-3';
+                                preview.innerHTML = `
+                                    <div class="current-image-container">
+                                        <img class="current-image shadow-sm" style="max-width: 200px; max-height: 200px; border-radius: 15px;">
+                                    </div>
+                                    <div class="form-text mt-2">
+                                        <i class="fas fa-eye me-1"></i>Aperçu de l'image
+                                    </div>
+                                `;
+                                imageInput.parentNode.appendChild(preview);
+                            }
+                            preview.querySelector('img').src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        const preview = document.getElementById('image-preview');
+                        if (preview) {
+                            preview.remove();
+                        }
+                    }
+                });
+            }
+            
+            // Validation côté client
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let isValid = true;
+
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            field.classList.remove('is-invalid');
+                        }
+                    });
+
+                    if (!isValid) {
+                        e.preventDefault();
+                        alert('Veuillez remplir tous les champs obligatoires.');
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

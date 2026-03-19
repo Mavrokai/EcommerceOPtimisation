@@ -1,0 +1,1328 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail commande #{{ order.id }} - Clochette&CO{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .detail-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--cream);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-orange);
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-orange);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: var(--secondary-orange);
+            text-decoration: none;
+            transform: translateX(-3px);
+        }
+        
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .order-title {
+            font-family: var(--font-heading);
+            color: var(--dark-gray);
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        
+        .status-badge {
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .status-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.8s ease;
+        }
+        
+        .status-badge:hover::before {
+            left: 100%;
+        }
+        
+        .status-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .status-delivered {
+            background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+            color: white;
+            border-color: var(--dark-orange);
+            box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+        }
+        
+        .status-delivered::after {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-shipped {
+            background: linear-gradient(135deg, var(--secondary-orange), var(--dark-orange));
+            color: white;
+            border-color: var(--navbar-orange);
+            box-shadow: 0 4px 12px rgba(232, 133, 30, 0.4);
+        }
+        
+        .status-shipped::after {
+            content: '\f48b';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-processing {
+            background: linear-gradient(135deg, var(--light-orange), var(--primary-orange));
+            color: white;
+            border-color: var(--secondary-orange);
+            box-shadow: 0 4px 12px rgba(253, 180, 98, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-processing::after {
+            content: '\f013';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-cancelled {
+            background: linear-gradient(135deg, var(--medium-gray), var(--dark-gray));
+            color: white;
+            border-color: var(--dark-gray);
+            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4);
+        }
+        
+        .status-cancelled::after {
+            content: '\f00d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-en_attente {
+            background: linear-gradient(135deg, #FFE4B5, var(--light-orange));
+            color: var(--dark-orange);
+            border-color: var(--secondary-orange);
+            box-shadow: 0 4px 12px rgba(253, 180, 98, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-en_attente::after {
+            content: '\f017';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-confirmee {
+            background: linear-gradient(135deg, var(--primary-orange), var(--light-orange));
+            color: white;
+            border-color: var(--secondary-orange);
+            box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+        }
+        
+        .status-confirmee::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-expediee {
+            background: linear-gradient(135deg, var(--secondary-orange), var(--navbar-orange));
+            color: white;
+            border-color: var(--dark-orange);
+            box-shadow: 0 4px 12px rgba(232, 133, 30, 0.4);
+        }
+        
+        .status-expediee::after {
+            content: '\f0d1';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-livree {
+            background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+            color: white;
+            border-color: var(--dark-orange);
+            box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+        }
+        
+        .status-livree::after {
+            content: '\f015';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-annulee {
+            background: linear-gradient(135deg, var(--medium-gray), var(--dark-gray));
+            color: white;
+            border-color: var(--dark-gray);
+            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.4);
+        }
+        
+        .status-annulee::after {
+            content: '\f057';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .status-default {
+            background: linear-gradient(135deg, var(--light-gray), var(--medium-gray));
+            color: var(--dark-gray);
+            border-color: var(--medium-gray);
+            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.3);
+        }
+        
+        .status-default::after {
+            content: '\f059';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 6px 20px rgba(251, 150, 41, 0.7);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+                transform: scale(1);
+            }
+        }
+        
+        /* Timeline de progression professionnelle */
+        .order-timeline {
+            background: linear-gradient(135deg, var(--white) 0%, var(--cream) 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(251, 150, 41, 0.1);
+            border: 2px solid rgba(251, 150, 41, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .order-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-orange), var(--secondary-orange), var(--light-orange));
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .timeline-title {
+            font-family: var(--font-heading);
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            font-weight: 600;
+        }
+        
+        .timeline-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(45deg, var(--primary-orange), var(--secondary-orange));
+            border-radius: 2px;
+        }
+        
+        .timeline-title i {
+            margin-right: 0.5rem;
+            color: var(--secondary-orange);
+        }
+        
+        .progress-container {
+            position: relative;
+            width: 100%;
+            margin: 2rem 0;
+        }
+        
+        .progress-line {
+            position: absolute;
+            top: 30px;
+            left: 75px;
+            right: 75px;
+            height: 4px;
+            background: #E5E7EB;
+            border-radius: 2px;
+            z-index: 1;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FB9629, #E8851E) !important;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+            width: 0%;
+            box-shadow: 0 2px 8px rgba(251, 150, 41, 0.4);
+            transition: width 2s ease-out;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 30px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        /* Classes pour les différents pourcentages avec largeur directe */
+        .progress-0 {
+            width: 0% !important;
+        }
+        
+        .progress-25 {
+            width: 25% !important;
+            animation: fillTo25 2s ease-out;
+        }
+        
+        .progress-50 {
+            width: 50% !important;
+            animation: fillTo50 2s ease-out;
+        }
+        
+        .progress-75 {
+            width: 75% !important;
+            animation: fillTo75 2s ease-out;
+        }
+        
+        .progress-100 {
+            width: 100% !important;
+            animation: fillTo100 2s ease-out;
+        }
+        
+        /* Animations pour chaque pourcentage */
+        @keyframes fillTo0 {
+            from { width: 0%; }
+            to { width: 0%; }
+        }
+        
+        @keyframes fillTo25 {
+            from { width: 0%; }
+            to { width: 25%; }
+        }
+        
+        @keyframes fillTo50 {
+            from { width: 0%; }
+            to { width: 50%; }
+        }
+        
+        @keyframes fillTo75 {
+            from { width: 0%; }
+            to { width: 75%; }
+        }
+        
+        @keyframes fillTo100 {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 30px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-30px); }
+            100% { transform: translateX(200px); }
+        }
+        
+        .timeline-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .timeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            flex: 1;
+            max-width: 150px;
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 3px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--medium-gray);
+            transition: all 0.4s ease;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 3;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-step.completed .step-icon {
+            background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+            border-color: var(--primary-orange);
+            color: white;
+            box-shadow: 0 6px 20px rgba(251, 150, 41, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .timeline-step.active .step-icon {
+            background: linear-gradient(135deg, var(--light-orange), var(--primary-orange));
+            border-color: var(--secondary-orange);
+            color: white;
+            box-shadow: 0 6px 20px rgba(251, 150, 41, 0.5);
+            animation: pulse-glow 2s infinite;
+            transform: scale(1.1);
+        }
+        
+        .step-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--medium-gray);
+            line-height: 1.3;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-step.completed .step-text {
+            color: var(--primary-orange);
+            font-weight: 700;
+        }
+        
+        .timeline-step.active .step-text {
+            color: var(--dark-orange);
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(251, 150, 41, 0.2);
+        }
+        
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 6px 20px rgba(251, 150, 41, 0.5);
+                transform: scale(1.1);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(251, 150, 41, 0.7);
+                transform: scale(1.15);
+            }
+            100% {
+                box-shadow: 0 6px 20px rgba(251, 150, 41, 0.5);
+                transform: scale(1.1);
+            }
+        }
+        
+        .order-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .info-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-orange);
+        }
+        
+        .info-card h3 {
+            font-family: var(--font-heading);
+            color: var(--primary-orange);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: var(--medium-gray);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+        
+        .address-block {
+            color: var(--dark-gray);
+            line-height: 1.6;
+        }
+        
+        .address-block p {
+            margin: 0.3rem 0;
+        }
+        
+        .items-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-family: var(--font-heading);
+            color: var(--primary-orange);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 0.5rem;
+        }
+        
+        .item-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(251, 150, 41, 0.15);
+        }
+        
+        .item-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid var(--light-gray);
+        }
+        
+        .item-placeholder {
+            width: 80px;
+            height: 80px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--medium-gray);
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-family: var(--font-heading);
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-description {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+        
+        .item-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+        
+        .summary-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .summary-list {
+            max-width: 400px;
+            margin-left: auto;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .summary-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            border-top: 2px solid var(--primary-orange);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .actions-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-orange);
+            color: var(--white);
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-orange);
+            color: var(--white);
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: var(--white);
+            color: var(--dark-gray);
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--light-gray);
+            color: var(--dark-gray);
+            text-decoration: none;
+        }
+        
+        .btn-danger {
+            background: var(--white);
+            color: #dc3545;
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            background: #dc3545;
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .detail-container {
+                margin: 0.5rem;
+                padding: 1rem;
+                border-radius: 12px;
+            }
+            
+            .detail-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .order-title {
+                font-size: 1.8rem;
+                text-align: center;
+                width: 100%;
+            }
+            
+            .status-badge {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+                align-self: center;
+            }
+            
+            .order-info-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .item-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.8rem;
+            }
+            
+            .item-image, .item-placeholder {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .actions-section {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            
+            .btn-primary, .btn-secondary, .btn-danger {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* Timeline responsive optimisée */
+            .order-timeline {
+                padding: 1.2rem;
+                margin: 1rem 0;
+                border-radius: 15px;
+            }
+            
+            .timeline-title {
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .timeline-title::after {
+                width: 40px;
+            }
+            
+            .progress-container {
+                margin: 1rem 0;
+            }
+            
+            /* Masquer la ligne de progression sur mobile */
+            .progress-line {
+                display: none !important;
+            }
+            
+            /* Timeline verticale sur mobile */
+            .timeline-steps {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: stretch;
+            }
+            
+            .timeline-step {
+                flex-direction: row;
+                text-align: left;
+                max-width: none;
+                background: rgba(251, 150, 41, 0.05);
+                padding: 1rem;
+                border-radius: 12px;
+                border-left: 4px solid #E5E7EB;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                align-items: center;
+            }
+            
+            .timeline-step.completed {
+                border-left-color: #FB9629;
+                background: linear-gradient(135deg, rgba(251, 150, 41, 0.1), rgba(251, 150, 41, 0.05));
+                box-shadow: 0 4px 12px rgba(251, 150, 41, 0.1);
+            }
+            
+            .timeline-step.active {
+                border-left-color: #E8851E;
+                background: linear-gradient(135deg, rgba(251, 150, 41, 0.15), rgba(251, 150, 41, 0.1));
+                box-shadow: 0 6px 16px rgba(251, 150, 41, 0.2);
+                transform: translateX(3px);
+            }
+            
+            .step-icon {
+                margin-bottom: 0;
+                margin-right: 1rem;
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+            
+            .timeline-step.completed .step-icon {
+                background: linear-gradient(135deg, #FB9629, #E8851E);
+                color: white;
+                border-color: #FB9629;
+                box-shadow: 0 4px 12px rgba(251, 150, 41, 0.3);
+            }
+            
+            .timeline-step.active .step-icon {
+                background: linear-gradient(135deg, #FDB462, #FB9629);
+                color: white;
+                border-color: #E8851E;
+                box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+                animation: pulse-mobile 2s infinite;
+            }
+            
+            .step-text {
+                font-size: 0.9rem;
+                font-weight: 600;
+                align-self: center;
+                margin: 0;
+                line-height: 1.3;
+            }
+            
+            .timeline-step.completed .step-text {
+                color: #FB9629;
+                font-weight: 700;
+            }
+            
+            .timeline-step.active .step-text {
+                color: #C7511F;
+                font-weight: 700;
+            }
+            
+            @keyframes pulse-mobile {
+                0% {
+                    box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+                    transform: scale(1);
+                }
+                50% {
+                    box-shadow: 0 6px 16px rgba(251, 150, 41, 0.6);
+                    transform: scale(1.05);
+                }
+                100% {
+                    box-shadow: 0 4px 12px rgba(251, 150, 41, 0.4);
+                    transform: scale(1);
+                }
+            }
+        }
+        
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .detail-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .order-timeline {
+                padding: 2rem;
+            }
+            
+            .timeline-title {
+                font-size: 1.3rem;
+            }
+            
+            .progress-line {
+                left: 60px;
+                right: 60px;
+            }
+            
+            .step-icon {
+                width: 55px;
+                height: 55px;
+                font-size: 1.2rem;
+            }
+            
+            .step-text {
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .detail-container {
+                margin: 0.25rem;
+                padding: 0.8rem;
+            }
+            
+            .order-title {
+                font-size: 1.5rem;
+            }
+            
+            .timeline-title {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .timeline-step {
+                padding: 0.8rem;
+                border-radius: 10px;
+            }
+            
+            .step-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+                margin-right: 0.8rem;
+            }
+            
+            .step-text {
+                font-size: 0.8rem;
+            }
+            
+            .status-badge {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.7rem;
+            }
+        }
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="detail-container">
+    <!-- Messages flash -->
+    {% for category, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ category == 'error' ? 'danger' : category }} alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px; border-left: 4px solid {% if category == 'success' %}#28a745{% elseif category == 'error' %}#dc3545{% else %}#17a2b8{% endif %}; background: {% if category == 'success' %}rgba(40, 167, 69, 0.1){% elseif category == 'error' %}rgba(220, 53, 69, 0.1){% else %}rgba(23, 162, 184, 0.1){% endif %};">
+                <i class="fas {% if category == 'success' %}fa-check-circle{% elseif category == 'error' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}" style="margin-right: 0.5rem;"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float: right; background: none; border: none; font-size: 1.2rem; cursor: pointer;">&times;</button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="detail-header">
+        <a href="{{ path('app_historique') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Retour aux commandes
+        </a>
+        <span class="status-badge 
+            {% if order.status == 'delivered' or order.status == 'livree' %}status-livree
+            {% elseif order.status == 'shipped' or order.status == 'expediee' %}status-expediee
+            {% elseif order.status == 'processing' or order.status == 'en_cours' %}status-processing
+            {% elseif order.status == 'cancelled' or order.status == 'annulee' %}status-annulee
+            {% elseif order.status == 'en_attente' %}status-en_attente
+            {% elseif order.status == 'confirmee' %}status-confirmee
+            {% else %}status-default{% endif %}">
+            {% if order.status == 'delivered' or order.status == 'livree' %}
+                Livrée
+            {% elseif order.status == 'shipped' or order.status == 'expediee' %}
+                Expédiée
+            {% elseif order.status == 'processing' or order.status == 'en_cours' %}
+                En cours de traitement
+            {% elseif order.status == 'cancelled' or order.status == 'annulee' %}
+                Annulée
+            {% elseif order.status == 'en_attente' %}
+                En attente
+            {% elseif order.status == 'confirmee' %}
+                Confirmée
+            {% else %}
+                {{ order.status|title }}
+            {% endif %}
+        </span>
+    </div>
+
+    <h1 class="order-title">
+        <i class="fas fa-receipt"></i>
+        Commande #{{ order.id }}
+    </h1>
+
+    <!-- Timeline de progression de la commande -->
+    <div class="order-timeline">
+        <h3 class="timeline-title">
+            <i class="fas fa-route"></i>
+            Suivi de votre commande
+        </h3>
+        <div class="progress-container">
+            <div class="progress-line">
+                <div class="progress-fill progress-
+                    {% if order.status == 'en_attente' %}25
+                    {% elseif order.status == 'confirmee' %}50
+                    {% elseif order.status == 'expediee' or order.status == 'shipped' %}75
+                    {% elseif order.status == 'livree' or order.status == 'delivered' %}100
+                    {% elseif order.status == 'annulee' or order.status == 'cancelled' %}0
+                    {% else %}25{% endif %}" data-status="{{ order.status }}"></div>
+            </div>
+            
+            <div class="timeline-steps">
+                <div class="timeline-step {% if order.status == 'en_attente' %}active{% elseif order.status in ['confirmee', 'expediee', 'shipped', 'livree', 'delivered'] %}completed{% endif %}">
+                    <div class="step-icon">
+                        <i class="fas fa-shopping-basket"></i>
+                    </div>
+                    <div class="step-text">Commande passée</div>
+                </div>
+                
+                <div class="timeline-step {% if order.status == 'confirmee' %}active{% elseif order.status in ['expediee', 'shipped', 'livree', 'delivered'] %}completed{% endif %}">
+                    <div class="step-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="step-text">Commande confirmée</div>
+                </div>
+                
+                <div class="timeline-step {% if order.status == 'expediee' or order.status == 'shipped' %}active{% elseif order.status == 'livree' or order.status == 'delivered' %}completed{% endif %}">
+                    <div class="step-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="step-text">Expédition en cours</div>
+                </div>
+                
+                <div class="timeline-step {% if order.status == 'livree' or order.status == 'delivered' %}completed{% endif %}">
+                    <div class="step-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="step-text">Livraison effectuée</div>
+                </div>
+            </div>
+        </div>
+        
+        {% if order.status == 'livree' or order.status == 'delivered' %}
+            <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: rgba(251, 150, 41, 0.1); border-radius: 12px; border: 2px solid rgba(251, 150, 41, 0.2);">
+                <i class="fas fa-check-circle" style="color: var(--primary-orange); font-size: 1.8rem; margin-bottom: 0.8rem; display: block;"></i>
+                <p style="color: var(--dark-orange); font-weight: 600; margin: 0; font-family: var(--font-heading); font-size: 1.1rem;">
+                    Votre commande a été livrée avec succès !
+                </p>
+                <p style="color: var(--medium-gray); font-size: 0.9rem; margin: 0.5rem 0 0 0;">
+                    Merci pour votre confiance
+                </p>
+            </div>
+        {% elseif order.status == 'annulee' or order.status == 'cancelled' %}
+            <div style="text-align: center; margin-top: 2rem; padding: 1.5rem; background: rgba(113, 128, 150, 0.1); border-radius: 12px; border: 2px solid rgba(113, 128, 150, 0.2);">
+                <i class="fas fa-exclamation-triangle" style="color: var(--medium-gray); font-size: 1.8rem; margin-bottom: 0.8rem; display: block;"></i>
+                <p style="color: var(--dark-gray); font-weight: 600; margin: 0; font-family: var(--font-heading); font-size: 1.1rem;">
+                    Cette commande a été annulée
+                </p>
+                <p style="color: var(--medium-gray); font-size: 0.9rem; margin: 0.5rem 0 0 0;">
+                    Contactez-nous si vous avez des questions
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="order-info-grid">
+        <div class="info-card">
+            <h3><i class="fas fa-info-circle"></i> Informations de commande</h3>
+            <ul class="info-list">
+                <li class="info-item">
+                    <span class="info-label">Date de commande :</span>
+                    <span class="info-value">{{ order.createdAt|date('d/m/Y à H:i') }}</span>
+                </li>
+                <li class="info-item">
+                    <span class="info-label">Statut :</span>
+                    <span class="info-value">
+                        <span class="status-badge 
+                            {% if order.status == 'delivered' or order.status == 'livree' %}status-livree
+                            {% elseif order.status == 'shipped' or order.status == 'expediee' %}status-expediee
+                            {% elseif order.status == 'processing' or order.status == 'en_cours' %}status-processing
+                            {% elseif order.status == 'cancelled' or order.status == 'annulee' %}status-annulee
+                            {% elseif order.status == 'en_attente' %}status-en_attente
+                            {% elseif order.status == 'confirmee' %}status-confirmee
+                            {% else %}status-default{% endif %}" style="padding: 0.3rem 0.8rem; font-size: 0.75rem;">
+                            {% if order.status == 'delivered' or order.status == 'livree' %}
+                                Livrée
+                            {% elseif order.status == 'shipped' or order.status == 'expediee' %}
+                                Expédiée
+                            {% elseif order.status == 'processing' or order.status == 'en_cours' %}
+                                En cours de traitement
+                            {% elseif order.status == 'cancelled' or order.status == 'annulee' %}
+                                Annulée
+                            {% elseif order.status == 'en_attente' %}
+                                En attente
+                            {% elseif order.status == 'confirmee' %}
+                                Confirmée
+                            {% else %}
+                                {{ order.status|title }}
+                            {% endif %}
+                        </span>
+                    </span>
+                </li>
+                <li class="info-item">
+                    <span class="info-label">Mode de paiement :</span>
+                    <span class="info-value">Carte bancaire</span>
+                </li>
+                <li class="info-item">
+                    <span class="info-label">Méthode de livraison :</span>
+                    <span class="info-value">{{ order.deliveryMethod ?? 'Standard' }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h3><i class="fas fa-map-marker-alt"></i> Adresse de livraison</h3>
+            <div class="address-block">
+                {% if order.deliveryAddress %}
+                    {{ order.deliveryAddress|nl2br }}
+                {% else %}
+                    <p style="color: var(--medium-gray);">Adresse non disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="items-section">
+        <h3 class="section-title">
+            <i class="fas fa-shopping-cart"></i>
+            Articles commandés
+        </h3>
+        
+        {% for item in order.orderItems %}
+            <div class="item-card">
+                <div class="item-content">
+                    <div class="item-image-container">
+                        {% if item.product.imageUrl %}
+                            <img src="{{ asset('assets/images/' ~ item.product.imageUrl) }}" 
+                                 alt="{{ item.displayName }}"
+                                 class="item-image"
+                                 onerror="this.src='{{ asset('assets/images/default-product.svg') }}'">
+                        {% else %}
+                            <div class="item-placeholder">
+                                <i class="fas fa-image fa-2x"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="item-details">
+                        <h4 class="item-name">{{ item.displayName }}</h4>
+                        {% if item.product.description %}
+                            <p class="item-description">{{ item.product.description|slice(0, 100) }}{% if item.product.description|length > 100 %}...{% endif %}</p>
+                        {% endif %}
+                        <div class="item-meta">
+                            <span><i class="fas fa-sort-numeric-up"></i> Quantité : {{ item.quantity }}</span>
+                            <span><i class="fas fa-euro-sign"></i> Prix unitaire : {{ item.unitPrice|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                    </div>
+                    <div class="item-price">
+                        {{ item.totalPrice|number_format(2, ',', ' ') }} €
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="summary-section">
+        <h3 class="section-title">
+            <i class="fas fa-calculator"></i>
+            Récapitulatif
+        </h3>
+        <div class="summary-list">
+            <div class="summary-item">
+                <span>Sous-total :</span>
+                <span>{{ order.total|number_format(2, ',', ' ') }} €</span>
+            </div>
+            <div class="summary-item">
+                <span>Livraison :</span>
+                <span>0,00 €</span>
+            </div>
+            <div class="summary-item summary-total">
+                <span>Total :</span>
+                <span>{{ order.total|number_format(2, ',', ' ') }} €</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-section">
+        {% if order.status == 'delivered' %}
+            <button class="btn-primary">
+                <i class="fas fa-redo"></i>
+                Racheter ces articles
+            </button>
+        {% endif %}
+        <a href="{{ path('app_historique_facture', { id: order.id }) }}" class="btn-secondary">
+            <i class="fas fa-download"></i>
+            Télécharger la facture
+        </a>
+        {% if order.canBeModified %}
+            <button class="btn-danger" onclick="cancelOrder({{ order.id }})">
+                <i class="fas fa-times"></i>
+                Annuler la commande
+            </button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                const status = progressFill.getAttribute('data-status');
+                console.log('Statut de la commande:', status);
+                
+                let targetWidth = '25%';
+                
+                if (status === 'en_attente') targetWidth = '25%';
+                else if (status === 'confirmee') targetWidth = '50%';
+                else if (status === 'expediee' || status === 'shipped') targetWidth = '75%';
+                else if (status === 'livree' || status === 'delivered') targetWidth = '100%';
+                else if (status === 'annulee' || status === 'cancelled') targetWidth = '0%';
+                
+                if (window.innerWidth > 768) {
+                    progressFill.style.width = targetWidth;
+                    progressFill.style.background = 'linear-gradient(90deg, #FB9629, #E8851E)';
+                    progressFill.style.height = '100%';
+                }
+                
+                const timelineSteps = document.querySelectorAll('.timeline-step');
+                timelineSteps.forEach((step, index) => {
+                    const stepIcon = step.querySelector('.step-icon');
+                    const stepText = step.querySelector('.step-text');
+                    
+                    let isCompleted = false;
+                    let isActive = false;
+                    
+                    if (status === 'en_attente' && index === 0) isActive = true;
+                    else if (status === 'confirmee') {
+                        if (index === 0) isCompleted = true;
+                        else if (index === 1) isActive = true;
+                    }
+                    else if (status === 'expediee' || status === 'shipped') {
+                        if (index <= 1) isCompleted = true;
+                        else if (index === 2) isActive = true;
+                    }
+                    else if (status === 'livree' || status === 'delivered') {
+                        if (index <= 2) isCompleted = true;
+                        else if (index === 3) isCompleted = true;
+                    }
+                    
+                    if (isCompleted) {
+                        step.classList.add('completed');
+                        stepIcon.classList.add('completed');
+                        stepText.classList.add('completed');
+                    } else if (isActive) {
+                        step.classList.add('active');
+                        stepIcon.classList.add('active');
+                        stepText.classList.add('active');
+                    }
+                });
+                
+                console.log('Timeline responsive initialisée');
+            }
+        });
+        
+        window.addEventListener('resize', function() {
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill && window.innerWidth > 768) {
+                const status = progressFill.getAttribute('data-status');
+                let targetWidth = '25%';
+                
+                if (status === 'en_attente') targetWidth = '25%';
+                else if (status === 'confirmee') targetWidth = '50%';
+                else if (status === 'expediee' || status === 'shipped') targetWidth = '75%';
+                else if (status === 'livree' || status === 'delivered') targetWidth = '100%';
+                else if (status === 'annulee' || status === 'cancelled') targetWidth = '0%';
+                
+                progressFill.style.width = targetWidth;
+            }
+        });
+        
+        // Fonction pour annuler une commande
+        function cancelOrder(orderId) {
+            if (confirm('Êtes-vous sûr de vouloir annuler cette commande ? Cette action est irréversible.')) {
+                // Créer un formulaire pour envoyer la requête POST
+                const form = document.createElement('form');
+                form.method = 'POST';
+                
+                // Construction de l'URL avec le bon format Symfony
+                const baseUrl = '{{ path('app_historique_cancel', {id: 'PLACEHOLDER'}) }}';
+                form.action = baseUrl.replace('PLACEHOLDER', orderId);
+                
+                // Ajouter le token CSRF si Symfony l'exige
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token('cancel_order') }}';
+                form.appendChild(csrfInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+{% endblock %} 

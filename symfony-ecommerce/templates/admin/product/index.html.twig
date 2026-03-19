@@ -1,0 +1,1026 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Administration - Produits{% endblock %}
+
+{% block header_actions %}
+    <a href="{{ path('admin_product_new') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Nouveau Produit
+    </a>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <div class="dashboard-content">
+        <!-- Statistiques simplifiées -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ totalProducts }}</div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon promo">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ products|filter(p => p.isPromo)|length }}</div>
+                    <div class="stat-label">Promotions</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon new">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ products|filter(p => p.isNew)|length }}</div>
+                    <div class="stat-label">Nouveautés</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ products|filter(p => p.stock < 10)|length }}</div>
+                    <div class="stat-label">Stock faible</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres simplifiés -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-filter"></i>
+                Filtres
+            </div>
+            <form method="GET" action="{{ path('admin_product_index') }}" class="filter-form">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label><i class="fas fa-search"></i> Recherche</label>
+                        <input type="text" name="search" value="{{ search }}" 
+                               placeholder="Nom du produit...">
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-tags"></i> Catégorie</label>
+                        <select name="category">
+                            <option value="">Toutes</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {{ categoryFilter == category.id ? 'selected' : '' }}>
+                                    {{ category.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-sort"></i> Tri</label>
+                        <select name="sort">
+                            <option value="created_desc" {{ sortFilter == 'created_desc' ? 'selected' : '' }}>Plus récent</option>
+                            <option value="name_asc" {{ sortFilter == 'name_asc' ? 'selected' : '' }}>Nom A-Z</option>
+                            <option value="price_asc" {{ sortFilter == 'price_asc' ? 'selected' : '' }}>Prix croissant</option>
+                            <option value="stock_asc" {{ sortFilter == 'stock_asc' ? 'selected' : '' }}>Stock faible</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a href="{{ path('admin_product_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tableau des produits -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-table"></i>
+                Liste des Produits ({{ products|length }} résultats)
+            </div>
+            {% if products|length > 0 %}
+                <div class="table-responsive">
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Produit</th>
+                                <th>Catégorie</th>
+                                <th>Prix</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                                <tr class="product-row">
+                                    <td class="product-image-cell">
+                                        {% if product.imageUrl %}
+                                            <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" 
+                                                 alt="{{ product.name }}"
+                                                 class="product-thumb"
+                                                 onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+                                        {% else %}
+                                            <div class="product-thumb-placeholder">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="product-name-cell">
+                                        <div class="product-name">{{ product.name }}</div>
+                                        {% if product.description %}
+                                            <div class="product-description">{{ product.description|slice(0, 60) }}{% if product.description|length > 60 %}...{% endif %}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="product-category-cell">
+                                        {% if product.subCategory %}
+                                            <div class="category-badge">{{ product.subCategory.name }}</div>
+                                            {% if product.subCategory.category %}
+                                                <div class="parent-category">{{ product.subCategory.category.name }}</div>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Non définie</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="product-price-cell">
+                                        {% if product.isPromo and product.promoPercentage %}
+                                            <div class="price-container">
+                                                <span class="old-price">{{ product.price|number_format(2, ',', ' ') }} €</span>
+                                                <span class="current-price">{{ product.promotionalPrice|number_format(2, ',', ' ') }} €</span>
+                                                <span class="promo-badge">-{{ product.promoPercentage }}%</span>
+                                            </div>
+                                        {% else %}
+                                            <span class="current-price">{{ product.price|number_format(2, ',', ' ') }} €</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="product-stock-cell">
+                                        <span class="stock-badge {% if product.stock < 5 %}danger{% elseif product.stock < 10 %}warning{% else %}success{% endif %}">
+                                            {{ product.stock }}
+                                        </span>
+                                    </td>
+                                    <td class="product-status-cell">
+                                        <div class="status-badges">
+                                            {% if product.isPromo %}
+                                                <span class="status-badge promo">PROMO</span>
+                                            {% endif %}
+                                            {% if product.isNew %}
+                                                <span class="status-badge new">NOUVEAU</span>
+                                            {% endif %}
+                                            {% if not product.isPromo and not product.isNew %}
+                                                <span class="status-badge normal">NORMAL</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="product-actions-cell">
+                                        <div class="table-actions">
+                                            <a href="{{ path('admin_product_show', {'id': product.id}) }}" 
+                                               class="btn btn-sm btn-outline" title="Voir">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ path('admin_product_edit', {'id': product.id}) }}" 
+                                               class="btn btn-sm btn-primary" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="post" action="{{ path('admin_product_delete', {'id': product.id}) }}" 
+                                                  class="delete-form" data-product-name="{{ product.name }}"
+                                                  style="display: inline;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn" 
+                                                        title="Supprimer" data-product-id="{{ product.id }}" 
+                                                        data-product-name="{{ product.name }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>Aucun produit trouvé</h3>
+                    <p>{% if search %}Aucun résultat pour "{{ search }}"{% else %}Créez votre premier produit{% endif %}</p>
+                    <a href="{{ path('admin_product_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Nouveau Produit
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- Pagination -->
+            {% if totalPages > 1 %}
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <span>Page {{ currentPage }} sur {{ totalPages }} ({{ totalProducts }} produits au total)</span>
+                    </div>
+                    <nav class="pagination">
+                        {% if hasPrevPage %}
+                            <a href="{{ path('admin_product_index', app.request.query.all|merge({'page': 1})) }}" 
+                               class="pagination-btn" title="Première page">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="{{ path('admin_product_index', app.request.query.all|merge({'page': currentPage - 1})) }}" 
+                               class="pagination-btn" title="Page précédente">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        {% endif %}
+
+                        {% set startPage = max(1, currentPage - 2) %}
+                        {% set endPage = min(totalPages, currentPage + 2) %}
+
+                        {% for page in startPage..endPage %}
+                            {% if page == currentPage %}
+                                <span class="pagination-btn active">{{ page }}</span>
+                            {% else %}
+                                <a href="{{ path('admin_product_index', app.request.query.all|merge({'page': page})) }}" 
+                                   class="pagination-btn">{{ page }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if hasNextPage %}
+                            <a href="{{ path('admin_product_index', app.request.query.all|merge({'page': currentPage + 1})) }}" 
+                               class="pagination-btn" title="Page suivante">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                            <a href="{{ path('admin_product_index', app.request.query.all|merge({'page': totalPages})) }}" 
+                               class="pagination-btn" title="Dernière page">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+/* Dashboard Container */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--cream, #fdf6e3);
+    min-height: 100vh;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--dark-orange) 100%);
+    color: var(--white);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(255, 138, 51, 0.3);
+}
+
+.dashboard-title {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dashboard-subtitle {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.dashboard-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.dashboard-actions .btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.dashboard-actions .btn:hover {
+    background: var(--white);
+    color: var(--primary-orange);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: var(--white);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: var(--primary-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+.stat-icon.promo {
+    background: #f39c12;
+}
+
+.stat-icon.new {
+    background: #27ae60;
+}
+
+.stat-icon.alert {
+    background: #e74c3c;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin: 0;
+    font-family: var(--font-heading);
+}
+
+.stat-label {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Dashboard Card */
+.dashboard-card {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+}
+
+/* Filter Form */
+.filter-form {
+    padding: 1.5rem;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    transition: all 0.3s ease;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(251, 150, 41, 0.1);
+    outline: none;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-actions .btn {
+    padding: 0.75rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-orange);
+    color: var(--white);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: var(--white);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Products Table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.products-table thead th {
+    background: var(--dark-gray);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--white);
+    border-bottom: 2px solid #dee2e6;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-family: var(--font-heading);
+}
+
+.products-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.products-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(251, 150, 41, 0.05) 0%, var(--cream) 100%);
+    transform: translateX(5px);
+}
+
+.products-table tbody tr:nth-child(even) {
+    background: var(--light-gray);
+}
+
+.products-table tbody tr:nth-child(even):hover {
+    background: linear-gradient(135deg, rgba(251, 150, 41, 0.1) 0%, var(--cream) 100%);
+}
+
+.products-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* Product Image Cell */
+.product-image-cell {
+    width: 80px;
+}
+
+.product-thumb {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-thumb-placeholder {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 1.5rem;
+}
+
+/* Product Name Cell */
+.product-name-cell {
+    min-width: 200px;
+}
+
+.product-name {
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.product-description {
+    color: var(--medium-gray);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Category Cell */
+.product-category-cell {
+    min-width: 150px;
+}
+
+.category-badge {
+    background: var(--primary-orange);
+    color: var(--white);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 0.25rem;
+}
+
+.parent-category {
+    color: var(--medium-gray);
+    font-size: 0.75rem;
+    font-style: italic;
+}
+
+/* Price Cell */
+.product-price-cell {
+    min-width: 120px;
+}
+
+.price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.current-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-orange);
+}
+
+.promo-badge {
+    background: #f39c12;
+    color: var(--white);
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: inline-block;
+    width: fit-content;
+}
+
+/* Stock Cell */
+.product-stock-cell {
+    width: 100px;
+    text-align: center;
+}
+
+.stock-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--white);
+    min-width: 60px;
+    display: inline-block;
+    text-align: center;
+}
+
+.stock-badge.success {
+    background: #27ae60;
+}
+
+.stock-badge.warning {
+    background: #f39c12;
+}
+
+.stock-badge.danger {
+    background: #e74c3c;
+}
+
+/* Status Cell */
+.product-status-cell {
+    min-width: 120px;
+}
+
+.status-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--white);
+    text-align: center;
+    display: inline-block;
+    width: fit-content;
+}
+
+.status-badge.promo {
+    background: #f39c12;
+}
+
+.status-badge.new {
+    background: #27ae60;
+}
+
+.status-badge.normal {
+    background: #6c757d;
+}
+
+/* Actions Cell */
+.product-actions-cell {
+    width: 150px;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.table-actions .btn {
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    border: 2px solid;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 35px;
+    height: 35px;
+}
+
+.table-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 2px solid;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-outline {
+    border-color: #ddd;
+    color: var(--medium-gray);
+    background: var(--white);
+}
+
+.btn-outline:hover {
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+}
+
+.btn-primary {
+    border-color: var(--primary-orange);
+    background: var(--primary-orange);
+    color: var(--white);
+}
+
+.btn-danger {
+    border-color: #e74c3c;
+    background: #e74c3c;
+    color: var(--white);
+}
+
+/* Pagination */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+    margin-top: 2rem;
+    background: var(--white);
+    border-radius: 10px;
+}
+
+.pagination-info {
+    color: var(--medium-gray);
+    font-weight: 600;
+}
+
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.pagination-btn {
+    padding: 0.5rem 0.75rem;
+    background: var(--white);
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: var(--dark-gray);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    min-width: 40px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:hover {
+    background: var(--primary-orange);
+    color: var(--white);
+    border-color: var(--primary-orange);
+    text-decoration: none;
+}
+
+.pagination-btn.active {
+    background: var(--primary-orange);
+    color: var(--white);
+    border-color: var(--primary-orange);
+    font-weight: 600;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--medium-gray);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin-bottom: 0.5rem;
+    color: var(--dark-gray);
+}
+
+.empty-state p {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .dashboard-header {
+        padding: 1.5rem;
+    }
+    
+    .dashboard-title {
+        font-size: 2rem;
+    }
+    
+    .filter-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .filter-actions {
+        justify-content: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Table responsive */
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .products-table th,
+    .products-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .product-name {
+        font-size: 0.9rem;
+    }
+    
+    .product-description {
+        display: none;
+    }
+    
+    .table-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .table-actions .btn {
+        min-width: 30px;
+        height: 30px;
+        padding: 0.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-actions {
+        flex-direction: column;
+    }
+    
+    /* Masquer certaines colonnes sur mobile */
+    .products-table .product-category-cell,
+    .products-table .product-status-cell {
+        display: none;
+    }
+    
+    .products-table th:nth-child(3),
+    .products-table th:nth-child(6) {
+        display: none;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit filters
+    const filterForm = document.querySelector('.filter-form');
+    if (filterForm) {
+        const inputs = filterForm.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            if (input.type !== 'submit') {
+                input.addEventListener('change', () => {
+                    filterForm.submit();
+                });
+            }
+        });
+        
+        // Search with delay
+        const searchInput = filterForm.querySelector('input[name="search"]');
+        if (searchInput) {
+            let timeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    filterForm.submit();
+                }, 800);
+            });
+        }
+    }
+    
+    // Table row hover effects
+    const tableRows = document.querySelectorAll('.product-row');
+    tableRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = 'rgba(255, 138, 51, 0.08)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+
+    // Delete confirmation modal
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const productName = this.dataset.productName;
+            const productId = this.dataset.productId;
+            
+            if (confirm(`⚠️ ATTENTION !\n\nÊtes-vous sûr de vouloir supprimer définitivement le produit :\n"${productName}" ?\n\n❌ Cette action est irréversible !\n\n💡 Conseil : Si ce produit a été commandé, vous ne pourrez pas le supprimer. Considérez plutôt :\n• Mettre le stock à 0\n• Désactiver le produit\n• Le marquer comme non disponible\n\nContinuer la suppression ?`)) {
+                // Trouver le formulaire parent et le soumettre
+                const form = this.closest('.delete-form');
+                if (form) {
+                    form.submit();
+                }
+            }
+        });
+    });
+});
+</script>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Attention :</strong> Cette action est irréversible !
+                </div>
+                <p>Êtes-vous sûr de vouloir supprimer définitivement le produit :</p>
+                <p class="fw-bold text-danger" id="productToDelete"></p>
+                <div class="alert alert-info">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    <strong>Alternative :</strong> Si ce produit a été commandé, considérez plutôt :
+                    <ul class="mb-0 mt-2">
+                        <li>Mettre le stock à 0</li>
+                        <li>Désactiver le produit</li>
+                        <li>Le marquer comme non disponible</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash me-1"></i>
+                    Supprimer définitivement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,454 @@
+{# templates/contact/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Nous contacter{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: #F6F3E1;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .contact-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .contact-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        /* Formulaire de contact */
+        .contact-form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #5a6c7d;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #E67E22;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
+        }
+
+        /* Informations de contact */
+        .contact-info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .info-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: #E67E22;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .contact-item:hover .contact-icon {
+            background: white;
+            color: #E67E22;
+        }
+
+        .contact-details h4 {
+            margin: 0 0 0.25rem 0;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .contact-details p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .contact-item:hover .contact-details p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Horaires d'ouverture */
+        .hours-card {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .hours-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .hours-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .hours-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hours-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Flash messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .contact-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .contact-container {
+                padding: 1rem;
+            }
+            
+            .contact-form-card,
+            .contact-info-card {
+                padding: 2rem;
+            }
+            
+            .contact-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Erreurs de validation */
+        .form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="contact-container">
+        <!-- Header -->
+        <div class="contact-header">
+            <h1 class="contact-title">Nous contacter</h1>
+            <p class="contact-subtitle">
+                Une question, une suggestion ou besoin d'aide ? N'hésitez pas à nous écrire, 
+                nous vous répondrons dans les plus brefs délais.
+            </p>
+        </div>
+
+        <!-- Flash messages -->
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="contact-layout">
+            <!-- Formulaire de contact -->
+            <div class="contact-form-card">
+                <h2 class="form-section-title">Envoyez-nous un message</h2>
+                
+                {{ form_start(form, {'attr': {'class': 'contact-form'}}) }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.firstName, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.firstName) }}
+                                {{ form_errors(form.firstName) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.lastName, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.lastName) }}
+                                {{ form_errors(form.lastName) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.email) }}
+                                {{ form_errors(form.email) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.phone, null, {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.phone) }}
+                                {{ form_errors(form.phone) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.subject, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.subject) }}
+                        {{ form_errors(form.subject) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.message, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.message) }}
+                        {{ form_errors(form.message) }}
+                    </div>
+
+                    <button type="submit" class="btn-send">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Envoyer le message
+                    </button>
+                {{ form_end(form) }}
+            </div>
+
+            <!-- Informations de contact -->
+            <div class="contact-info-card">
+                <h3 class="info-title">Nos coordonnées</h3>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Adresse</h4>
+                        <p> Rue de Crochette&Co<br>la webac, France</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Téléphone</h4>
+                        <p>+33 1 00 00 00 00</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Email</h4>
+                        <p>contact@Crochette&Co.com</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Site web</h4>
+                        <p>www.Crochette&Co.com</p>
+                    </div>
+                </div>
+
+               
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Animation pour les éléments de contact au survol
+        document.querySelectorAll('.contact-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(10px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Compteur de caractères pour le message
+        const messageField = document.querySelector('textarea[name="contact[message]"]');
+        if (messageField) {
+            const maxLength = 1000;
+            const counter = document.createElement('div');
+            counter.style.cssText = 'text-align: right; font-size: 0.8rem; color: #6c757d; margin-top: 0.25rem;';
+            messageField.parentNode.appendChild(counter);
+            
+            function updateCounter() {
+                const currentLength = messageField.value.length;
+                counter.textContent = `${currentLength}/${maxLength} caractères`;
+                
+                if (currentLength > maxLength * 0.9) {
+                    counter.style.color = '#dc3545';
+                } else if (currentLength > maxLength * 0.8) {
+                    counter.style.color = '#ffc107';
+                } else {
+                    counter.style.color = '#6c757d';
+                }
+            }
+            
+            messageField.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('.contact-form');
+        const submitButton = form.querySelector('.btn-send');
+        const originalText = submitButton.innerHTML;
+
+        form.addEventListener('submit', function () {
+            // Désactive le bouton
+            submitButton.disabled = true;
+
+            // Change le contenu du bouton avec un spinner
+            submitButton.innerHTML = `
+                <i class="fas fa-spinner fa-spin me-2"></i>
+                Envoi en cours...
+            `;
+        });
+    });
+    </script>
+
+{% endblock %}

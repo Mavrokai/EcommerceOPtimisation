@@ -1,0 +1,484 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Gestion des Catégories{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item active">Catégories</li>
+{% endblock %}
+
+{% block header_actions %}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-tags"></i>
+                <h1>Catégories</h1>
+                <span class="count-badge">{{ categories|length }}</span>
+            </div>
+            <a href="{{ path('admin_category_new') }}" class="btn-primary-action">
+                <i class="fas fa-plus"></i>
+                Nouvelle catégorie
+            </a>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        {% if categories %}
+            <div class="table-container">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Nom</th>
+                            <th class="d-none d-md-table-cell">Description</th>
+                            <th class="text-center">Sous-catégories</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                            <tr class="table-row">
+                                <td class="image-cell">
+                                    {% if category.image %}
+                                        <div class="image-wrapper">
+                                            <img src="{{ asset('assets/images/' ~ category.image) }}" 
+                                                 alt="{{ category.name }}">
+                                        </div>
+                                    {% else %}
+                                        <div class="image-placeholder">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td class="name-cell">
+                                    <div class="category-name">{{ category.name }}</div>
+                                    <div class="category-description d-md-none">
+                                        {% if category.description %}
+                                            {{ category.description|length > 50 ? category.description|slice(0, 50) ~ '...' : category.description }}
+                                        {% else %}
+                                            <span class="text-muted">Aucune description</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="description-cell d-none d-md-table-cell">
+                                    {% if category.description %}
+                                        <div class="description-text" title="{{ category.description }}">
+                                            {{ category.description }}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">Aucune description</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <span class="count-badge small">{{ category.subCategories|length }}</span>
+                                </td>
+                                <td class="actions-cell">
+                                    <div class="action-buttons">
+                                        <a href="{{ path('admin_category_show', {'id': category.id}) }}" 
+                                           class="btn-action btn-view" title="Voir">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ path('admin_category_edit', {'id': category.id}) }}" 
+                                           class="btn-action btn-edit" title="Modifier">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" 
+                                                class="btn-action btn-delete"
+                                                onclick="confirmDelete('{{ category.name }}', '{{ path('admin_category_delete', {'id': category.id}) }}', '{{ csrf_token('delete' ~ category.id) }}')"
+                                                title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h3>Aucune catégorie</h3>
+                <p>Commencez par créer votre première catégorie pour organiser vos produits efficacement.</p>
+                <a href="{{ path('admin_category_new') }}" class="btn-primary-action large">
+                    <i class="fas fa-plus"></i>
+                    Créer ma première catégorie
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Dashboard Container */
+.dashboard-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* Header */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+}
+
+.header-title i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.header-title h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+.count-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.count-badge.small {
+    background: var(--cream);
+    color: var(--primary-orange);
+    padding: 0.125rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--secondary-orange);
+}
+
+/* Primary Action Button */
+.btn-primary-action {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-family: var(--font-body);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.btn-primary-action:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary-action.large {
+    background: var(--primary-orange);
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+}
+
+.btn-primary-action.large:hover {
+    background: var(--secondary-orange);
+    transform: translateY(-2px);
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    padding: 0;
+}
+
+/* Table Container */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Modern Table */
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.modern-table thead th {
+    background: var(--cream);
+    color: var(--dark-orange);
+    font-weight: 600;
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    padding: 1rem;
+    border-bottom: 2px solid var(--secondary-orange);
+    white-space: nowrap;
+}
+
+.modern-table tbody .table-row {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.modern-table tbody .table-row:hover {
+    background: var(--cream);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(251, 150, 41, 0.15);
+}
+
+.modern-table td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+}
+
+/* Image Cells */
+.image-cell {
+    width: 60px;
+}
+
+.image-wrapper, .image-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-placeholder {
+    background: var(--cream);
+    color: var(--primary-orange);
+}
+
+/* Name Cell */
+.category-name {
+    font-weight: 600;
+    font-family: var(--font-heading);
+    color: var(--dark-orange);
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.category-description {
+    color: #64748b;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+/* Description Cell */
+.description-cell .description-text {
+    color: #64748b;
+    font-family: var(--font-body);
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Actions */
+.actions-cell {
+    width: 140px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.btn-action {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-view {
+    background: rgba(251, 150, 41, 0.1);
+    color: var(--primary-orange);
+}
+
+.btn-view:hover {
+    background: var(--primary-orange);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-edit {
+    background: rgba(232, 133, 30, 0.1);
+    color: var(--secondary-orange);
+}
+
+.btn-edit:hover {
+    background: var(--secondary-orange);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background: #fecaca;
+    color: #dc2626;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--cream);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    border: 2px solid var(--secondary-orange);
+}
+
+.empty-icon i {
+    font-size: 2rem;
+    color: var(--primary-orange);
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    color: var(--dark-orange);
+    margin-bottom: 0.75rem;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    font-family: var(--font-body);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .header-title {
+        justify-content: center;
+    }
+    
+    .header-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .action-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .modern-table td {
+        padding: 1rem 0.75rem;
+    }
+    
+    .empty-state {
+        padding: 3rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-header {
+        padding: 1rem;
+    }
+    
+    .btn-primary-action {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+    }
+    
+    .action-buttons {
+        gap: 0.25rem;
+    }
+    
+    .btn-action {
+        width: 32px;
+        height: 32px;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function confirmDelete(categoryName, deleteUrl, csrfToken) {
+            if (confirm(`Êtes-vous sûr de vouloir supprimer la catégorie "${categoryName}" ?`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = deleteUrl;
+                
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = '_token';
+                tokenInput.value = csrfToken;
+                
+                form.appendChild(tokenInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accès refusé - Clochette&CO{% endblock %}
+
+{% block body %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">
+            🔒
+        </div>
+        <h1 class="error-title">Accès refusé</h1>
+        <p class="error-message">
+            {% if app.user %}
+                Désolé, vous n'avez pas les autorisations nécessaires pour accéder à cette page.
+                <br>Seuls les administrateurs peuvent accéder à cette section.
+            {% else %}
+                Vous devez être connecté en tant qu'administrateur pour accéder à cette page.
+            {% endif %}
+        </p>
+        
+        <div class="error-actions">
+            {% if not app.user %}
+                <a href="{{ path('app_login') }}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Se connecter
+                </a>
+            {% endif %}
+            <a href="{{ path('homepage') }}" class="btn btn-secondary">
+                <i class="fas fa-home"></i>
+                Retour à l'accueil
+            </a>
+        </div>
+        
+        <div class="error-help">
+            <p class="help-text">
+                <i class="fas fa-info-circle"></i>
+                Si vous pensez que c'est une erreur, contactez l'administrateur du site.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.error-content {
+    max-width: 600px;
+    text-align: center;
+    background: white;
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.error-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+}
+
+.error-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    min-width: 140px;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: var(--primary-orange);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #e6851f;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(251, 150, 41, 0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+}
+
+.error-help {
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.help-text {
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.help-text i {
+    color: var(--primary-orange);
+}
+
+/* Animation d'entrée */
+.error-content {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .error-container {
+        padding: 1rem;
+        min-height: 70vh;
+    }
+    
+    .error-content {
+        padding: 2rem 1.5rem;
+    }
+    
+    .error-title {
+        font-size: 2rem;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+</style>
+{% endblock %}

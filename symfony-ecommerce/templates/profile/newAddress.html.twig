@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une adresse{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+        h1 {
+            font-size: 1.7rem;
+            margin-bottom: 25px;
+            color: #333;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #E67E22;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+        }
+        .btn-secondary {
+            background: #bdc3c7;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        form .form-row {
+            margin-bottom: 20px;
+        }
+        
+        form input,
+        form select,
+        form textarea {
+            margin-bottom: 15px;
+        }
+        
+        form label {
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 500;
+        }
+        
+        form > div {
+            margin-bottom: 20px;
+        }
+
+                .form-actions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Ajouter une adresse</h1>
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <div class="form-actions">
+                <button class="btn btn-primary">Enregistrer</button>
+                <a href="{{ path('app_profile_addresses') }}" class="btn btn-secondary">Retour</a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

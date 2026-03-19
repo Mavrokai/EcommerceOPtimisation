@@ -1,0 +1,39 @@
+<!-- Admin Sidebar -->
+<div class="admin-sidebar">
+    <div class="p-4">
+        <h4 class="text-white mb-4">
+            <i class="fas fa-paw me-2"></i>
+            Administration
+        </h4>
+        <nav class="nav flex-column">
+            <a class="nav-link {{ app.request.get('_route') == 'admin_dashboard' ? 'active' : '' }}" href="{{ path('admin_dashboard') }}">
+                <i class="fas fa-tachometer-alt me-2"></i>
+                Tableau de bord
+            </a>
+            <a class="nav-link {{ app.request.get('_route') starts with 'admin_category' ? 'active' : '' }}" href="{{ path('admin_category_index') }}">
+                <i class="fas fa-tags me-2"></i>
+                Catégories
+            </a>
+            <a class="nav-link {{ app.request.get('_route') starts with 'admin_subcategory' ? 'active' : '' }}" href="{{ path('admin_subcategory_index') }}">
+                <i class="fas fa-sitemap me-2"></i>
+                Sous-catégories
+            </a>
+            <a class="nav-link {{ app.request.get('_route') starts with 'admin_product' ? 'active' : '' }}" href="{{ path('admin_product_index') }}">
+                <i class="fas fa-box me-2"></i>
+                Produits
+            </a>
+            <a class="nav-link" href="#">
+                <i class="fas fa-users me-2"></i>
+                Utilisateurs
+            </a>
+            <a class="nav-link {{ app.request.get('_route') starts with 'admin_orders' ? 'active' : '' }}" href="{{ path('admin_orders_index') }}">
+                <i class="fas fa-shopping-cart me-2"></i>
+                Commandes
+            </a>
+            <a class="nav-link" href="{{ path('homepage') }}">
+                <i class="fas fa-home me-2"></i>
+                Retour au site
+            </a>
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,1324 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Gestion des Sous-Catégories{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item active">Sous-catégories</li>
+{% endblock %}
+
+{% block header_actions %}
+    {# Boutons déplacés dans le contenu principal #}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-sitemap"></i>
+                <h1>Gestion des Sous-Catégories</h1>
+            </div>
+            <div class="header-actions">
+                <a href="{{ path('admin_subcategory_new') }}" class="btn-primary-action">
+                    <i class="fas fa-plus"></i>
+                    Nouvelle Sous-Catégorie
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- Statistiques -->
+        <div class="stats-container">
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <i class="fas fa-sitemap"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ subCategories|length }}</div>
+                    <div class="stat-label">Sous-catégorie{{ subCategories|length > 1 ? 's' : '' }}</div>
+                </div>
+            </div>
+            
+            {% if subCategories %}
+                {% set categories_count = {} %}
+                {% for subCategory in subCategories %}
+                    {% set category_name = subCategory.category.name %}
+                    {% set categories_count = categories_count|merge({(category_name): (categories_count[category_name] ?? 0) + 1}) %}
+                {% endfor %}
+                
+                <div class="stat-card secondary">
+                    <div class="stat-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ categories_count|length }}</div>
+                        <div class="stat-label">Catégorie{{ categories_count|length > 1 ? 's' : '' }} parente{{ categories_count|length > 1 ? 's' : '' }}</div>
+                    </div>
+                </div>
+                
+                {% set total_products = 0 %}
+                {% for subCategory in subCategories %}
+                    {% set total_products = total_products + subCategory.products|length %}
+                {% endfor %}
+                
+                <div class="stat-card accent">
+                    <div class="stat-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ total_products }}</div>
+                        <div class="stat-label">Produit{{ total_products > 1 ? 's' : '' }} total{{ total_products > 1 ? 'aux' : '' }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="main-content">
+            {% if subCategories %}
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="header-info">
+                            <h3>
+                                <i class="fas fa-list"></i>
+                                Liste des Sous-Catégories
+                            </h3>
+                            <span class="item-count">{{ subCategories|length }} élément{{ subCategories|length > 1 ? 's' : '' }}</span>
+                        </div>
+                        <div class="header-actions">
+                            <div class="filter-dropdown">
+                                <button class="btn-filter" onclick="toggleFilterDropdown()">
+                                    <i class="fas fa-filter"></i>
+                                    <span id="filter-text">Toutes les catégories</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div class="filter-dropdown-menu" id="filterDropdown">
+                                    <div class="filter-option active" onclick="filterByCategory('all')">
+                                        <i class="fas fa-list"></i>
+                                        Toutes les catégories
+                                        <span class="filter-count">{{ subCategories|length }}</span>
+                                    </div>
+                                    {% set categories_count = {} %}
+                                    {% for subCategory in subCategories %}
+                                        {% set category_name = subCategory.category.name %}
+                                        {% set categories_count = categories_count|merge({(category_name): (categories_count[category_name] ?? 0) + 1}) %}
+                                    {% endfor %}
+                                    {% for category_name, count in categories_count %}
+                                        <div class="filter-option" onclick="filterByCategory('{{ category_name|e('js') }}')">
+                                            <i class="fas fa-tag"></i>
+                                            {{ category_name }}
+                                            <span class="filter-count">{{ count }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <button class="btn-search" onclick="toggleSearch()">
+                                <i class="fas fa-search"></i>
+                                Rechercher
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Barre de recherche -->
+                    <div class="search-bar d-none" id="searchBar">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Rechercher par nom ou description..." onkeyup="searchSubCategories()">
+                            <button class="clear-search" onclick="clearSearch()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" onclick="sortTable(0)">
+                                        <span>Nom</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" onclick="sortTable(1)">
+                                        <span>Catégorie parente</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Description</th>
+                                    <th class="text-center">Produits</th>
+                                    <th class="sortable" onclick="sortTable(4)">
+                                        <span>Date de création</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                {% for subCategory in subCategories %}
+                                    <tr class="table-row" data-category="{{ subCategory.category.name }}" data-name="{{ subCategory.name|lower }}" data-description="{{ subCategory.description|lower }}">
+                                        <td>
+                                            <div class="name-cell">
+                                                <strong>{{ subCategory.name }}</strong>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="category-badge">
+                                                <i class="fas fa-tag"></i>
+                                                {{ subCategory.category.name }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if subCategory.description %}
+                                                <div class="description-cell" title="{{ subCategory.description }}">
+                                                    {{ subCategory.description|slice(0, 80) }}{{ subCategory.description|length > 80 ? '...' : '' }}
+                                                </div>
+                                            {% else %}
+                                                <span class="no-description">Aucune description</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="count-badge">
+                                                {{ subCategory.products|length }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="date-cell">
+                                                {{ subCategory.createdAt|date('d/m/Y') }}
+                                                <small>{{ subCategory.createdAt|date('H:i') }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="action-buttons">
+                                                <a href="{{ path('admin_subcategory_show', {'id': subCategory.id}) }}" 
+                                                   class="action-btn view" title="Voir">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ path('admin_subcategory_edit', {'id': subCategory.id}) }}" 
+                                                   class="action-btn edit" title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form method="post" action="{{ path('admin_subcategory_delete', {'id': subCategory.id}) }}" class="d-inline" onsubmit="return confirmDeleteSubCategory('{{ subCategory.name }}', '{{ subCategory.category.name }}', {{ subCategory.products|length }})">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ subCategory.id) }}">
+                                                    <button type="submit" class="action-btn delete" title="Supprimer">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="paginationContainer">
+                        <div class="pagination-info">
+                            <span id="paginationInfo">Affichage de 1-8 sur {{ subCategories|length }} éléments</span>
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                                Précédent
+                            </button>
+                            <div class="pagination-numbers" id="paginationNumbers">
+                                <!-- Généré par JavaScript -->
+                            </div>
+                            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+                                Suivant
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Répartition par catégorie -->
+                <div class="distribution-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-chart-pie"></i>
+                            Répartition par catégorie
+                        </h3>
+                    </div>
+                    <div class="distribution-content">
+                        <div class="distribution-grid">
+                            {% for category_name, count in categories_count %}
+                                <div class="distribution-item">
+                                    <div class="distribution-bar">
+                                        <div class="bar-fill" style="width: {{ (count / subCategories|length * 100)|round }}%"></div>
+                                    </div>
+                                    <div class="distribution-info">
+                                        <span class="category-name">{{ category_name }}</span>
+                                        <span class="category-count">{{ count }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h3>Aucune sous-catégorie</h3>
+                    <p>Commencez par créer votre première sous-catégorie pour organiser vos produits.</p>
+                    <a href="{{ path('admin_subcategory_new') }}" class="btn-primary-large">
+                        <i class="fas fa-plus"></i>
+                        Créer une sous-catégorie
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function confirmDeleteSubCategory(subCategoryName, parentCategoryName, productsCount) {
+            let message = `Êtes-vous sûr de vouloir supprimer la sous-catégorie "${subCategoryName}" ?`;
+            message += `\n\nCatégorie parente : ${parentCategoryName}`;
+            
+            if (productsCount > 0) {
+                message += `\n\nAttention : Cette sous-catégorie contient ${productsCount} produit${productsCount > 1 ? 's' : ''}.\nLa suppression sera définitive.`;
+            }
+            
+            return confirm(message);
+        }
+
+        function sortTable(columnIndex) {
+            const table = document.querySelector('.modern-table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Toggle sort direction
+            const header = table.querySelectorAll('th')[columnIndex];
+            const isAsc = header.classList.contains('sort-asc');
+            
+            // Remove all sort classes
+            table.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            // Add appropriate sort class
+            header.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
+            
+            // Sort rows
+            rows.sort((a, b) => {
+                const aText = a.children[columnIndex].textContent.trim();
+                const bText = b.children[columnIndex].textContent.trim();
+                
+                if (columnIndex === 4) { // Date column
+                    const aDate = new Date(aText.split(' ')[0].split('/').reverse().join('-'));
+                    const bDate = new Date(bText.split(' ')[0].split('/').reverse().join('-'));
+                    return isAsc ? bDate - aDate : aDate - bDate;
+                }
+                
+                return isAsc ? bText.localeCompare(aText) : aText.localeCompare(bText);
+            });
+            
+            // Reorder rows in table
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        function toggleFilters() {
+            // Placeholder for filter functionality
+            console.log('Toggle filters - functionality to be implemented');
+        }
+
+        // Variables globales pour la pagination
+        let currentPage = 1;
+        const itemsPerPage = 8;
+        let filteredRows = [];
+        let allRows = [];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            allRows = Array.from(document.querySelectorAll('#tableBody tr'));
+            filteredRows = [...allRows];
+            initializePagination();
+        });
+
+        function initializePagination() {
+            updatePagination();
+            showPage(currentPage);
+        }
+
+        function showPage(page) {
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            // Cacher toutes les lignes
+            allRows.forEach(row => row.style.display = 'none');
+            
+            // Afficher les lignes de la page actuelle
+            filteredRows.slice(startIndex, endIndex).forEach(row => {
+                row.style.display = '';
+            });
+            
+            updatePaginationInfo(startIndex, Math.min(endIndex, filteredRows.length), filteredRows.length);
+            updatePaginationControls();
+        }
+
+        function updatePaginationInfo(start, end, total) {
+            const info = document.getElementById('paginationInfo');
+            if (total === 0) {
+                info.textContent = 'Aucun élément à afficher';
+            } else {
+                info.textContent = `Affichage de ${start + 1}-${end} sur ${total} éléments`;
+            }
+        }
+
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const numbersContainer = document.getElementById('paginationNumbers');
+            
+            // Boutons précédent/suivant
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            
+            // Numéros de page
+            numbersContainer.innerHTML = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `pagination-number ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => goToPage(i);
+                    numbersContainer.appendChild(pageBtn);
+                }
+            }
+            
+            // Cacher la pagination s'il n'y a qu'une page
+            const paginationContainer = document.getElementById('paginationContainer');
+            paginationContainer.style.display = totalPages <= 1 ? 'none' : 'flex';
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                showPage(currentPage);
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            showPage(currentPage);
+        }
+
+        function updatePagination() {
+            currentPage = 1;
+            showPage(currentPage);
+        }
+
+        // Filtres par catégorie
+        function toggleFilterDropdown() {
+            const dropdown = document.getElementById('filterDropdown');
+            dropdown.classList.toggle('show');
+            
+            // Fermer le dropdown si on clique ailleurs
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!e.target.closest('.filter-dropdown')) {
+                    dropdown.classList.remove('show');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+
+        function filterByCategory(categoryName) {
+            const filterText = document.getElementById('filter-text');
+            const filterOptions = document.querySelectorAll('.filter-option');
+            
+            // Mettre à jour l'interface
+            filterOptions.forEach(option => option.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (categoryName === 'all') {
+                filterText.textContent = 'Toutes les catégories';
+                filteredRows = [...allRows];
+            } else {
+                filterText.textContent = categoryName;
+                filteredRows = allRows.filter(row => 
+                    row.getAttribute('data-category') === categoryName
+                );
+            }
+            
+            // Réinitialiser la recherche
+            document.getElementById('searchInput').value = '';
+            
+            updatePagination();
+            updateStats();
+            
+            // Fermer le dropdown
+            document.getElementById('filterDropdown').classList.remove('show');
+        }
+
+        // Recherche
+        function toggleSearch() {
+            const searchBar = document.getElementById('searchBar');
+            const searchInput = document.getElementById('searchInput');
+            
+            searchBar.classList.toggle('d-none');
+            if (!searchBar.classList.contains('d-none')) {
+                searchInput.focus();
+            } else {
+                clearSearch();
+            }
+        }
+
+        function searchSubCategories() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const currentFilter = document.querySelector('.filter-option.active');
+            const categoryFilter = currentFilter ? currentFilter.textContent.trim() : 'Toutes les catégories';
+            
+            let baseRows = allRows;
+            if (categoryFilter !== 'Toutes les catégories') {
+                baseRows = allRows.filter(row => 
+                    row.getAttribute('data-category') === categoryFilter
+                );
+            }
+            
+            if (searchTerm === '') {
+                filteredRows = [...baseRows];
+            } else {
+                filteredRows = baseRows.filter(row => {
+                    const name = row.getAttribute('data-name');
+                    const description = row.getAttribute('data-description');
+                    return name.includes(searchTerm) || description.includes(searchTerm);
+                });
+            }
+            
+            updatePagination();
+            updateStats();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchSubCategories();
+        }
+
+        function updateStats() {
+            const statsNumber = document.querySelector('.stat-card.primary .stat-number');
+            const statsLabel = document.querySelector('.stat-card.primary .stat-label');
+            const itemCount = document.querySelector('.item-count');
+            
+            const count = filteredRows.length;
+            if (statsNumber) statsNumber.textContent = count;
+            if (statsLabel) statsLabel.textContent = `Sous-catégorie${count > 1 ? 's' : ''}`;
+            if (itemCount) itemCount.textContent = `${count} élément${count > 1 ? 's' : ''}`;
+        }
+    </script>
+
+    <style>
+        /* Styles spécifiques pour la page index des sous-catégories */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--cream) 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .header-content {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            color: white;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-title i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .header-title h1 {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-primary-action {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-primary-action:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .dashboard-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Statistiques */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-card.primary .stat-icon {
+            background: var(--primary-orange);
+        }
+
+        .stat-card.secondary .stat-icon {
+            background: var(--secondary-orange);
+        }
+
+        .stat-card.accent .stat-icon {
+            background: var(--dark-orange);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-family: var(--font-body);
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Tableau */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info h3 {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .item-count {
+            font-family: var(--font-body);
+            color: rgba(255,255,255,0.8);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-filter {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .btn-filter:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .btn-search {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-search:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Dropdown de filtres */
+        .filter-dropdown {
+            position: relative;
+        }
+
+        .filter-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .filter-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .filter-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-body);
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .filter-option:last-child {
+            border-bottom: none;
+        }
+
+        .filter-option:hover {
+            background: #f8f9fa;
+        }
+
+        .filter-option.active {
+            background: var(--primary-orange);
+            color: white;
+        }
+
+        .filter-option i {
+            margin-right: 0.5rem;
+        }
+
+        .filter-count {
+            background: #e9ecef;
+            color: #666;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .filter-option.active .filter-count {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* Barre de recherche */
+        .search-bar {
+            padding: 1rem 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            max-width: 400px;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-input-wrapper input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 138, 51, 0.1);
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .clear-search:hover {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .pagination-info {
+            font-family: var(--font-body);
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            color: var(--primary-orange);
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--primary-orange);
+            color: white;
+            border-color: var(--primary-orange);
+        }
+
+        .pagination-btn:disabled {
+            background: #f8f9fa;
+            color: #ccc;
+            cursor: not-allowed;
+            border-color: #e9ecef;
+        }
+
+        .pagination-numbers {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .pagination-number {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            color: var(--primary-orange);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-number:hover {
+            background: var(--primary-orange);
+            color: white;
+            border-color: var(--primary-orange);
+        }
+
+        .pagination-number.active {
+            background: var(--primary-orange);
+            color: white;
+            border-color: var(--primary-orange);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-body);
+        }
+
+        .modern-table th {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-orange);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .modern-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        .modern-table th.sortable:hover {
+            background: #e9ecef;
+        }
+
+        .modern-table th.sortable span {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modern-table th.sort-asc i:before {
+            content: "\f0de";
+        }
+
+        .modern-table th.sort-desc i:before {
+            content: "\f0dd";
+        }
+
+        .modern-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .table-row {
+            transition: all 0.2s ease;
+        }
+
+        .table-row:hover {
+            background: #f8f9fa;
+        }
+
+        .name-cell strong {
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-orange);
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .description-cell {
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .no-description {
+            color: #999;
+            font-style: italic;
+            font-size: 0.875rem;
+        }
+
+        .count-badge {
+            background: var(--secondary-orange);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .date-cell {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .date-cell small {
+            display: block;
+            color: #999;
+            font-size: 0.75rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .action-btn.view {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .action-btn.edit {
+            background: var(--secondary-orange);
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Distribution */
+        .distribution-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+        }
+
+        .card-header h3 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .distribution-content {
+            padding: 1.5rem;
+        }
+
+        .distribution-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .distribution-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .distribution-bar {
+            flex: 1;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .distribution-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 200px;
+        }
+
+        .category-name {
+            font-family: var(--font-body);
+            color: #666;
+            font-weight: 500;
+        }
+
+        .category-count {
+            background: var(--primary-orange);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* Empty state */
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            font-family: var(--font-heading);
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-family: var(--font-body);
+            color: #999;
+            margin-bottom: 2rem;
+        }
+
+        .btn-primary-large {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-large:hover {
+            background: linear-gradient(135deg, var(--secondary-orange) 0%, var(--dark-orange) 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .header-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .filter-dropdown-menu {
+                right: auto;
+                left: 0;
+                width: 100%;
+            }
+            
+            .search-input-wrapper {
+                max-width: 100%;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .modern-table {
+                font-size: 0.875rem;
+            }
+            
+            .modern-table th,
+            .modern-table td {
+                padding: 0.75rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            
+            .distribution-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            
+            .distribution-info {
+                justify-content: space-between;
+                min-width: auto;
+            }
+            
+            .pagination-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .pagination-controls {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .pagination-numbers {
+                order: -1;
+            }
+        }
+
+        /* Utilitaires */
+        .d-none {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .d-inline {
+            display: inline;
+        }
+    </style>
+{% endblock %}

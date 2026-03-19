@@ -1,0 +1,634 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Administration - Modifier {{ product.name }}{% endblock %}
+
+{% block page_title %}Modifier "{{ product.name }}"{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('admin_product_index') }}">Produits</a></li>
+    <li class="breadcrumb-item active">Modifier</li>
+{% endblock %}
+
+{% block header_actions %}
+    <div class="d-flex gap-2">
+        <a href="{{ path('admin_product_show', {'id': product.id}) }}" class="btn btn-outline-info">
+            <i class="fas fa-eye me-2"></i>
+            Voir
+        </a>
+        <a href="{{ path('admin_product_index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>
+            Retour à la liste
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-content">
+        <!-- Formulaire principal -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-edit"></i>
+                Modification du produit
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data', 'class': 'product-form'}}) }}
+                
+                <div class="form-grid">
+                    <!-- Nom du produit -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tag"></i>
+                            Nom du produit
+                        </label>
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Nom du produit'}}) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+
+                    <!-- Catégorie -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tags"></i>
+                            Catégorie
+                        </label>
+                        {{ form_widget(form.subCategory, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(form.subCategory) }}
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group full-width">
+                        <label class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Description
+                        </label>
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '3', 'placeholder': 'Description du produit...'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+
+                    <!-- Prix -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-euro-sign"></i>
+                            Prix
+                        </label>
+                        <div class="input-group">
+                            {{ form_widget(form.price, {'attr': {'class': 'form-control', 'step': '0.01', 'placeholder': '0.00'}}) }}
+                            <span class="input-group-text">€</span>
+                        </div>
+                        {{ form_errors(form.price) }}
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-boxes"></i>
+                            Stock
+                        </label>
+                        {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
+                        {{ form_errors(form.stock) }}
+                    </div>
+
+                    <!-- Poids -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-weight"></i>
+                            Poids
+                        </label>
+                        <div class="input-group">
+                            {{ form_widget(form.weight, {'attr': {'class': 'form-control', 'step': '0.01', 'placeholder': '0.00'}}) }}
+                            <span class="input-group-text">kg</span>
+                        </div>
+                        {{ form_errors(form.weight) }}
+                    </div>
+
+                    <!-- Image -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-image"></i>
+                            Image
+                        </label>
+                        {{ form_widget(form.imageUrl, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
+                        {{ form_errors(form.imageUrl) }}
+                        {% if product.imageUrl %}
+                            <div class="current-image-preview">
+                                <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" 
+                                     alt="{{ product.name }}"
+                                     onerror="this.style.display='none'">
+                                <span class="image-label">Image actuelle</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Options -->
+                    <div class="form-group full-width">
+                        <label class="form-label">
+                            <i class="fas fa-cogs"></i>
+                            Options du produit
+                        </label>
+                        <div class="options-grid">
+                            <div class="option-item">
+                                {{ form_widget(form.isPromo, {'attr': {'class': 'form-check-input', 'id': 'promo-switch'}}) }}
+                                <label for="promo-switch" class="option-label">
+                                    En promotion
+                                </label>
+                            </div>
+                            
+                            <div class="option-item" id="promo-percentage" style="display: {{ product.isPromo ? 'block' : 'none' }};">
+                                <div class="input-group">
+                                    {{ form_widget(form.promoPercentage, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                {{ form_errors(form.promoPercentage) }}
+                            </div>
+                            
+                            <div class="option-item">
+                                {{ form_widget(form.isNew, {'attr': {'class': 'form-check-input'}}) }}
+                                <label class="option-label">
+                                    Nouveau produit
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="form-actions">
+                    <div class="actions-left">
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                            <i class="fas fa-trash"></i>
+                            Supprimer
+                        </button>
+                    </div>
+                    <div class="actions-right">
+                        <a href="{{ path('admin_product_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Sauvegarder
+                        </button>
+                    </div>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <!-- Informations du produit -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i>
+                Informations
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">ID</div>
+                        <div class="info-value">{{ product.id }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Stock</div>
+                        <div class="info-value {% if product.stock < 5 %}text-danger{% elseif product.stock < 10 %}text-warning{% else %}text-success{% endif %}">
+                            {{ product.stock }}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Prix actuel</div>
+                        <div class="info-value" id="current-price">
+                            {% if product.isPromo and product.promoPercentage %}
+                                <span class="original-price">{{ product.price|number_format(2, ',', ' ') }} €</span>
+                                <span class="promo-price">{{ product.promotionalPrice|number_format(2, ',', ' ') }} €</span>
+                            {% else %}
+                                {{ product.price|number_format(2, ',', ' ') }} €
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Statut</div>
+                        <div class="info-value">
+                            {% if product.isPromo %}
+                                <span class="status-badge promo">PROMO</span>
+                            {% endif %}
+                            {% if product.isNew %}
+                                <span class="status-badge new">NOUVEAU</span>
+                            {% endif %}
+                            {% if not product.isPromo and not product.isNew %}
+                                <span class="status-badge normal">NORMAL</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Créé le</div>
+                        <div class="info-value">{{ product.createdAt|date('d/m/Y H:i') }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Modifié le</div>
+                        <div class="info-value">{{ product.updatedAt|date('d/m/Y H:i') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formulaire de suppression caché -->
+<form id="deleteForm" method="post" action="{{ path('admin_product_delete', {'id': product.id}) }}" style="display: none;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+</form>
+{% endblock %}
+
+<style>
+/* Dashboard Container */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--cream, #fdf6e3);
+    min-height: 100vh;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Dashboard Card */
+.dashboard-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: var(--primary-orange, #ff8a33);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-control {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-orange, #ff8a33);
+    box-shadow: 0 0 0 3px rgba(255, 138, 51, 0.1);
+    outline: none;
+}
+
+.input-group {
+    display: flex;
+}
+
+.input-group .form-control {
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+}
+
+.input-group-text {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    padding: 0.75rem 1rem;
+    color: #666;
+}
+
+/* Current Image Preview */
+.current-image-preview {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.current-image-preview img {
+    max-width: 200px;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.image-label {
+    display: block;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Options Grid */
+.options-grid {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 1rem;
+    align-items: center;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.option-label {
+    font-weight: 500;
+    color: #666;
+    margin: 0;
+}
+
+.form-check-input {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    border-top: 2px solid #f8f9fa;
+}
+
+.actions-left,
+.actions-right {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    border: 2px solid;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--primary-orange, #ff8a33);
+    border-color: var(--primary-orange, #ff8a33);
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.info-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    margin: 0.1rem;
+}
+
+.status-badge.promo {
+    background: #f39c12;
+}
+
+.status-badge.new {
+    background: #27ae60;
+}
+
+.status-badge.normal {
+    background: #6c757d;
+}
+
+/* Price Display */
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.promo-price {
+    color: var(--primary-orange, #ff8a33);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .options-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .actions-left,
+    .actions-right {
+        justify-content: center;
+    }
+}
+</style>
+
+{% block javascripts %}
+    {{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion du champ pourcentage de promotion
+    const promoSwitch = document.getElementById('promo-switch');
+    const promoPercentage = document.getElementById('promo-percentage');
+    const currentPrice = document.getElementById('current-price');
+    
+    if (promoSwitch && promoPercentage) {
+        promoSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                promoPercentage.style.display = 'block';
+            } else {
+                promoPercentage.style.display = 'none';
+                updatePriceDisplay();
+            }
+        });
+    }
+    
+    // Calcul en temps réel du prix promotionnel
+    const priceInput = document.querySelector('input[name*="price"]');
+    const promoPercentageInput = document.querySelector('input[name*="promoPercentage"]');
+    
+    function updatePriceDisplay() {
+        if (!priceInput || !currentPrice) return;
+        
+        const price = parseFloat(priceInput.value) || 0;
+        const percentage = parseFloat(promoPercentageInput?.value) || 0;
+        const isPromo = promoSwitch?.checked;
+        
+        if (isPromo && percentage > 0 && percentage <= 100) {
+            const promoPrice = price * (1 - (percentage / 100));
+            currentPrice.innerHTML = `
+                <span class="original-price">${price.toFixed(2).replace('.', ',')} €</span>
+                <span class="promo-price">${promoPrice.toFixed(2).replace('.', ',')} €</span>
+            `;
+        } else {
+            currentPrice.innerHTML = `${price.toFixed(2).replace('.', ',')} €`;
+        }
+    }
+    
+    // Écouter les changements
+    if (priceInput) {
+        priceInput.addEventListener('input', updatePriceDisplay);
+    }
+    
+    if (promoPercentageInput) {
+        promoPercentageInput.addEventListener('input', function() {
+            const value = parseFloat(this.value) || 0;
+            if (this.value && (value <= 0 || value > 100)) {
+                this.style.borderColor = '#e74c3c';
+            } else {
+                this.style.borderColor = '';
+            }
+            updatePriceDisplay();
+        });
+    }
+    
+    // Preview de la nouvelle image
+    const imageInput = document.querySelector('input[type="file"]');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let preview = document.getElementById('new-image-preview');
+                    if (!preview) {
+                        preview = document.createElement('div');
+                        preview.id = 'new-image-preview';
+                        preview.className = 'current-image-preview';
+                        preview.innerHTML = `
+                            <img>
+                            <span class="image-label">Aperçu de la nouvelle image</span>
+                        `;
+                        imageInput.parentNode.appendChild(preview);
+                    }
+                    preview.querySelector('img').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                const preview = document.getElementById('new-image-preview');
+                if (preview) {
+                    preview.remove();
+                }
+            }
+        });
+    }
+});
+
+function confirmDelete() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?\n\nCette action est irréversible.')) {
+        document.getElementById('deleteForm').submit();
+    }
+}
+</script>
+{% endblock %}

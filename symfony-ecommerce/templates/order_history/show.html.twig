@@ -1,0 +1,386 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande #{{ order.id }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .order-detail-container {
+            background: linear-gradient(135deg, #FFF8F0 0%, #FFF5E6 100%);
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+        
+        .detail-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .detail-header {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            color: white;
+            padding: 25px;
+            position: relative;
+        }
+        
+        .detail-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%);
+            background-size: 20px 20px;
+        }
+        
+        .order-info {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .status-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-left: 15px;
+        }
+        
+        .status-en_attente {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .status-confirmee {
+            background: rgba(40, 167, 69, 0.3);
+            color: #fff;
+            border: 2px solid rgba(40, 167, 69, 0.5);
+        }
+        
+        .status-expediee {
+            background: rgba(0, 123, 255, 0.3);
+            color: #fff;
+            border: 2px solid rgba(0, 123, 255, 0.5);
+        }
+        
+        .status-livree {
+            background: rgba(40, 167, 69, 0.3);
+            color: #fff;
+            border: 2px solid rgba(40, 167, 69, 0.5);
+        }
+        
+        .status-annulee {
+            background: rgba(220, 53, 69, 0.3);
+            color: #fff;
+            border: 2px solid rgba(220, 53, 69, 0.5);
+        }
+        
+        .detail-body {
+            padding: 30px;
+        }
+        
+        .info-section {
+            margin-bottom: 30px;
+        }
+        
+        .info-title {
+            color: var(--primary-orange);
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .product-table th {
+            background: #f8f9fa;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .product-table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .product-variant {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        
+        .price {
+            font-weight: 600;
+            color: var(--primary-orange);
+        }
+        
+        .total-row {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .total-row td {
+            border-top: 2px solid var(--primary-orange);
+            padding: 20px 10px;
+        }
+        
+        .address-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary-orange);
+        }
+        
+        .btn-back {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-invoice {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            float: right;
+        }
+        
+        .btn-invoice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(251, 150, 41, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .progress-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .progress-timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #dee2e6;
+            z-index: 1;
+        }
+        
+        .timeline-step {
+            background: white;
+            border: 3px solid #dee2e6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            font-size: 0.8rem;
+        }
+        
+        .timeline-step.active {
+            border-color: var(--primary-orange);
+            background: var(--primary-orange);
+            color: white;
+        }
+        
+        .timeline-step.completed {
+            border-color: #28a745;
+            background: #28a745;
+            color: white;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="order-detail-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="{{ path('order_history_index') }}" class="btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Retour à mes commandes
+                </a>
+                
+                <a href="{{ path('order_history_invoice', {id: order.id}) }}" class="btn-invoice">
+                    <i class="fas fa-file-invoice me-2"></i>
+                    Télécharger la facture
+                </a>
+                
+                <div class="clearfix"></div>
+                
+                <!-- Informations générales -->
+                <div class="detail-card">
+                    <div class="detail-header">
+                        <div class="order-info">
+                            <h1>
+                                Commande #{{ order.id }}
+                                <span class="status-badge status-{{ order.status }}">
+                                    {{ order.status|replace({'_': ' '})|title }}
+                                </span>
+                            </h1>
+                            <p class="mb-1">Commandé le {{ order.createdAt|date('d/m/Y à H:i') }}</p>
+                            <p class="mb-0">Dernière mise à jour : {{ order.updatedAt|date('d/m/Y à H:i') }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-body">
+                        <!-- Timeline de suivi -->
+                        <div class="info-section">
+                            <h5 class="info-title">Suivi de commande</h5>
+                            <div class="progress-timeline">
+                                <div class="timeline-step {{ order.status in ['en_attente', 'confirmee', 'expediee', 'livree'] ? 'completed' : '' }}">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="timeline-step {{ order.status in ['confirmee', 'expediee', 'livree'] ? 'completed' : (order.status == 'en_attente' ? 'active' : '') }}">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="timeline-step {{ order.status in ['expediee', 'livree'] ? 'completed' : (order.status == 'confirmee' ? 'active' : '') }}">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="timeline-step {{ order.status == 'livree' ? 'completed' : (order.status == 'expediee' ? 'active' : '') }}">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between text-center">
+                                <small>Commande<br>passée</small>
+                                <small>Commande<br>confirmée</small>
+                                <small>En cours<br>de livraison</small>
+                                <small>Commande<br>livrée</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Informations générales -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-section">
+                                    <h5 class="info-title">Informations de livraison</h5>
+                                    {% if order.deliveryMethod %}
+                                        <p><strong>Méthode :</strong> {{ order.deliveryMethod }}</p>
+                                    {% endif %}
+                                    {% if order.deliveryAddress %}
+                                        <div class="address-card">
+                                            {{ order.deliveryAddress|nl2br }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-section">
+                                    <h5 class="info-title">Résumé financier</h5>
+                                    <p><strong>Nombre d'articles :</strong> {{ order.totalItemsCount }}</p>
+                                    <p><strong>Total de la commande :</strong> <span class="price">{{ order.total }}€</span></p>
+                                    {% if order.promoCode %}
+                                        <p><strong>Code promo utilisé :</strong> {{ order.promoCode.code }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Détail des produits -->
+                <div class="detail-card">
+                    <div class="detail-body">
+                        <div class="info-section">
+                            <h5 class="info-title">Détail des produits commandés</h5>
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <th>Quantité</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.orderItems %}
+                                        <tr>
+                                            <td>
+                                                <div class="product-name">{{ item.displayName }}</div>
+                                                {% if item.variantName %}
+                                                    <div class="product-variant">{{ item.variantName }}</div>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ item.quantity }}</td>
+                                            <td class="price">{{ item.unitPrice }}€</td>
+                                            <td class="price">{{ item.totalPrice }}€</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="total-row">
+                                        <td colspan="3"><strong>Total de la commande</strong></td>
+                                        <td class="price"><strong>{{ order.total }}€</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Adresses de facturation -->
+                {% if order.billingAddress and order.billingAddress != order.deliveryAddress %}
+                    <div class="detail-card">
+                        <div class="detail-body">
+                            <div class="info-section">
+                                <h5 class="info-title">Adresse de facturation</h5>
+                                <div class="address-card">
+                                    {{ order.billingAddress|nl2br }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

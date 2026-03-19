@@ -1,0 +1,340 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Adresses - Clochette&CO{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: #F6F3E1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .addresses-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .addresses-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .addresses-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .addresses-title i {
+            color: #E67E22;
+            margin-right: 1rem;
+        }
+
+        .btn-add-address {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add-address:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .addresses-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state i {
+            color: #bdc3c7;
+            margin-bottom: 2rem;
+        }
+
+        .empty-state h4 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+        }
+
+        .addresses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .address-card {
+            background: #fafbfc;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .address-card:hover {
+            border-color: #E67E22;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(230, 126, 34, 0.15);
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .address-label {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .default-star {
+            color: #f39c12;
+        }
+
+        .address-actions {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            background: #e9ecef;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 10px;
+            color: #5a6c7d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-toggle:hover {
+            background: #E67E22;
+            color: white;
+        }
+
+        .dropdown-menu {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+            min-width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: #2c3e50;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #E67E22;
+        }
+
+        .dropdown-item.text-danger {
+            color: #e74c3c !important;
+        }
+
+        .dropdown-item.text-danger:hover {
+            background: #fdf2f2;
+            color: #c0392b !important;
+        }
+
+        .address-details {
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+
+        .address-details p {
+            margin-bottom: 0.5rem;
+        }
+
+        .address-details strong {
+            color: #2c3e50;
+        }
+
+        .phone-info {
+            color: #7f8c8d !important;
+            font-size: 0.9rem;
+        }
+
+        .default-badge {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .back-button {
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: 2px solid #bdc3c7;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: #E67E22;
+            color: white;
+            border-color: #E67E22;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .addresses-container {
+                padding: 1rem;
+            }
+
+            .addresses-title {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .addresses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="addresses-container">
+        <div class="addresses-header">
+            <h1 class="addresses-title">
+                <span>
+                    <i class="fas fa-map-marker-alt"></i>
+                    Mes Adresses
+                </span>
+                <a href="{{ path('app_profile_address_new') }}" class="btn-add-address">
+                    <i class="fas fa-plus"></i>
+                    Ajouter une adresse
+                </a>
+            </h1>
+        </div>
+
+        <div class="addresses-content">
+            {% if addresses is empty %}
+                <div class="empty-state">
+                    <i class="fas fa-map-marker-alt fa-4x"></i>
+                    <h4>Aucune adresse enregistrée</h4>
+                    <p>Ajoutez votre première adresse de livraison pour faciliter vos commandes.</p>
+                    <a href="#" class="btn-add-address">
+                        <i class="fas fa-plus"></i>
+                        Ajouter ma première adresse
+                    </a>
+                </div>
+            {% else %}
+                <div class="addresses-grid">
+                    {% for address in addresses %}
+                        <div class="address-card">
+                            <div class="address-header">
+                                <h5 class="address-label">
+                                    {% if address.isDefault %}
+                                        <i class="fas fa-star default-star"></i>
+                                    {% endif %}
+                                    {{ address.label ?? 'Adresse' }}
+                                </h5>
+                                <div class="address-actions">
+                                    <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-edit"></i>Modifier</a></li>
+                                        {% if not address.isDefault %}
+                                            <li><a class="dropdown-item" href="#"><i class="fas fa-star"></i>Définir par défaut</a></li>
+                                        {% endif %}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash"></i>Supprimer</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="address-details">
+                                <p>
+                                    <strong>{{ address.line1 }}</strong>
+                                </p>
+                                {% if address.line2 %}
+                                    <p>{{ address.line2 }}</p>
+                                {% endif %}
+                                <p>{{ address.postalCode }} {{ address.city }}</p>
+                                <p>{{ address.country }}</p>
+                            </div>
+                            
+                            {% if address.isDefault %}
+                                <div class="default-badge">
+                                    <i class="fas fa-star"></i>
+                                    Adresse par défaut
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <a href="{{ path('app_profile') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Retour au profil
+            </a>
+        </div>
+    </div>
+{% endblock %}

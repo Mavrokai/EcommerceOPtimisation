@@ -1,0 +1,291 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Administration - {{ product.name }}{% endblock %}
+
+{% block page_title %}{{ product.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('admin_product_index') }}">Produits</a></li>
+    <li class="breadcrumb-item active">{{ product.name }}</li>
+{% endblock %}
+
+{% block header_actions %}
+    <div class="btn-group">
+        <a href="{{ path('admin_product_edit', {'id': product.id}) }}" class="btn btn-primary">
+            <i class="fas fa-edit me-2"></i>
+            Modifier
+        </a>
+        <a href="{{ path('admin_product_index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>
+            Retour à la liste
+        </a>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Informations principales -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Informations du produit
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {% if product.imageUrl %}
+                                <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" 
+                                     alt="{{ product.name }}" 
+                                     class="img-fluid rounded shadow"
+                                     style="max-height: 300px; width: 100%; object-fit: cover;"
+                                     onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center shadow" 
+                                     style="height: 300px;">
+                                    <div class="text-center">
+                                        <i class="fas fa-image fa-5x text-muted mb-3"></i>
+                                        <p class="text-muted">Aucune image</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold" style="width: 150px;">Nom:</td>
+                                    <td>{{ product.name }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Prix:</td>
+                                    <td class="h5 text-primary">{{ product.price|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Stock:</td>
+                                    <td>
+                                        <span class="badge fs-6 {% if product.stock < 5 %}bg-danger{% elseif product.stock < 10 %}bg-warning{% else %}bg-success{% endif %}">
+                                            {{ product.stock }} unité(s)
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% if product.weight %}
+                                <tr>
+                                    <td class="fw-bold">Poids:</td>
+                                    <td>{{ product.weight }} kg</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td class="fw-bold">Catégorie:</td>
+                                    <td>
+                                        {% if product.subCategory %}
+                                            <span class="badge bg-primary">{{ product.subCategory.category.name }}</span>
+                                            > <span class="badge bg-info">{{ product.subCategory.name }}</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark">Aucune catégorie</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Statuts:</td>
+                                    <td>
+                                        {% if product.isPromo %}
+                                            <span class="badge bg-warning me-1">En promotion</span>
+                                        {% endif %}
+                                        {% if product.isNew %}
+                                            <span class="badge bg-success me-1">Nouveau</span>
+                                        {% endif %}
+                                        {% if not product.isPromo and not product.isNew %}
+                                            <span class="badge bg-light text-dark">Standard</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {% if product.description %}
+                        <hr>
+                        <div>
+                            <h6 class="fw-bold">Description:</h6>
+                            <p class="text-muted">{{ product.description|nl2br }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Historique et métadonnées -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Métadonnées
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong><i class="fas fa-id-badge me-2 text-muted"></i>ID du produit:</strong><br>
+                                <code>#{{ product.id }}</code>
+                            </div>
+                            <div class="mb-3">
+                                <strong><i class="fas fa-calendar-plus me-2 text-success"></i>Date de création:</strong><br>
+                                {{ product.createdAt|date('d/m/Y à H:i') }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if product.imageUrl %}
+                            <div class="mb-3">
+                                <strong><i class="fas fa-image me-2 text-info"></i>Fichier image:</strong><br>
+                                <code>{{ product.imageUrl }}</code>
+                            </div>
+                            {% endif %}
+                            <div class="mb-3">
+                                <strong><i class="fas fa-clock me-2 text-warning"></i>Dernière modification:</strong><br>
+                                {{ product.updatedAt|date('d/m/Y à H:i') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Actions rapides -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>
+                        Actions rapides
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ path('admin_product_edit', {'id': product.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>
+                            Modifier ce produit
+                        </a>
+                        
+                        <form method="post" action="{{ path('admin_product_toggle_promo', {'id': product.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-promo' ~ product.id) }}">
+                            <button type="submit" class="btn {% if product.isPromo %}btn-warning{% else %}btn-outline-warning{% endif %} w-100">
+                                <i class="fas fa-percentage me-2"></i>
+                                {% if product.isPromo %}Désactiver la promotion{% else %}Activer la promotion{% endif %}
+                            </button>
+                        </form>
+                        
+                        <form method="post" action="{{ path('admin_product_toggle_new', {'id': product.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-new' ~ product.id) }}">
+                            <button type="submit" class="btn {% if product.isNew %}btn-success{% else %}btn-outline-success{% endif %} w-100">
+                                <i class="fas fa-star me-2"></i>
+                                {% if product.isNew %}Retirer des nouveautés{% else %}Marquer comme nouveau{% endif %}
+                            </button>
+                        </form>
+                        
+                        <hr>
+                        
+                        <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
+                            <i class="fas fa-trash me-2"></i>
+                            Supprimer ce produit
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Statistiques
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-12 mb-3">
+                            <div class="h2 mb-0 
+                                {% if product.stock == 0 %}text-danger
+                                {% elseif product.stock < 5 %}text-warning
+                                {% else %}text-success{% endif %}">
+                                {{ product.stock }}
+                            </div>
+                            <small class="text-muted">Unités en stock</small>
+                        </div>
+                    </div>
+                    
+                    {% if product.stock < 10 %}
+                        <div class="alert alert-warning small mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {% if product.stock == 0 %}
+                                <strong>Rupture de stock!</strong> Pensez à réapprovisionner.
+                            {% else %}
+                                <strong>Stock faible.</strong> Pensez à réapprovisionner bientôt.
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recommandations -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Recommandations
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="small">
+                        {% if not product.description or product.description|length < 50 %}
+                            <div class="mb-2">
+                                <i class="fas fa-info-circle text-info me-2"></i>
+                                Ajoutez une description plus détaillée pour améliorer le SEO.
+                            </div>
+                        {% endif %}
+                        
+                        {% if not product.imageUrl %}
+                            <div class="mb-2">
+                                <i class="fas fa-image text-warning me-2"></i>
+                                Ajoutez une image pour rendre le produit plus attractif.
+                            </div>
+                        {% endif %}
+                        
+                        {% if product.stock == 0 %}
+                            <div class="mb-2">
+                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                Remettez du stock pour pouvoir vendre ce produit.
+                            </div>
+                        {% endif %}
+                        
+                        {% if not product.isPromo and not product.isNew %}
+                            <div class="mb-2">
+                                <i class="fas fa-star text-success me-2"></i>
+                                Marquez ce produit comme "Nouveau" ou "En promotion" pour le mettre en avant.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulaire de suppression caché -->
+    <form id="deleteForm" method="post" action="{{ path('admin_product_delete', {'id': product.id}) }}" style="display: none;">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+    </form>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function confirmDelete() {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?\n\nCette action est irréversible et supprimera également l\'image associée.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
+{% endblock %}

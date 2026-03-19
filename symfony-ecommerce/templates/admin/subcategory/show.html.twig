@@ -1,0 +1,667 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Sous-Catégorie : {{ subCategory.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('admin_subcategory_index') }}">Sous-catégories</a></li>
+    <li class="breadcrumb-item active">{{ subCategory.name }}</li>
+{% endblock %}
+
+{% block header_actions %}
+    {# Boutons déplacés dans le contenu principal #}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-sitemap"></i>
+                <h1>{{ subCategory.name }}</h1>
+                <span class="parent-category">{{ subCategory.category.name }}</span>
+            </div>
+            <div class="header-actions">
+                <a href="{{ path('admin_subcategory_edit', {'id': subCategory.id}) }}" class="btn-secondary-action">
+                    <i class="fas fa-edit"></i>
+                    Modifier
+                </a>
+                <button type="button" class="btn-danger-action" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash"></i>
+                    Supprimer
+                </button>
+                <a href="{{ path('admin_subcategory_index') }}" class="btn-secondary-action">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="content-grid">
+            <!-- Contenu principal -->
+            <div class="main-content">
+                <!-- Détails de la sous-catégorie -->
+                <div class="detail-card">
+                    <div class="detail-content">
+                        {% if subCategory.description %}
+                            <div class="description-section">
+                                <h3>Description</h3>
+                                <p>{{ subCategory.description|nl2br }}</p>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="meta-section">
+                            <div class="meta-grid">
+                                <div class="meta-item">
+                                    <span class="meta-label">ID</span>
+                                    <span class="meta-value">{{ subCategory.id }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Créée le</span>
+                                    <span class="meta-value">{{ subCategory.createdAt|date('d/m/Y') }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Produits</span>
+                                    <span class="count-badge">{{ subCategory.products|length }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produits associés (simplifié) -->
+                {% if subCategory.products|length > 0 %}
+                <div class="products-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-box"></i>
+                            Produits associés ({{ subCategory.products|length }})
+                        </h3>
+                    </div>
+                    <div class="products-grid">
+                        {% for product in subCategory.products|slice(0, 6) %}
+                            <div class="product-item">
+                                <i class="fas fa-cube"></i>
+                                <div class="product-info">
+                                    <h4>{{ product.name }}</h4>
+                                    {% if product.price is defined %}
+                                        <span class="price">{{ product.price }}€</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% if subCategory.products|length > 6 %}
+                            <div class="product-item more">
+                                <i class="fas fa-plus"></i>
+                                <div class="product-info">
+                                    <h4>{{ subCategory.products|length - 6 }} autres produits</h4>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar simplifiée -->
+            <div class="sidebar-content">
+                <!-- Actions principales -->
+                <div class="action-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-bolt"></i>
+                            Actions
+                        </h3>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{{ path('admin_category_show', {'id': subCategory.category.id}) }}" class="action-btn view">
+                            <i class="fas fa-layer-group"></i>
+                            Voir la catégorie parente
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Statistiques compactes -->
+                <div class="stats-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-chart-bar"></i>
+                            Informations
+                        </h3>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stat-item">
+                            <span class="stat-label">Ancienneté</span>
+                            <span class="stat-value">{{ (date().diff(subCategory.createdAt)).days }} jours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Description</span>
+                            {% if subCategory.description %}
+                                <span class="status-badge success">
+                                    <i class="fas fa-check"></i>
+                                    Oui
+                                </span>
+                            {% else %}
+                                <span class="status-badge warning">
+                                    <i class="fas fa-times"></i>
+                                    Non
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content delete-modal">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning border-0">
+                    <div class="alert-content">
+                        <i class="fas fa-trash fa-2x mb-3"></i>
+                        <p class="mb-2">Êtes-vous sûr de vouloir supprimer la sous-catégorie <strong>{{ subCategory.name }}</strong> ?</p>
+                        {% if subCategory.products|length > 0 %}
+                            <div class="warning-notice">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Cette sous-catégorie contient {{ subCategory.products|length }} produit{{ subCategory.products|length > 1 ? 's' : '' }}. 
+                                La suppression sera définitive.
+                            </div>
+                        {% endif %}
+                        <p class="small text-muted mt-3 mb-0">Cette action est irréversible.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-action" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+                <form method="post" action="{{ path('admin_subcategory_delete', {'id': subCategory.id}) }}" class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ subCategory.id) }}">
+                    <button type="submit" class="btn-danger-action">
+                        <i class="fas fa-trash"></i>
+                        Supprimer définitivement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques pour la page show des sous-catégories */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--cream) 0%, #ffffff 100%);
+    min-height: 100vh;
+}
+
+.dashboard-header {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.header-content {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    color: white;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.header-title i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.header-title h1 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.parent-category {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-left: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-secondary-action,
+.btn-danger-action {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-secondary-action {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-secondary-action:hover {
+    background: rgba(255,255,255,0.3);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-danger-action {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger-action:hover {
+    background: #c82333;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.dashboard-content {
+    margin-top: 2rem;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.detail-card,
+.products-card,
+.action-card,
+.stats-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.detail-content {
+    padding: 2rem;
+}
+
+.description-section {
+    margin-bottom: 2rem;
+}
+
+.description-section h3 {
+    font-family: var(--font-heading);
+    color: var(--primary-orange);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.description-section p {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: #666;
+    margin: 0;
+}
+
+.meta-section {
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.meta-label {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary-orange);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meta-value {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.count-badge {
+    background: var(--primary-orange);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    align-self: flex-start;
+}
+
+.card-header {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    border-bottom: 1px solid #eee;
+}
+
+.card-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.products-grid {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--cream);
+    border-radius: 8px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.product-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.product-item.more {
+    background: #f0f0f0;
+    color: #999;
+    font-style: italic;
+}
+
+.product-item i {
+    color: var(--primary-orange);
+    font-size: 1.2rem;
+    width: 20px;
+    text-align: center;
+}
+
+.product-info h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--primary-orange);
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+}
+
+.price {
+    background: #28a745;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Sidebar */
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.action-buttons {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.action-btn.edit {
+    background: var(--secondary-orange);
+    color: white;
+}
+
+.action-btn.create {
+    background: #28a745;
+    color: white;
+}
+
+.action-btn.view {
+    background: #17a2b8;
+    color: white;
+}
+
+.action-btn.delete {
+    background: #dc3545;
+    color: white;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    color: white;
+}
+
+.stats-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: #666;
+}
+
+.stat-value {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: #333;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.status-badge.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Modal styling */
+.delete-modal .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.delete-modal .modal-header {
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.delete-modal .modal-header h5 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.delete-modal .alert {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    text-align: center;
+}
+
+.delete-modal .alert-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.delete-modal .warning-notice {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.delete-modal .modal-footer {
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .header-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .parent-category {
+        margin-left: 0;
+        align-self: flex-start;
+    }
+    
+    .header-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .meta-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

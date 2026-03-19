@@ -1,0 +1,633 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}{{ category.name }}{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item"><a href="{{ path('admin_category_index') }}">Catégories</a></li>
+    <li class="breadcrumb-item active">{{ category.name }}</li>
+{% endblock %}
+
+{% block header_actions %}
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-eye"></i>
+                <h1>{{ category.name }}</h1>
+            </div>
+            <div class="header-actions">
+                <a href="{{ path('admin_category_edit', {'id': category.id}) }}" class="btn-secondary-action">
+                    <i class="fas fa-edit"></i>
+                    Modifier
+                </a>
+                <button type="button" class="btn-danger-action" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash"></i>
+                    Supprimer
+                </button>
+                <a href="{{ path('admin_category_index') }}" class="btn-secondary-action">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="content-grid">
+            <div class="main-content">
+                <div class="detail-card">
+                    <div class="detail-content">
+                        {% if category.image %}
+                            <div class="category-image">
+                                <img src="{{ asset('assets/images/' ~ category.image) }}" 
+                                     alt="{{ category.name }}">
+                            </div>
+                        {% endif %}
+                        
+                        <div class="category-info">
+                            <div class="category-description">
+                                {% if category.description %}
+                                    <p>{{ category.description|nl2br }}</p>
+                                {% else %}
+                                    <p class="no-description">Aucune description fournie pour cette catégorie.</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="category-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">ID</span>
+                                    <span class="meta-value">{{ category.id }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Créée le</span>
+                                    <span class="meta-value">{{ category.createdAt|date('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if category.subCategories|length > 0 %}
+                <div class="subcategories-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-sitemap"></i>
+                            Sous-catégories ({{ category.subCategories|length }})
+                        </h3>
+                    </div>
+                    <div class="subcategories-grid">
+                        {% for subCategory in category.subCategories %}
+                            <div class="subcategory-item">
+                                <h4>{{ subCategory.name }}</h4>
+                                {% if subCategory.description %}
+                                    <p>{{ subCategory.description|slice(0, 100) }}{{ subCategory.description|length > 100 ? '...' : '' }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar-content">
+                <!-- Actions -->
+                <div class="action-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-bolt"></i>
+                            Actions
+                        </h3>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{{ path('admin_category_edit', {'id': category.id}) }}" class="action-btn edit">
+                            <i class="fas fa-edit"></i>
+                            Modifier cette catégorie
+                        </a>
+                        <a href="{{ path('admin_category_new') }}" class="action-btn create">
+                            <i class="fas fa-plus"></i>
+                            Nouvelle catégorie
+                        </a>
+                        <button type="button" class="action-btn delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash"></i>
+                            Supprimer cette catégorie
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistiques -->
+                <div class="stats-card">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fas fa-chart-bar"></i>
+                            Statistiques
+                        </h3>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stat-item">
+                            <span class="stat-label">Sous-catégories</span>
+                            <span class="count-badge">{{ category.subCategories|length }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Ancienneté</span>
+                            <span class="stat-value">{{ (date().diff(category.createdAt)).days }} jours</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Image</span>
+                            {% if category.image %}
+                                <span class="status-badge success">
+                                    <i class="fas fa-check"></i>
+                                    Oui
+                                </span>
+                            {% else %}
+                                <span class="status-badge warning">
+                                    <i class="fas fa-times"></i>
+                                    Non
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content delete-modal">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning border-0">
+                    <div class="alert-content">
+                        <i class="fas fa-trash fa-2x mb-3"></i>
+                        <p class="mb-2">Êtes-vous sûr de vouloir supprimer la catégorie <strong>{{ category.name }}</strong> ?</p>
+                        {% if category.subCategories|length > 0 %}
+                            <div class="warning-notice">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Cette catégorie contient {{ category.subCategories|length }} sous-catégorie(s). 
+                                Elles seront également supprimées.
+                            </div>
+                        {% endif %}
+                        <p class="small text-muted mt-3 mb-0">Cette action est irréversible.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary-action" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </button>
+                <form method="post" action="{{ path('admin_category_delete', {'id': category.id}) }}" class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                    <button type="submit" class="btn-danger-action">
+                        <i class="fas fa-trash"></i>
+                        Supprimer définitivement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques pour la page show */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--cream) 0%, #ffffff 100%);
+    min-height: 100vh;
+}
+
+.dashboard-header {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.header-content {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    color: white;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-title i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.header-title h1 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-secondary-action,
+.btn-danger-action {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-secondary-action {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-secondary-action:hover {
+    background: rgba(255,255,255,0.3);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-danger-action {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger-action:hover {
+    background: #c82333;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.dashboard-content {
+    margin-top: 2rem;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.detail-card,
+.subcategories-card,
+.action-card,
+.stats-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.detail-content {
+    padding: 2rem;
+}
+
+.category-image {
+    margin-bottom: 1.5rem;
+}
+
+.category-image img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.category-info h3 {
+    font-family: var(--font-heading);
+    color: var(--primary-orange);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.category-description p {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.no-description {
+    font-style: italic;
+    color: #999 !important;
+}
+
+.category-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.meta-label {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary-orange);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meta-value {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.card-header {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    border-bottom: 1px solid #eee;
+}
+
+.card-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.subcategories-grid {
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.subcategory-item {
+    padding: 1rem;
+    background: var(--cream);
+    border-radius: 8px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.subcategory-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.subcategory-item h4 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--primary-orange);
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.subcategory-item p {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.action-buttons {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.action-btn.edit {
+    background: var(--secondary-orange);
+    color: white;
+}
+
+.action-btn.create {
+    background: #28a745;
+    color: white;
+}
+
+.action-btn.delete {
+    background: #dc3545;
+    color: white;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    color: white;
+}
+
+.stats-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: #666;
+}
+
+.count-badge {
+    background: var(--primary-orange);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: #333;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.status-badge.success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Modal styling */
+.delete-modal .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.delete-modal .modal-header {
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.delete-modal .modal-header h5 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.delete-modal .alert {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    text-align: center;
+}
+
+.delete-modal .alert-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.delete-modal .warning-notice {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.delete-modal .modal-footer {
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .header-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .category-meta {
+        grid-template-columns: 1fr;
+    }
+    
+    .subcategories-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

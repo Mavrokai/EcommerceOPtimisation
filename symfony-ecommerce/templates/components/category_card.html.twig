@@ -1,0 +1,184 @@
+{# 
+  Component: Category Card
+  Props: category (Entity Category)
+#}
+<div class="category-card">
+    <a href="{{ path('app_product_index', {'category': category.name|lower}) }}" class="category-link">
+        <div class="category-image-container">
+            {% if category.image %}
+                {# Utilise l'image depuis la base de données si elle existe #}
+                {% set imageSource = asset('assets/images/' ~ category.image) %}
+            {% else %}
+                {# Fallback sur les images statiques par défaut #}
+                {% if category.name|lower == 'chiens' %}
+                    {% set imageName = 'category-dog.png' %}
+                {% elseif category.name|lower == 'chats' %}
+                    {% set imageName = 'category-cat.png' %}
+                {% elseif category.name|lower == 'oiseaux' %}
+                    {% set imageName = 'category-bird.png' %}
+                {% elseif category.name|lower == 'lézards' %}
+                    {% set imageName = 'category-lizard.png' %}
+                {% else %}
+                    {% set imageName = 'category-dog.png' %}
+                {% endif %}
+                {% set imageSource = asset('assets/images/' ~ imageName) %}
+            {% endif %}
+            
+            <img 
+                src="{{ imageSource }}" 
+                alt="{{ category.name }}" 
+                class="category-image"
+                loading="lazy"
+                onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+        </div>
+        <div class="category-content">
+            <h3 class="category-name">{{ category.name }}</h3>
+            <p class="category-description">Découvrez tous nos produits pour {{ category.name|lower }}</p>
+        </div>
+    </a>
+</div>
+
+<style>
+.category-card {
+    border-radius: 16px;
+    overflow: visible;
+    background: transparent; 
+    box-shadow: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: none;
+}
+
+.category-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.category-image-container {
+    position: relative;
+    overflow: visible;
+    aspect-ratio: 4/3;
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-image {
+    transform: scale(1.05);
+}
+
+.category-content {
+    padding: 1.5rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    margin-top: -20px;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+}
+
+.category-name {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #2d3748;
+}
+
+.category-description {
+    font-size: 0.9rem;
+    color: #718096;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .category-content {
+        padding: 1.2rem;
+        margin-top: -15px;
+    }
+    
+    .category-name {
+        font-size: 1.3rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .category-description {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .category-card {
+        border-radius: 12px;
+    }
+    
+    .category-content {
+        padding: 1rem;
+        margin-top: -10px;
+        border-radius: 10px;
+    }
+    
+    .category-name {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .category-description {
+        font-size: 0.8rem;
+        line-height: 1.3;
+    }
+    
+    .category-image-container {
+        aspect-ratio: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .category-content {
+        padding: 0.8rem;
+        margin-top: -8px;
+    }
+    
+    .category-name {
+        font-size: 1.1rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .category-description {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .category-card {
+        border-radius: 10px;
+    }
+    
+    .category-content {
+        padding: 0.7rem;
+        margin-top: -5px;
+        border-radius: 8px;
+    }
+    
+    .category-name {
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .category-description {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+}
+</style>

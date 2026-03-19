@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture #{{ order.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .header {
+            border-bottom: 3px solid #FB9629;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .company-info {
+            text-align: right;
+        }
+        
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FB9629;
+            margin-bottom: 5px;
+        }
+        
+        .invoice-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #FB9629;
+            margin: 30px 0 20px 0;
+        }
+        
+        .invoice-info {
+            display: table;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .customer-info, .invoice-details {
+            display: table-cell;
+            vertical-align: top;
+            width: 50%;
+        }
+        
+        .info-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .info-title {
+            font-weight: bold;
+            color: #FB9629;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .items-table th {
+            background: #FB9629;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .items-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .items-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .total-section {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .total-line {
+            margin: 5px 0;
+            padding: 5px 0;
+        }
+        
+        .total-final {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FB9629;
+            border-top: 2px solid #FB9629;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-info">
+            <div class="company-name">Clochette&CO</div>
+            <div>Animalerie en ligne</div>
+            <div>123 Rue des Animaux</div>
+            <div>75001 Paris, France</div>
+            <div>Tél : 01 23 45 67 89</div>
+            <div>Email : contact@clochetteco.fr</div>
+        </div>
+    </div>
+
+    <h1 class="invoice-title">FACTURE #{{ order.id }}</h1>
+
+    <div class="invoice-info">
+        <div class="customer-info">
+            <div class="info-block">
+                <div class="info-title">FACTURÉ À :</div>
+                <div>
+                    {% if order.user %}
+                        {% if order.user.firstName or order.user.lastName %}
+                            <strong>{{ order.user.firstName }} {{ order.user.lastName }}</strong><br>
+                        {% endif %}
+                        {{ order.user.email }}<br>
+                    {% else %}
+                        <strong>{{ order.guestEmail }}</strong><br>
+                        <em>(Commande invité)</em><br>
+                    {% endif %}
+                    {% if order.deliveryAddress %}
+                        {{ order.deliveryAddress|nl2br }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="invoice-details">
+            <div class="info-block">
+                <div class="info-title">DÉTAILS DE LA FACTURE :</div>
+                <div>
+                    <strong>Date de commande :</strong> {{ order.createdAt|date('d/m/Y') }}<br>
+                    <strong>Numéro de commande :</strong> #{{ order.id }}<br>
+                    <strong>Statut :</strong> {{ order.statusLabel }}<br>
+                    <strong>Mode de paiement :</strong> Carte bancaire
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th class="text-center">Quantité</th>
+                <th class="text-right">Prix unitaire</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.orderItems %}
+                <tr>
+                    <td>{{ item.displayName }}</td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-right">{{ item.unitPrice|number_format(2, ',', ' ') }} €</td>
+                    <td class="text-right">{{ item.totalPrice|number_format(2, ',', ' ') }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        <div class="total-line">
+            <strong>Sous-total : {{ order.total|number_format(2, ',', ' ') }} €</strong>
+        </div>
+        <div class="total-line">
+            <strong>Livraison : 0,00 €</strong>
+        </div>
+        <div class="total-line">
+            <strong>TVA (20%) : {{ (order.total * 0.2)|number_format(2, ',', ' ') }} €</strong>
+        </div>
+        <div class="total-final">
+            <strong>TOTAL TTC : {{ (order.total * 1.2)|number_format(2, ',', ' ') }} €</strong>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Merci pour votre commande chez Clochette&CO !</p>
+        <p>Cette facture a été générée automatiquement le {{ "now"|date('d/m/Y à H:i') }}</p>
+        <p>Pour toute question, contactez-nous à contact@clochetteco.fr</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Animalerie - Tout pour vos animaux{% endblock %}</title>
+        <meta name="description" content="{% block meta_description %}Découvrez notre large gamme de produits pour chiens, chats et oiseaux. Tout pour le bien-être de vos animaux de compagnie.{% endblock %}">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Dyna+Puff:wght@400;500;600;700&family=Emily+Candys&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <link href="{{ asset('assets/css/responsive.css') }}" rel="stylesheet">
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🐾</text></svg>">
+        
+        {% block stylesheets %}
+            <style>
+                :root {
+                    --font-heading: 'Bubblegum Sans', cursive;
+                    --font-display: 'Dyna Puff', cursive;
+                    --font-decorative: 'Emily Candys', cursive;
+                    --font-body: 'Nunito', sans-serif;
+                    --primary-orange: #FB9629;
+                    --secondary-orange: #E8851E;
+                    --dark-orange: #D4741A;
+                    --navbar-orange: #B8631A;
+                    --light-orange: #FDB462;
+                    --cream: #FFF8F3;
+                    --light-gray: #F7F7F7;
+                    --medium-gray: #718096;
+                    --dark-gray: #2D3748;
+                    --white: #FFFFFF;
+                }
+                
+                body {
+                    font-family: var(--font-body);
+                    margin: 0;
+                    padding: 0;
+                    line-height: 1.6;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+                
+                * {
+                    box-sizing: border-box;
+                }
+                
+                img {
+                    max-width: 100%;
+                    height: auto;
+                }
+                
+                main {
+                    margin-top: 0;
+                    width: 100%;
+                    overflow-x: hidden;
+                }
+                
+                h1, h2, h3 {
+                    font-family: var(--font-heading);
+                }
+
+                .btn-add-quick {
+                    background: var(--primary-orange);
+                    color: var(--white);
+                    border: none;
+                    padding: 0.5rem 1rem;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-family: var(--font-body);
+                    font-weight: 600;
+                    transition: background-color 0.3s;
+                    margin-right: 0.5rem;
+                }
+
+                .btn-add-quick:hover {
+                    background: var(--secondary-orange);
+                }
+
+                .btn-details {
+                    color: var(--dark-orange);
+                    text-decoration: none;
+                    padding: 0.5rem 1rem;
+                    border: 2px solid var(--primary-orange);
+                    border-radius: 6px;
+                    transition: all 0.3s;
+                }
+
+                .btn-details:hover {
+                    background: var(--primary-orange);
+                    color: var(--white);
+                }
+
+                .product-actions {
+                    margin-top: 1rem;
+                    display: flex;
+                    gap: 0.5rem;
+                    align-items: center;
+                }
+
+                #add-to-cart-form {
+                    margin-top: 1rem;
+                }
+
+                #add-to-cart-form .btn-primary {
+                    margin-top: 1rem;
+                    width: 100%;
+                    padding: 1rem;
+                    font-size: 1.1rem;
+                }
+
+                .cart-counter {
+                    background: #dc3545;
+                    color: white;
+                    border-radius: 50%;
+                    padding: 2px 6px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin-left: 4px;
+                    min-width: 18px;
+                    height: 18px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    animation: bounce 0.5s ease;
+                }
+
+                .cart-counter:empty {
+                    display: none;
+                }
+
+                @keyframes bounce {
+                    0%, 20%, 60%, 100% { transform: translateY(0); }
+                    40% { transform: translateY(-5px); }
+                    80% { transform: translateY(-2px); }
+                }
+            </style>
+        {% endblock %}
+    </head>
+    <body>
+        {% include 'components/navbar.html.twig' %}
+        
+        <main>
+            {% block body %}{% endblock %}
+        </main>
+        
+        {% include 'components/footer.html.twig' %}
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {% block javascripts %}{% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('add-to-cart-form');
+            
+            if (form && !form.hasAttribute('data-listener-attached')) {
+                form.setAttribute('data-listener-attached', 'true');
+                
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); 
+                    
+                    const quantity = document.getElementById('quantity').value;
+                    {% if product is defined %}
+                        const productName = "{{ product.name|escape('js') }}";
+                    {% endif %}
+
+                    const button = this.querySelector('button[type="submit"]');
+                    const originalText = button.textContent;
+                    
+                    if (button.disabled) return;
+                    
+                    button.textContent = '✅ Ajouté !';
+                    button.disabled = true;
+                    
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: new FormData(this)
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            updateCartCounter();
+                            
+                            setTimeout(() => {
+                                button.textContent = originalText;
+                                button.disabled = false;
+                            }, 1500);
+                        } else {
+                            throw new Error('Erreur lors de l\'ajout');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        button.textContent = originalText;
+                        button.disabled = false;
+                        this.submit();
+                    });
+                });
+            }
+        });
+    </body>
+</html>

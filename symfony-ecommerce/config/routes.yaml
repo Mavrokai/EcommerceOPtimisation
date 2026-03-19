@@ -1,0 +1,89 @@
+controllers:
+  resource:
+    path: ../src/Controller/
+    namespace: App\Controller
+  type: attribute
+
+# Routes pour les sections principales
+categories:
+  path: /categories
+  controller: App\Controller\CategoryController::index
+
+category_show:
+  path: /category/{slug}
+  controller: App\Controller\CategoryController::show
+
+products:
+  path: /products
+  controller: App\Controller\ProductController::index
+
+product_show:
+  path: /product/{slug}
+  controller: App\Controller\ProductController::show
+
+# Routes utilisateur
+user_login:
+  path: /login
+  controller: App\Controller\SecurityController::login
+
+user_register:
+  path: /register
+  controller: App\Controller\SecurityController::register
+
+user_profile:
+  path: /profile
+  controller: App\Controller\UserController::profile
+
+# Routes panier
+cart:
+  path: /cart
+  controller: App\Controller\CartController::index
+
+cart_add:
+  path: /cart/add/{id}
+  controller: App\Controller\CartController::add
+
+cart_remove:
+  path: /cart/remove/{id}
+  controller: App\Controller\CartController::remove
+
+# Routes promotions
+promotions:
+  path: /promotions
+  controller: App\Controller\PromotionController::index
+
+promotion_show:
+  path: /promotion/{slug}
+  controller: App\Controller\PromotionController::show
+
+# Routes pages statiques
+about:
+  path: /about
+  controller: App\Controller\AboutController::index
+
+contact:
+  path: /contact
+  controller: App\Controller\PageController::contact
+
+privacy:
+  path: /privacy
+  controller: App\Controller\PageController::privacy
+
+terms:
+  path: /terms
+  controller: App\Controller\PageController::terms
+
+# API routes pour AJAX
+api_search:
+  path: /api/search
+  controller: App\Controller\ApiController::search
+
+api_categories:
+    path: /api/categories
+    controller: App\Controller\ApiController::categories
+
+#Routes pour les avis
+# product_detail:
+# path: /{id}
+# controller: App\Controller\ProductController::show
+# methods: [GET]

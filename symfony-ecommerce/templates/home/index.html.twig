@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Pet E-commerce{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <!-- Catégories Section -->
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Nos Catégories</h2>
+        </div>
+    </div>
+
+    {% if categories|length > 0 %}
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                {% if category.name == 'Chiens' %}
+                                    <i class="fas fa-dog fa-3x text-primary"></i>
+                                {% elseif category.name == 'Chats' %}
+                                    <i class="fas fa-cat fa-3x text-warning"></i>
+                                {% elseif category.name == 'Oiseaux' %}
+                                    <i class="fas fa-dove fa-3x text-success"></i>
+                                {% else %}
+                                    <i class="fas fa-paw fa-3x text-info"></i>
+                                {% endif %}
+                            </div>
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            <a href="{{ path('app_category_show', {'id': category.id}) }}" 
+                               class="btn btn-outline-primary">
+                                Voir les produits
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <h4>Aucune catégorie disponible</h4>
+            <p>Les catégories seront bientôt disponibles.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

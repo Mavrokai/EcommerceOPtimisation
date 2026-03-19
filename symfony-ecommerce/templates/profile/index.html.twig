@@ -1,0 +1,336 @@
+{# templates/profile/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: #F6F3E1;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* Sidebar */
+        .profile-sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-avatar i {
+            font-size: 2.5rem;
+        }
+
+        .profile-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .profile-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-menu li {
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-menu a {
+            display: block;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #5a6c7d;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .profile-menu a:hover,
+        .profile-menu a.active {
+            background: linear-gradient(135deg, #FFE5B4, #FFCC8E);
+            color: #E67E22;
+            transform: translateX(5px);
+        }
+
+        /* Main content */
+        .profile-content {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .content-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #5a6c7d;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #E67E22;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .profile-container {
+                padding: 1rem;
+            }
+            
+            .profile-sidebar {
+                position: static;
+            }
+        }
+
+        /* Flash messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Style pour le champ téléphone simulé */
+        .phone-field {
+            margin-bottom: 2rem;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 1rem;
+            background: #fafbfc;
+            color: #6c757d;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+    <div class="profile-container">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="profile-layout">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                
+                <div class="profile-name">
+                    {% if user.firstName or user.lastName %}
+                        {{ user.fullName }}
+                    {% else %}
+                        Utilisateur
+                    {% endif %}
+                </div>
+                <div class="profile-email">{{ user.email }}</div>
+                
+                <ul class="profile-menu">
+                    <li>
+                        <a href="{{ path('app_profile') }}" class="active">
+                            Informations personnelles
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_historique') }}">
+                            Mes commandes
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ path('app_profile_addresses') }}">
+                            Adresses
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_logout') }}" onclick="return confirm('Êtes-vous sûr de vouloir vous déconnecter ?')">
+                            Déconnexion
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main content -->
+            <div class="profile-content">
+                <div class="content-header">
+                    <h1 class="content-title">Informations personnelles</h1>
+                </div>
+
+                {{ form_start(form, {'attr': {'class': 'profile-form'}}) }}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.firstName, 'Prénom', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Jean'}}) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form_label(form.lastName, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Dupont'}}) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'jean@example.com'}}) }}
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            Sauvegarder les modifications
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Validation du formulaire côté client
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.profile-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Validation basique du formulaire
+                    const email = form.querySelector('input[type="email"]');
+                    if (email && !email.value.includes('@')) {
+                        e.preventDefault();
+                        alert('Veuillez saisir une adresse email valide');
+                        email.focus();
+                    }
+                });
+            }
+        });
+    </script>
+
+{% endblock %}

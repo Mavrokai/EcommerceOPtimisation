@@ -1,0 +1,921 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Gestion des Utilisateurs{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item active">Utilisateurs</li>
+{% endblock %}
+
+{% block header_actions %}
+    <div class="header-actions">
+        <a href="{{ path('admin_user_new') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i>
+            Nouvel Utilisateur
+        </a>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+<style>
+/* Dashboard Container */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--cream);
+    min-height: 100vh;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Dashboard Card */
+.dashboard-card {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.header-badge {
+    background: var(--white);
+    color: var(--primary-orange);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--light-gray);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: var(--white);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+.stat-icon.bg-primary { background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%); }
+.stat-icon.bg-danger { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+.stat-icon.bg-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+.stat-icon.bg-info { background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); }
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    line-height: 1;
+    font-family: var(--font-heading);
+}
+
+.stat-label {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    font-weight: 600;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-control {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(251, 150, 41, 0.1);
+    outline: none;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 2px solid var(--light-gray);
+}
+
+.actions-right {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    transition: all 0.3s ease;
+    border: 2px solid;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    color: var(--white);
+    border-color: var(--primary-orange);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--secondary-orange) 0%, var(--dark-orange) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(251, 150, 41, 0.4);
+    border-color: var(--secondary-orange);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--medium-gray) 0%, var(--dark-gray) 100%);
+    color: var(--white);
+    border-color: var(--medium-gray);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, var(--dark-gray) 0%, #495057 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
+    border-color: var(--dark-gray);
+}
+
+.btn-sm {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 42px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background: var(--dark-gray);
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    text-align: left;
+    border-bottom: 2px solid #e9ecef;
+    font-family: var(--font-heading);
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f8f9fa;
+    vertical-align: middle;
+}
+
+.data-table tbody tr {
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.data-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(251, 150, 41, 0.05) 0%, var(--cream) 100%);
+    transform: translateX(5px);
+}
+
+.data-table tbody tr:nth-child(even) {
+    background: var(--light-gray);
+}
+
+.data-table tbody tr:nth-child(even):hover {
+    background: linear-gradient(135deg, rgba(251, 150, 41, 0.1) 0%, var(--cream) 100%);
+}
+
+.actions-column {
+    text-align: center;
+    width: 150px;
+}
+
+/* Table Actions */
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* User Elements */
+.id-badge {
+    background: var(--light-gray);
+    color: var(--medium-gray);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.user-email {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-indicator {
+    padding: 0.25rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+}
+
+.status-indicator.warning {
+    background: #ffc107;
+    color: var(--white);
+}
+
+.status-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--white);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.status-badge.admin {
+    background: #dc3545;
+}
+
+.status-badge.user {
+    background: var(--medium-gray);
+}
+
+.status-badge.verified {
+    background: #28a745;
+}
+
+.status-badge.pending {
+    background: #ffc107;
+}
+
+.date-info {
+    color: var(--medium-gray);
+    font-size: 0.85rem;
+}
+
+/* Action Buttons */
+.btn-outline-info {
+    border: 2px solid #17a2b8;
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+    background: #17a2b8;
+    color: var(--white);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+.btn-outline-warning {
+    border: 2px solid #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.btn-outline-warning:hover {
+    background: #ffc107;
+    color: #212529;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+}
+
+.btn-outline-danger {
+    border: 2px solid #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    color: var(--white);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-outline-muted {
+    border: 2px solid var(--medium-gray);
+    background: rgba(108, 117, 125, 0.1);
+    color: var(--medium-gray);
+    cursor: not-allowed;
+}
+
+/* Pagination */
+.pagination-container {
+    padding: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background: var(--light-gray);
+}
+
+.pagination-nav {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0.5rem;
+}
+
+.pagination-item {
+    display: flex;
+}
+
+.pagination-link {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--medium-gray);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    background: var(--white);
+}
+
+.pagination-link:hover {
+    background: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(251, 150, 41, 0.3);
+}
+
+.pagination-item.active .pagination-link {
+    background: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: var(--white);
+}
+
+.pagination-item.disabled .pagination-link {
+    color: #ccc;
+    cursor: not-allowed;
+    background: #f8f9fa;
+}
+
+.pagination-item.disabled .pagination-link:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--medium-gray);
+    margin-bottom: 1rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-heading);
+}
+
+.empty-text {
+    color: var(--medium-gray);
+    margin-bottom: 2rem;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .actions-column {
+        width: 100px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .actions-right {
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-content">
+        <!-- Statistiques -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i>
+                Statistiques des Utilisateurs
+            </div>
+            <div class="card-body">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon bg-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total }}</div>
+                            <div class="stat-label">Total Utilisateurs</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon bg-danger">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.admins }}</div>
+                            <div class="stat-label">Administrateurs</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon bg-success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.verified }}</div>
+                            <div class="stat-label">Comptes Vérifiés</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon bg-info">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.recent }}</div>
+                            <div class="stat-label">Récents (30j)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres et recherche -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-filter"></i>
+                Filtres et Recherche
+            </div>
+            <div class="card-body">
+                <form method="GET" class="filter-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-search"></i>
+                                Rechercher
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="search" 
+                                   value="{{ search }}" 
+                                   placeholder="Email, prénom ou nom...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user-tag"></i>
+                                Type d'utilisateur
+                            </label>
+                            <select class="form-control" name="isAdmin">
+                                <option value="">Tous</option>
+                                <option value="1" {{ isAdmin == '1' ? 'selected' : '' }}>Administrateurs</option>
+                                <option value="0" {{ isAdmin == '0' ? 'selected' : '' }}>Utilisateurs standards</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="actions-right">
+                            <a href="{{ path('admin_user_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-eraser"></i>
+                                Reset
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                                Rechercher
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des utilisateurs -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-list"></i>
+                Liste des Utilisateurs
+                <span class="header-badge">{{ totalUsers }}</span>
+            </div>
+            <div class="card-body">
+                {% if users %}
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email</th>
+                                <th>Nom complet</th>
+                                <th>Statut</th>
+                                <th>Inscrit le</th>
+                                <th>Dernière connexion</th>
+                                <th class="actions-column">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        <span class="id-badge">#{{ user.id }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="user-email">
+                                            <strong>{{ user.email }}</strong>
+                                            {% if not user.isVerified %}
+                                                <span class="status-indicator warning" title="Email non vérifié">
+                                                    <i class="fas fa-exclamation-triangle"></i>
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if user.fullName|trim %}
+                                            {{ user.fullName }}
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="status-badges">
+                                            {% if user.isAdmin %}
+                                                <span class="status-badge admin">
+                                                    <i class="fas fa-user-shield"></i>
+                                                    Administrateur
+                                                </span>
+                                            {% else %}
+                                                <span class="status-badge user">
+                                                    <i class="fas fa-user"></i>
+                                                    Utilisateur
+                                                </span>
+                                            {% endif %}
+                                            
+                                            {% if user.isVerified %}
+                                                <span class="status-badge verified">
+                                                    <i class="fas fa-check"></i>
+                                                    Vérifié
+                                                </span>
+                                            {% else %}
+                                                <span class="status-badge pending">
+                                                    <i class="fas fa-clock"></i>
+                                                    Non vérifié
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="date-info">
+                                            {{ user.createdAt|date('d/m/Y H:i') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="date-info">
+                                            {% if user.updatedAt %}
+                                                {{ user.updatedAt|date('d/m/Y H:i') }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="actions-column">
+                                        <div class="table-actions">
+                                            <a href="{{ path('admin_user_show', {'id': user.id}) }}" 
+                                               class="btn btn-sm btn-outline-info"
+                                               title="Voir les détails">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            <a href="{{ path('admin_user_edit', {'id': user.id}) }}" 
+                                               class="btn btn-sm btn-outline-warning"
+                                               title="Modifier l'utilisateur">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            {% if user != app.user %}
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-danger btn-delete-user"
+                                                        data-user-id="{{ user.id }}"
+                                                        data-user-email="{{ user.email }}"
+                                                        title="Supprimer l'utilisateur">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            {% else %}
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-muted" 
+                                                        disabled
+                                                        title="Votre propre compte">
+                                                    <i class="fas fa-user-shield"></i>
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if totalPages > 1 %}
+                    <div class="pagination-container">
+                        <nav class="pagination-nav">
+                            <ul class="pagination-list">
+                                {% if currentPage > 1 %}
+                                    <li class="pagination-item">
+                                        <a class="pagination-link" href="{{ path('admin_user_index', {page: currentPage - 1, search: search, isAdmin: isAdmin}) }}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for page in 1..totalPages %}
+                                    {% if page == currentPage %}
+                                        <li class="pagination-item active">
+                                            <span class="pagination-link">{{ page }}</span>
+                                        </li>
+                                    {% elseif page == 1 or page == totalPages or (page >= currentPage - 2 and page <= currentPage + 2) %}
+                                        <li class="pagination-item">
+                                            <a class="pagination-link" href="{{ path('admin_user_index', {page: page, search: search, isAdmin: isAdmin}) }}">{{ page }}</a>
+                                        </li>
+                                    {% elseif page == currentPage - 3 or page == currentPage + 3 %}
+                                        <li class="pagination-item disabled">
+                                            <span class="pagination-link">...</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if currentPage < totalPages %}
+                                    <li class="pagination-item">
+                                        <a class="pagination-link" href="{{ path('admin_user_index', {page: currentPage + 1, search: search, isAdmin: isAdmin}) }}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="empty-title">Aucun utilisateur trouvé</div>
+                        <div class="empty-text">
+                            {% if search or isAdmin != '' %}
+                                Aucun utilisateur ne correspond aux critères de recherche.
+                            {% else %}
+                                Il n'y a aucun utilisateur dans le système.
+                            {% endif %}
+                        </div>
+                        {% if search or isAdmin != '' %}
+                            <div class="empty-actions">
+                                <a href="{{ path('admin_user_index') }}" class="btn btn-primary">
+                                    <i class="fas fa-eraser"></i>
+                                    Effacer les filtres
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Formulaires de suppression cachés -->
+{% for user in users %}
+    {% if user != app.user %}
+        <form id="deleteForm{{ user.id }}" method="post" action="{{ path('admin_user_delete', {'id': user.id}) }}" style="display: none;">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+        </form>
+    {% endif %}
+{% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des boutons de suppression
+    const deleteButtons = document.querySelectorAll('.btn-delete-user');
+    
+    deleteButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            const userEmail = this.getAttribute('data-user-email');
+            
+            confirmDeleteUser(userId, userEmail);
+        });
+    });
+    
+    // Animation des lignes du tableau
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+    tableRows.forEach(function(row) {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+    
+    // Animation des boutons d'action
+    const actionButtons = document.querySelectorAll('.table-actions .btn');
+    actionButtons.forEach(function(button) {
+        button.addEventListener('mouseenter', function() {
+            if (!this.disabled) {
+                this.style.transform = 'scale(1.1)';
+            }
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+});
+
+function confirmDeleteUser(userId, userEmail) {
+    const message = `⚠️ CONFIRMATION DE SUPPRESSION ⚠️\n\n` +
+                   `Vous êtes sur le point de supprimer définitivement l'utilisateur :\n` +
+                   `"${userEmail}"\n\n` +
+                   `Cette action est IRRÉVERSIBLE !\n\n` +
+                   `Toutes les données associées seront perdues :\n` +
+                   `• Informations du compte\n` +
+                   `• Historique des commandes\n` +
+                   `• Préférences utilisateur\n` +
+                   `• Données personnelles\n\n` +
+                   `Êtes-vous absolument certain de vouloir continuer ?`;
+    
+    if (confirm(message)) {
+        // Double confirmation pour les actions critiques
+        const finalConfirm = confirm(`🔴 DERNIÈRE CONFIRMATION 🔴\n\nVous confirmez la suppression définitive de "${userEmail}" ?\n\nCliquez sur OK pour supprimer définitivement ou Annuler pour arrêter.`);
+        
+        if (finalConfirm) {
+            // Soumission du formulaire de suppression
+            const deleteForm = document.getElementById('deleteForm' + userId);
+            if (deleteForm) {
+                deleteForm.submit();
+            } else {
+                console.error('Formulaire de suppression non trouvé pour l\'utilisateur ID:', userId);
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

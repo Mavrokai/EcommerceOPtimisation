@@ -1,0 +1,239 @@
+{# 
+  Component: Hero Banner
+  Props: title, subtitle, buttonText, buttonUrl, heroImage
+#}
+<section class="hero-banner">
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">{{ title|default('Tout pour le bien-être de vos animaux') }}</h1>
+                <p class="hero-subtitle">{{ subtitle|default('Découvrez notre large gamme de produits pour chiens, chats et oiseaux') }}</p>
+                <a href="{{ buttonUrl|default(path('categories')) }}" class="hero-button">
+                    {{ buttonText|default('Découvrir nos produits') }}
+                </a>
+            </div>
+            <div class="hero-image-container">
+                <img 
+                    src="{{ asset('assets/images/hero-image.png') }}" 
+                    alt="Animaux heureux" 
+                    class="hero-image"
+                    loading="eager">
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.hero-banner {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+}
+{# .hero-banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: white;
+    clip-path: polygon(0% 60%, 10% 40%, 20% 45%, 30% 25%, 40% 35%, 50% 20%, 60% 30%, 70% 15%, 80% 25%, 90% 10%, 100% 20%, 100% 100%, 0% 100%);
+} #}
+.hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.hero-text {
+    color: white;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    margin: 0 0 2rem 0;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.hero-button {
+    display: inline-block;
+    background: var(--primary-orange);
+    color: white;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(251, 150, 41, 0.3);
+}
+
+.hero-button:hover {
+    background: var(--secondary-orange);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(251, 150, 41, 0.4);
+}
+
+.hero-image-container {
+    text-align: center;
+}
+
+.hero-image {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .hero-container {
+        padding: 0 1.5rem;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-banner {
+        min-height: 55vh;
+    }
+    
+    .hero-content {
+        gap: 2.5rem;
+    }
+    
+    .hero-title {
+        font-size: 2.6rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.15rem;
+        margin-bottom: 1.8rem;
+    }
+    
+    .hero-button {
+        padding: 0.9rem 1.8rem;
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-banner {
+        min-height: 50vh;
+        text-align: center;
+    }
+    
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .hero-image-container {
+        display: none;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .hero-container {
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .hero-banner {
+        min-height: 45vh;
+        padding: 2rem 0;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+        margin-bottom: 0.8rem;
+        line-height: 1.1;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+    
+    .hero-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .hero-container {
+        padding: 0 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-banner {
+        min-height: 40vh;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 0.7rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.3rem;
+    }
+    
+    .hero-button {
+        padding: 0.75rem 1.3rem;
+        font-size: 0.95rem;
+        border-radius: 25px;
+    }
+    
+    .hero-container {
+        padding: 0 0.6rem;
+    }
+}
+</style>

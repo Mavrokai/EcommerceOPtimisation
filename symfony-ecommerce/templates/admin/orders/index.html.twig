@@ -1,0 +1,776 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}Gestion des Commandes{% endblock %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <li class="breadcrumb-item active">Commandes</li>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-content">
+        <!-- Statistiques des commandes -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i>
+                Statistiques des Commandes
+            </div>
+            <div class="card-body">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon bg-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ allOrders|filter(o => o.status == 'en_attente')|length }}</div>
+                            <div class="stat-label">En attente</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon bg-success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ allOrders|filter(o => o.status == 'confirmee')|length }}</div>
+                            <div class="stat-label">Confirmées</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon bg-primary">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ allOrders|filter(o => o.status == 'expediee')|length }}</div>
+                            <div class="stat-label">Expédiées</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-item">
+                        <div class="stat-icon bg-info">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ totalOrders }}</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if orders is empty %}
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="empty-title">Aucune commande trouvée</div>
+                        <div class="empty-text">
+                            Les commandes apparaîtront ici une fois passées par vos clients.
+                        </div>
+                        <div class="empty-actions">
+                            <a href="{{ path('admin_product_index') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Gérer les produits
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <i class="fas fa-list"></i>
+                    Liste des Commandes
+                    <span class="header-badge">{{ orders|length }} sur {{ totalOrders }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Commande</th>
+                                    <th>Client</th>
+                                    <th>Produits</th>
+                                    <th>Total</th>
+                                    <th>Statut</th>
+                                    <th>Date</th>
+                                    <th class="actions-column">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                    <tr class="order-row {% if order.status == 'en_attente' %}order-pending{% endif %}">
+                                        <td>
+                                            <div class="order-info">
+                                                <span class="order-id">#{{ order.id }}</span>
+                                                {% if order.status == 'en_attente' %}
+                                                    <div class="order-alert">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                        Nécessite validation
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="customer-info">
+                                                <div class="customer-email">{{ order.customerEmail }}</div>
+                                                <div class="customer-type">
+                                                    {% if order.user %}
+                                                        <i class="fas fa-user-check"></i>
+                                                        Utilisateur enregistré
+                                                    {% else %}
+                                                        <i class="fas fa-user"></i>
+                                                        Invité
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="products-info">
+                                                <div class="product-summary">
+                                                    {% set summary = order.orderSummary %}
+                                                    {% if summary|length > 50 %}
+                                                        {{ summary|slice(0, 50) }}...
+                                                    {% else %}
+                                                        {{ summary }}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="product-count">
+                                                    <i class="fas fa-boxes"></i>
+                                                    {{ order.totalItemsCount }} article(s)
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="order-total">{{ order.total }}€</div>
+                                        </td>
+                                        <td>
+                                            {% set statusClass = {
+                                                'en_attente': 'pending',
+                                                'confirmee': 'confirmed',
+                                                'expediee': 'shipped',
+                                                'livree': 'delivered',
+                                                'annulee': 'cancelled'
+                                            } %}
+                                            <span class="status-badge {{ statusClass[order.status] ?? 'unknown' }}">
+                                                <i class="fas {% if order.status == 'en_attente' %}fa-clock{% elseif order.status == 'confirmee' %}fa-check{% elseif order.status == 'expediee' %}fa-shipping-fast{% elseif order.status == 'livree' %}fa-check-circle{% else %}fa-times{% endif %}"></i>
+                                                {{ order.statusLabel }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="order-date">
+                                                <div class="date-main">{{ order.createdAt|date('d/m/Y') }}</div>
+                                                <div class="date-time">{{ order.createdAt|date('H:i') }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="actions-column">
+                                            <div class="table-actions">
+                                                <a href="{{ path('admin_orders_show', {id: order.id}) }}" 
+                                                   class="btn btn-sm btn-outline-info"
+                                                   title="Voir la commande">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if totalPages > 1 %}
+                        <div class="pagination-container">
+                            <nav class="pagination-nav">
+                                <ul class="pagination-list">
+                                    {% if currentPage > 1 %}
+                                        <li class="pagination-item">
+                                            <a class="pagination-link" href="{{ path('admin_orders_index', {page: currentPage - 1}) }}">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for page in 1..totalPages %}
+                                        {% if page == currentPage %}
+                                            <li class="pagination-item active">
+                                                <span class="pagination-link">{{ page }}</span>
+                                            </li>
+                                        {% elseif page == 1 or page == totalPages or (page >= currentPage - 2 and page <= currentPage + 2) %}
+                                            <li class="pagination-item">
+                                                <a class="pagination-link" href="{{ path('admin_orders_index', {page: page}) }}">{{ page }}</a>
+                                            </li>
+                                        {% elseif page == currentPage - 3 or page == currentPage + 3 %}
+                                            <li class="pagination-item disabled">
+                                                <span class="pagination-link">...</span>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if currentPage < totalPages %}
+                                        <li class="pagination-item">
+                                            <a class="pagination-link" href="{{ path('admin_orders_index', {page: currentPage + 1}) }}">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+<style>
+/* Dashboard Container */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: var(--cream);
+    min-height: 100vh;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Dashboard Card */
+.dashboard-card {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.header-badge {
+    background: var(--white);
+    color: var(--primary-orange);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--light-gray);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: var(--white);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+.stat-icon.bg-warning { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); }
+.stat-icon.bg-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+.stat-icon.bg-primary { background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%); }
+.stat-icon.bg-info { background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); }
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    line-height: 1;
+    font-family: var(--font-heading);
+}
+
+.stat-label {
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    font-weight: 600;
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background: var(--dark-gray);
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    text-align: left;
+    border-bottom: 2px solid #e9ecef;
+    font-family: var(--font-heading);
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f8f9fa;
+    vertical-align: middle;
+}
+
+.data-table tbody tr {
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.data-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(251, 150, 41, 0.05) 0%, var(--cream) 100%);
+    transform: translateX(5px);
+}
+
+.data-table tbody tr:nth-child(even) {
+    background: var(--light-gray);
+}
+
+.data-table tbody tr:nth-child(even):hover {
+    background: linear-gradient(135deg, rgba(251, 150, 41, 0.1) 0%, var(--cream) 100%);
+}
+
+.actions-column {
+    text-align: center;
+    width: 150px;
+}
+
+/* Order Specific Styles */
+.order-row.order-pending {
+    background: rgba(255, 193, 7, 0.1) !important;
+    border-left: 4px solid #ffc107;
+}
+
+.order-row.order-pending:hover {
+    background: rgba(255, 193, 7, 0.2) !important;
+}
+
+.order-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.order-id {
+    font-weight: 700;
+    color: var(--dark-gray);
+    font-size: 1rem;
+    font-family: var(--font-heading);
+}
+
+.order-alert {
+    color: #e0a800;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+}
+
+.customer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.customer-email {
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+.customer-type {
+    color: var(--medium-gray);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.products-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.product-summary {
+    color: var(--dark-gray);
+    line-height: 1.4;
+}
+
+.product-count {
+    color: var(--medium-gray);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+}
+
+.order-total {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-orange);
+    font-family: var(--font-heading);
+}
+
+.order-date {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.date-main {
+    color: var(--dark-gray);
+    font-weight: 600;
+}
+
+.date-time {
+    color: var(--medium-gray);
+    font-size: 0.8rem;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: var(--font-heading);
+}
+
+.status-badge.pending {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.status-badge.confirmed {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.status-badge.shipped {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+}
+
+.status-badge.delivered {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+}
+
+.status-badge.cancelled {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.status-badge.unknown {
+    background: linear-gradient(135deg, var(--medium-gray) 0%, var(--dark-gray) 100%);
+}
+
+/* Table Actions */
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* Action Buttons */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    font-family: var(--font-body);
+    transition: all 0.3s ease;
+    border: 2px solid;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-sm {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    min-width: 40px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-outline-info {
+    border-color: #17a2b8;
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+    background: #17a2b8;
+    color: var(--white);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+}
+
+.btn-outline-success {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.btn-outline-success:hover {
+    background: #28a745;
+    color: var(--white);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-outline-danger {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background: #dc3545;
+    color: var(--white);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--secondary-orange) 100%);
+    color: var(--white);
+    border-color: var(--primary-orange);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--secondary-orange) 0%, var(--dark-orange) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(251, 150, 41, 0.4);
+    border-color: var(--secondary-orange);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--medium-gray);
+    margin-bottom: 1rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-heading);
+}
+
+.empty-text {
+    color: var(--medium-gray);
+    margin-bottom: 2rem;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* Pagination */
+.pagination-container {
+    padding: 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background: var(--light-gray);
+}
+
+.pagination-nav {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0.5rem;
+}
+
+.pagination-item {
+    display: flex;
+}
+
+.pagination-link {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--medium-gray);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    background: var(--white);
+}
+
+.pagination-link:hover {
+    background: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(251, 150, 41, 0.3);
+}
+
+.pagination-item.active .pagination-link {
+    background: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: var(--white);
+}
+
+.pagination-item.disabled .pagination-link {
+    color: #ccc;
+    cursor: not-allowed;
+    background: #f8f9fa;
+}
+
+.pagination-item.disabled .pagination-link:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .actions-column {
+        width: 100px;
+    }
+    
+    .order-info,
+    .customer-info,
+    .products-info {
+        font-size: 0.8rem;
+    }
+    
+    .card-header {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des lignes du tableau
+    const tableRows = document.querySelectorAll('.data-table tbody tr');
+    tableRows.forEach(function(row) {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+    
+    // Animation des boutons d'action
+    const actionButtons = document.querySelectorAll('.table-actions .btn');
+    actionButtons.forEach(function(button) {
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+{% endblock %}

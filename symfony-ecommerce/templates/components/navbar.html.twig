@@ -1,0 +1,1772 @@
+{# Navigation principale #}
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-logo">
+            <a href="{{ path('homepage') }}" class="navbar-brand">
+                <span class="logo-emoji">🐾</span>
+                <span class="brand-text">Clochette&CO</span>
+            </a>
+        </div>
+
+        <div class="navbar-menu" id="navbarMenu">
+            <!-- Dropdown Chiens -->
+            <div class="nav-dropdown">
+                <button class="nav-link dropdown-toggle" id="chiensDropdown">
+                    🐕 Chiens
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
+                        <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
+                    </svg>
+                </button>
+                <div class="dropdown-menu" id="chiensDropdownMenu">
+                    <a href="{{ path('app_product_index', {category: 'chiens'}) }}" class="dropdown-item">🐕 Tous les produits pour chiens</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ path('app_product_index', {category: 'chiens', subcategory: 'laisses-colliers'}) }}" class="dropdown-item">🦮 Laisses & Colliers</a>
+                    <a href="{{ path('app_product_index', {category: 'chiens', subcategory: 'os-jouets'}) }}" class="dropdown-item">🦴 Os & Jouets</a>
+                    <a href="{{ path('app_product_index', {category: 'chiens', subcategory: 'croquettes-pour-chiens'}) }}" class="dropdown-item">🍖 Croquettes pour chiens</a>
+                    <a href="{{ path('app_product_index', {category: 'chiens', subcategory: 'gamelles-accessoires'}) }}" class="dropdown-item">🥣 Gamelles & Accessoires</a>
+                    <a href="{{ path('app_product_index', {category: 'chiens', subcategory: 'vetements'}) }}" class="dropdown-item">👕 Vêtements pour chiens</a>
+                    <a href="{{ path('app_product_index', {category: 'chiens', subcategory: 'soins-hygiene'}) }}" class="dropdown-item">🧼 Soins & Hygiène</a>
+                    <a href="{{ path('app_product_index', {category: 'chiens', subcategory: 'friandises'}) }}" class="dropdown-item">🍪 Friandises</a>
+                </div>
+            </div>
+
+            <!-- Dropdown Chats -->
+            <div class="nav-dropdown">
+                <button class="nav-link dropdown-toggle" id="chatsDropdown">
+                    🐱 Chats
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
+                        <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
+                    </svg>
+                </button>
+                <div class="dropdown-menu" id="chatsDropdownMenu">
+                    <a href="{{ path('app_product_index', {category: 'chats'}) }}" class="dropdown-item">🐱 Tous les produits pour chats</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ path('app_product_index', {category: 'chats', subcategory: 'litieres-bacs'}) }}" class="dropdown-item">🗳️ Litières & Bacs</a>
+                    <a href="{{ path('app_product_index', {category: 'chats', subcategory: 'herbe-chat'}) }}" class="dropdown-item">🌿 Herbe à chat</a>
+                    <a href="{{ path('app_product_index', {category: 'chats', subcategory: 'croquettes-pour-chats'}) }}" class="dropdown-item">🍽️ Croquettes pour chats</a>
+                    <a href="{{ path('app_product_index', {category: 'chats', subcategory: 'jouets-pour-chats'}) }}" class="dropdown-item">🎾 Jouets pour chats</a>
+                    <a href="{{ path('app_product_index', {category: 'chats', subcategory: 'arbres-chat'}) }}" class="dropdown-item">🏡 Arbres à chat</a>
+                    <a href="{{ path('app_product_index', {category: 'chats', subcategory: 'soins-hygiene'}) }}" class="dropdown-item">🧼 Soins & Hygiène</a>
+                    <a href="{{ path('app_product_index', {category: 'chats', subcategory: 'friandises'}) }}" class="dropdown-item">🍪 Friandises</a>
+                </div>
+            </div>
+
+            <!-- Dropdown Oiseaux -->
+            <div class="nav-dropdown">
+                <button class="nav-link dropdown-toggle" id="oiseauxDropdown">
+                    🐦 Oiseaux
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
+                        <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
+                    </svg>
+                </button>
+                <div class="dropdown-menu" id="oiseauxDropdownMenu">
+                    <a href="{{ path('app_product_index', {category: 'oiseaux'}) }}" class="dropdown-item">🐦 Tous les produits pour oiseaux</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ path('app_product_index', {category: 'oiseaux', subcategory: 'graines-alimentation'}) }}" class="dropdown-item">🌾 Graines & Alimentation</a>
+                    <a href="{{ path('app_product_index', {category: 'oiseaux', subcategory: 'cages-volieres'}) }}" class="dropdown-item">🏠 Cages & Volières</a>
+                    <a href="{{ path('app_product_index', {category: 'oiseaux', subcategory: 'jouets-accessoires'}) }}" class="dropdown-item">🧸 Jouets & Accessoires</a>
+                    <a href="{{ path('app_product_index', {category: 'oiseaux', subcategory: 'perchoirs'}) }}" class="dropdown-item">🪶 Perchoirs</a>
+                    <a href="{{ path('app_product_index', {category: 'oiseaux', subcategory: 'soins-vitamines'}) }}" class="dropdown-item">💊 Soins & Vitamines</a>
+                    <a href="{{ path('app_product_index', {category: 'oiseaux', subcategory: 'nids-reproduction'}) }}" class="dropdown-item">🥚 Nids & Reproduction</a>
+                </div>
+            </div>
+
+            <!-- Dropdown Lézards -->
+            <div class="nav-dropdown">
+                <button class="nav-link dropdown-toggle" id="lezardsDropdown">
+                    🦎 Lézards
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
+                        <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
+                    </svg>
+                </button>
+                <div class="dropdown-menu" id="lezardsDropdownMenu">
+                    <a href="{{ path('app_product_index', {category: 'lezards'}) }}" class="dropdown-item">🦎 Tous les produits pour lézards</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ path('app_product_index', {category: 'lezards', subcategory: 'alimentation'}) }}" class="dropdown-item">🦗 Alimentation</a>
+                    <a href="{{ path('app_product_index', {category: 'lezards', subcategory: 'chauffage-uv'}) }}" class="dropdown-item">🌡️ Chauffage & UV</a>
+                    <a href="{{ path('app_product_index', {category: 'lezards', subcategory: 'terrariums'}) }}" class="dropdown-item">🏠 Terrariums</a>
+                    <a href="{{ path('app_product_index', {category: 'lezards', subcategory: 'decoration'}) }}" class="dropdown-item">🪨 Décoration</a>
+                    <a href="{{ path('app_product_index', {category: 'lezards', subcategory: 'soins'}) }}" class="dropdown-item">💊 Soins</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="navbar-actions">
+            <div class="navbar-search">
+                <form action="{{ path('product_search') }}" method="GET" class="search-form-inline">
+                    <div class="search-input-container">
+                        <input type="text" 
+                               name="q" 
+                               placeholder="Rechercher des produits..." 
+                               class="search-input-inline"
+                               id="searchInputInline"
+                               autocomplete="off">
+                        <button type="submit" class="search-button-inline">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="search-results" id="searchResults">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Bouton Admin -->
+            {% if app.user and app.user.isAdmin %}
+                <a href="{{ path('admin_dashboard') }}" class="action-button admin-button" aria-label="Administration">
+                    <img src="{{ asset('assets/images/adminLogo.png') }}" alt="Admin" width="20" height="20">
+                </a>
+            {% endif %}
+
+            <!-- Panier -->
+            <a href="{{ path('app_cart') }}" class="action-button cart-button" aria-label="Panier">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
+                </svg>
+                <span id="cart-counter" class="cart-count">
+                    {% set cart = app.session.get('cart', {}) %}
+                    {% set totalItems = 0 %}
+                    {% for quantity in cart %}
+                        {% set totalItems = totalItems + quantity %}
+                    {% endfor %}
+                    {% if totalItems > 0 %}{{ totalItems }}{% endif %}
+                </span>
+            </a>
+
+            <!-- Compte utilisateur -->
+            {% if app.user %}
+                <div class="user-dropdown">
+                    <button class="user-button" aria-label="Mon compte">
+                        <div class="user-avatar">
+                            {{ app.user.firstName ? app.user.firstName|slice(0, 1)|upper : 'U' }}
+                        </div>
+                        <span class="user-name">{{ app.user.firstName ?: 'Utilisateur' }}</span>
+                        <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="user-dropdown-arrow">
+                            <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
+                        </svg>
+                    </button>
+                    <div class="user-dropdown-menu">
+                        <div class="user-info">
+                            <div class="user-info-avatar">
+                                {{ app.user.firstName ? app.user.firstName|slice(0, 1)|upper : 'U' }}
+                            </div>
+                            <div class="user-info-details">
+                                <div class="user-info-name">{{ app.user.fullName ?: 'Utilisateur' }}</div>
+                                <div class="user-info-email">{{ app.user.email }}</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ path('app_profile') }}" class="user-dropdown-item">
+                            <i class="fas fa-user"></i>
+                            Mon profil
+                        </a>
+                        {% if app.user and app.user.isAdmin %}
+                        <a href="{{ path('admin_dashboard') }}" class="user-dropdown-item admin-dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            Administration
+                        </a>
+                        {% endif %}
+                        <a href="{{ path('order_history_index') }}" class="user-dropdown-item">
+                            <i class="fas fa-shopping-bag"></i>
+                            Mes commandes
+                        </a>
+                        <a href="{{ path('app_profile_addresses') }}" class="user-dropdown-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Mes adresses
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ path('app_logout') }}" class="user-dropdown-item logout-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Déconnexion
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="action-button" aria-label="Se connecter">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </a>
+            {% endif %}
+
+            <!-- Menu mobile toggle -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+    </div>
+
+
+</nav>
+
+<style>
+.navbar {
+    background: var(--navbar-orange);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 9998; /* Z-index élevé pour la navbar */
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+}
+
+/* Logo */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: var(--cream);
+    transform: scale(1.05);
+}
+
+.logo-emoji {
+    font-size: 2rem;
+    margin-right: 0.5rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+.brand-text {
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+/* Menu principal */
+.navbar-menu {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: var(--cream);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-orange);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Lien Admin */
+.admin-link {
+    color: var(--primary-orange) !important;
+    font-weight: bold !important;
+}
+
+.admin-link:hover {
+    color: var(--cream) !important;
+    background: rgba(251, 150, 41, 0.1);
+}
+
+/* Dropdown styles */
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    height: 45px;
+    white-space: nowrap;
+}
+
+.dropdown-toggle:hover {
+    color: var(--cream);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s ease;
+}
+
+.nav-dropdown:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    min-width: 220px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 9999; /* Z-index très élevé pour être au-dessus des pages admin */
+    margin-top: 0.5rem;
+}
+
+/* CSS Hover pour le dropdown - fonctionne partout */
+.nav-dropdown:hover .dropdown-menu,
+.dropdown-menu.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+}
+
+/* Spécifiquement pour les pages admin */
+.admin-container .nav-dropdown:hover .dropdown-menu,
+.admin-container .dropdown-menu.show,
+body.admin .nav-dropdown:hover .dropdown-menu,
+body.admin .dropdown-menu.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+    z-index: 99999 !important;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: #2d3748;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.dropdown-item:hover {
+    background: var(--primary-orange);
+    color: white;
+    transform: translateX(5px);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0.5rem 0;
+}
+
+/* Styles pour les sous-catégories */
+.dropdown-item-with-sub {
+    position: relative;
+}
+
+.dropdown-item-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: #2d3748;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dropdown-item-main:hover {
+    background: var(--primary-orange);
+    color: white;
+    transform: translateX(5px);
+}
+
+.subcategory-arrow {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.dropdown-item-main:hover .subcategory-arrow {
+    transform: rotate(-90deg);
+}
+
+.subcategory-menu {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    z-index: 10000; /* Z-index encore plus élevé pour les sous-menus */
+    margin-left: 0.5rem;
+    pointer-events: none;
+}
+
+.dropdown-item-with-sub:hover .subcategory-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+/* Afficher le sous-menu au survol */
+.subcategory-menu:hover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.subcategory-item {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    color: #4a5568;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.subcategory-item:hover {
+    background: #f7fafc;
+    color: var(--primary-orange);
+    transform: translateX(5px);
+}
+
+.subcategory-item:last-child {
+    margin-bottom: 0;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Barre de recherche permanente */
+.navbar-search {
+    position: relative;
+    flex: 0 0 auto;
+    max-width: 250px;
+    min-width: 200px;
+}
+
+.search-form-inline {
+    position: relative;
+}
+
+.search-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input-inline {
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border: 2px solid transparent;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    height: 40px;
+}
+
+/* Forcer la priorité sur la navbar pour éviter les conflits avec la page produits */
+.navbar-search .search-input-inline,
+.navbar-actions .search-input-inline {
+    width: 100% !important;
+    padding: 0.5rem 2.5rem 0.5rem 1rem !important;
+    border: 2px solid transparent !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    font-size: 0.9rem !important;
+    outline: none !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    height: 40px !important;
+}
+
+.search-input-inline::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Forcer la priorité pour le placeholder */
+.navbar-search .search-input-inline::placeholder,
+.navbar-actions .search-input-inline::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.search-input-inline:focus {
+    background: white;
+    color: #2d3748;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(251, 150, 41, 0.1);
+}
+
+/* Forcer la priorité pour le focus */
+.navbar-search .search-input-inline:focus,
+.navbar-actions .search-input-inline:focus {
+    background: white !important;
+    color: #2d3748 !important;
+    border-color: var(--primary-orange) !important;
+    box-shadow: 0 0 0 3px rgba(251, 150, 41, 0.1) !important;
+}
+
+.search-input-inline:focus::placeholder {
+    color: #a0aec0;
+}
+
+/* Forcer la priorité pour le placeholder au focus */
+.navbar-search .search-input-inline:focus::placeholder,
+.navbar-actions .search-input-inline:focus::placeholder {
+    color: #a0aec0 !important;
+}
+
+.search-button-inline {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.search-input-inline:focus + .search-button-inline {
+    color: var(--primary-orange);
+}
+
+.search-button-inline:hover {
+    color: var(--primary-orange);
+    transform: scale(1.1);
+}
+
+/* Résultats de recherche en temps réel */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.05);
+    max-height: 600px;
+    overflow: hidden;
+    z-index: 1001;
+    margin-top: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 400px;
+}
+
+.search-results.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 140, 66, 0.08);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    min-height: 90px;
+}
+
+.search-result-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 140, 66, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.search-result-item:hover {
+    background: linear-gradient(135deg, rgba(255, 140, 66, 0.08) 0%, rgba(255, 140, 66, 0.05) 100%);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(255, 140, 66, 0.15);
+}
+
+.search-result-item:hover::before {
+    left: 100%;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 15px;
+    margin-right: 1.5rem;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.search-result-item:hover .search-result-image {
+    transform: scale(1.05) rotate(2deg);
+    box-shadow: 0 6px 15px rgba(255, 140, 66, 0.2);
+}
+
+.search-result-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.search-result-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.search-result-name {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+    flex: 1;
+}
+
+.search-result-promo-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ff5722);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(255, 87, 34, 0.3);
+}
+
+.search-result-category {
+    color: #718096;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.search-result-description {
+    color: #4a5568;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.search-result-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.search-result-pricing {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.search-result-price {
+    color: var(--primary-orange, #ff8c42);
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.search-result-old-price {
+    color: #a0aec0;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: line-through;
+}
+
+.search-result-promo-price {
+    color: #e53e3e;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.search-result-stock {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.search-result-stock.in-stock {
+    background: rgba(56, 178, 172, 0.1);
+    color: #38b2ac;
+    border: 1px solid rgba(56, 178, 172, 0.2);
+}
+
+.search-result-stock.out-of-stock {
+    background: rgba(229, 62, 62, 0.1);
+    color: #e53e3e;
+    border: 1px solid rgba(229, 62, 62, 0.2);
+}
+
+.search-result-item:hover .search-result-name {
+    color: #1a202c;
+}
+
+/* États de recherche */
+.search-loading,
+.search-error,
+.search-no-results {
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.search-loading {
+    color: #4299e1;
+    background: linear-gradient(135deg, rgba(66, 153, 225, 0.05) 0%, rgba(66, 153, 225, 0.02) 100%);
+    animation: pulse 2s infinite;
+}
+
+.search-error {
+    color: #e53e3e;
+    background: linear-gradient(135deg, rgba(229, 62, 62, 0.05) 0%, rgba(229, 62, 62, 0.02) 100%);
+}
+
+.search-no-results {
+    color: #718096;
+    background: linear-gradient(135deg, rgba(113, 128, 150, 0.05) 0%, rgba(113, 128, 150, 0.02) 100%);
+}
+
+.search-results-list {
+    max-height: 550px;
+    overflow-y: auto;
+}
+
+.search-results-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-results-list::-webkit-scrollbar-track {
+    background: rgba(255, 140, 66, 0.05);
+    border-radius: 10px;
+}
+
+.search-results-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 140, 66, 0.3);
+    border-radius: 10px;
+}
+
+.search-results-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 140, 66, 0.5);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes slideInFade {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.search-result-item {
+    animation: slideInFade 0.3s ease forwards;
+    opacity: 0;
+}
+
+.action-button {
+    background: none;
+    border: none;
+    color: #4a5568;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.action-button:hover {
+    background: #f7fafc;
+    color: #667eea;
+}
+
+.admin-button {
+    color: #4a5568;
+}
+
+.admin-button img {
+    filter: brightness(0) saturate(100%) invert(30%) sepia(18%) saturate(692%) hue-rotate(183deg) brightness(94%) contrast(87%); /* Même couleur que le panier #4a5568 */
+    transition: filter 0.3s ease;
+}
+
+.admin-button:hover {
+    background: #f7fafc;
+    color: #667eea;
+}
+
+.admin-button:hover img {
+    filter: brightness(0) saturate(100%) invert(51%) sepia(98%) saturate(1315%) hue-rotate(201deg) brightness(97%) contrast(86%); /* Même couleur que le panier au hover #667eea */
+}
+
+.cart-button .cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--primary-orange);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    animation: none;
+}
+
+.cart-count:empty {
+    display: none !important;
+}
+
+/* Animation pour le compteur */
+.cart-count.bounce {
+    animation: cartBounce 0.6s ease;
+}
+
+@keyframes cartBounce {
+    0%, 20%, 60%, 100% { 
+        transform: scale(1); 
+    }
+    40% { 
+        transform: scale(1.3); 
+    }
+    80% { 
+        transform: scale(1.1); 
+    }
+}
+
+/* Menu utilisateur */
+.user-dropdown {
+    position: relative;
+}
+
+.user-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.user-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.user-dropdown-arrow {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.user-dropdown:hover .user-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.user-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    min-width: 280px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    margin-top: 0.5rem;
+}
+
+.user-dropdown:hover .user-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.user-info-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.user-info-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-info-name {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.user-info-email {
+    color: #718096;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #2d3748;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.user-dropdown-item:hover {
+    background: #f7fafc;
+    color: var(--primary-orange);
+    transform: translateX(5px);
+}
+
+.user-dropdown-item i {
+    width: 16px;
+    text-align: center;
+    opacity: 0.7;
+}
+
+.admin-dropdown-item {
+    background: var(--primary-orange);
+    color: white !important;
+}
+
+.admin-dropdown-item:hover {
+    background: var(--secondary-orange, #e07b2a);
+    color: white !important;
+    transform: translateX(5px);
+}
+
+.admin-dropdown-item i {
+    color: white !important;
+    opacity: 1;
+}
+
+.logout-item {
+    color: #e53e3e;
+}
+
+.logout-item:hover {
+    background: #fed7d7;
+    color: #c53030;
+}
+
+/* Menu mobile */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 3px;
+    padding: 0.5rem;
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .navbar-container {
+        padding: 0 1.5rem;
+    }
+    
+    .navbar-search {
+        max-width: 200px;
+        min-width: 180px;
+    }
+    
+    .nav-dropdown .dropdown-menu {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 992px) {
+    .navbar-container {
+        padding: 0 1rem;
+        height: 65px;
+    }
+    
+    .admin-button {
+        display: none;
+    }
+    
+    .navbar-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--navbar-orange);
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        border-radius: 0 0 15px 15px;
+        gap: 0.5rem;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    .navbar-menu.active {
+        display: flex;
+    }
+    
+    .mobile-menu-toggle {
+        display: flex;
+        order: 3;
+    }
+    
+    .navbar-logo {
+        order: 1;
+    }
+    
+    .navbar-actions {
+        order: 2;
+        gap: 0.5rem;
+    }
+    
+    .nav-dropdown {
+        width: 100%;
+    }
+    
+    .dropdown-toggle {
+        width: 100%;
+        justify-content: space-between;
+        padding: 1rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        margin-bottom: 0.5rem;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        display: none;
+    }
+    
+    .nav-dropdown.mobile-open .dropdown-menu {
+        display: block;
+    }
+    
+    .navbar-search {
+        max-width: 160px;
+        min-width: 140px;
+        order: 1;
+    }
+    
+    .search-input-inline {
+        font-size: 0.85rem;
+        padding: 0.4rem 2rem 0.4rem 0.8rem;
+        height: 36px;
+    }
+    
+    .search-results {
+        min-width: 300px;
+        right: 0;
+        left: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-container {
+        padding: 0 1rem;
+        height: 60px;
+    }
+    
+    .brand-text {
+        font-size: 1.1rem;
+    }
+    
+    .logo-emoji {
+        font-size: 1.5rem;
+        margin-right: 0.3rem;
+    }
+    
+    /* Menu utilisateur responsive */
+    .user-button {
+        padding: 0.4rem 0.6rem;
+        gap: 0.3rem;
+        border-radius: 20px;
+    }
+    
+    .user-name {
+        display: none;
+    }
+    
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+    
+    .user-dropdown-menu {
+        min-width: 240px;
+        right: -0.5rem;
+    }
+    
+    .navbar-search {
+        max-width: 140px;
+        min-width: 120px;
+    }
+    
+    .search-input-inline {
+        font-size: 0.8rem;
+        padding: 0.35rem 1.8rem 0.35rem 0.7rem;
+        height: 32px;
+    }
+    
+    .search-button-inline {
+        right: 6px;
+    }
+    
+    .search-button-inline svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .action-button {
+        padding: 0.4rem;
+    }
+    
+    .action-button svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .mobile-menu-toggle {
+        padding: 0.4rem;
+    }
+    
+    .hamburger-line {
+        width: 18px;
+        height: 2px;
+    }
+    
+    /* Améliorer l'affichage des dropdowns sur mobile */
+    .dropdown-item {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .navbar-menu {
+        padding: 0.5rem;
+        max-height: 60vh;
+    }
+    
+    .dropdown-toggle {
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-container {
+        padding: 0 0.8rem;
+        height: 55px;
+    }
+    
+    .brand-text {
+        font-size: 1rem;
+    }
+    
+    .logo-emoji {
+        font-size: 1.3rem;
+        margin-right: 0.2rem;
+    }
+    
+    .navbar-search {
+        max-width: 100px;
+        min-width: 90px;
+    }
+    
+    .search-input-inline {
+        font-size: 0.75rem;
+        padding: 0.3rem 1.6rem 0.3rem 0.6rem;
+        height: 30px;
+    }
+    
+    .search-button-inline svg {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .action-button svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+    }
+    
+    .cart-count {
+        width: 16px;
+        height: 16px;
+        font-size: 0.7rem;
+        top: -3px;
+        right: -3px;
+    }
+    
+    .hamburger-line {
+        width: 16px;
+        height: 1.5px;
+        gap: 2px;
+    }
+    
+    .mobile-menu-toggle {
+        gap: 2px;
+    }
+    
+    /* Réduire les espacements sur très petits écrans */
+    .navbar-actions {
+        gap: 0.3rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .user-dropdown-menu {
+        min-width: 220px;
+        right: -0.8rem;
+    }
+    
+    .search-results {
+        min-width: 280px;
+        margin-top: 0.3rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchToggle = document.querySelector('.search-toggle');
+    const searchBar = document.getElementById('searchBar');
+    
+    if (searchToggle && searchBar) {
+        searchToggle.addEventListener('click', function() {
+            searchBar.classList.toggle('active');
+            if (searchBar.classList.contains('active')) {
+                searchBar.querySelector('.search-input').focus();
+            }
+        });
+    }
+    
+    // Menu-burger pour mobile
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    const navbarMenu = document.getElementById('navbarMenu');
+    
+    if (mobileToggle && navbarMenu) {
+        mobileToggle.addEventListener('click', function() {
+            navbarMenu.classList.toggle('active');
+            
+            // Animation du hamburger
+            const lines = this.querySelectorAll('.hamburger-line');
+            if (navbarMenu.classList.contains('active')) {
+                lines[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                lines[1].style.opacity = '0';
+                lines[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+            } else {
+                lines[0].style.transform = 'none';
+                lines[1].style.opacity = '1';
+                lines[2].style.transform = 'none';
+            }
+        });
+        
+        // Fermer le menu mobile en cliquant ailleurs
+        document.addEventListener('click', function(e) {
+            if (!mobileToggle.contains(e.target) && !navbarMenu.contains(e.target)) {
+                navbarMenu.classList.remove('active');
+                const lines = mobileToggle.querySelectorAll('.hamburger-line');
+                lines[0].style.transform = 'none';
+                lines[1].style.opacity = '1';
+                lines[2].style.transform = 'none';
+            }
+        });
+        
+        // Gestion des dropdowns sur mobile
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                if (window.innerWidth <= 992) {
+                    e.preventDefault();
+                    const dropdown = this.closest('.nav-dropdown');
+                    const isOpen = dropdown.classList.contains('mobile-open');
+                    
+                    // Fermer tous les autres dropdowns
+                    document.querySelectorAll('.nav-dropdown').forEach(d => {
+                        d.classList.remove('mobile-open');
+                    });
+                    
+                    // Basculer l'état du dropdown actuel
+                    if (!isOpen) {
+                        dropdown.classList.add('mobile-open');
+                    }
+                }
+            });
+        });
+    }
+
+    // Dropdown gestion pour tous les dropdowns avec gestion hover et clavier
+    const dropdowns = document.querySelectorAll('.nav-dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+        const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+        
+        if (dropdownToggle && dropdownMenu) {
+            // Gestion du hover pour afficher/masquer le dropdown
+            dropdown.addEventListener('mouseenter', function() {
+                dropdownMenu.classList.add('show');
+            });
+
+            dropdown.addEventListener('mouseleave', function() {
+                dropdownMenu.classList.remove('show');
+            });
+
+            // Gestion clavier pour l'accessibilité
+            dropdownToggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    dropdownMenu.classList.toggle('show');
+                }
+            });
+
+            // Clic sur le bouton pour basculer (optionnel)
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdownMenu.classList.toggle('show');
+            });
+
+            // Fermer le dropdown si on clique ailleurs
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        }
+    });
+
+    // Recherche en temps réel dans la navbar
+    const searchInput = document.getElementById('searchInputInline');
+    const searchResults = document.getElementById('searchResults');
+    const searchForm = document.querySelector('.search-form-inline');
+    let searchTimeout;
+
+    if (searchInput && searchResults) {
+        // Empêcher la soumission du formulaire
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+
+        // Recherche lors de la saisie
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            // Vider les résultats si moins de 2 caractères
+            if (query.length < 2) {
+                searchResults.innerHTML = '';
+                searchResults.classList.remove('show');
+                return;
+            }
+
+            // Débounce pour éviter trop de requêtes
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        });
+
+        // Masquer les résultats quand on perd le focus
+        searchInput.addEventListener('blur', function() {
+            // Délai pour permettre de cliquer sur un résultat
+            setTimeout(() => {
+                searchResults.classList.remove('show');
+            }, 200);
+        });
+
+        // Réafficher les résultats quand on reprend le focus
+        searchInput.addEventListener('focus', function() {
+            if (searchResults.innerHTML.trim() !== '') {
+                searchResults.classList.add('show');
+            }
+        });
+
+        function performSearch(query) {
+            // Afficher un loader avec animation
+            searchResults.innerHTML = '<div class="search-loading">✨ Recherche de produits magiques...</div>';
+            searchResults.classList.add('show');
+
+            // Faire la requête AJAX
+            fetch(`/product/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(products => {
+                    displaySearchResults(products, query);
+                })
+                .catch(error => {
+                    console.error('Erreur de recherche:', error);
+                    searchResults.innerHTML = '<div class="search-error">😿 Oups ! Problème de connexion</div>';
+                });
+        }
+
+        function displaySearchResults(products, query) {
+            if (products.length === 0) {
+                searchResults.innerHTML = `<div class="search-no-results">🔍 Aucun produit trouvé pour "${query}"<br><small>Essayez avec d'autres mots-clés</small></div>`;
+                return;
+            }
+
+            let html = '<div class="search-results-list">';
+            products.forEach((product, index) => {
+                const priceDisplay = product.isPromo && product.promotionalPrice ? 
+                    `<span class="search-result-old-price">${product.price}€</span><span class="search-result-promo-price">${product.promotionalPrice}€</span>` :
+                    `<span class="search-result-price">${product.price}€</span>`;
+                
+                const categoryInfo = product.category && product.subcategory ? 
+                    `<div class="search-result-category">${product.category} › ${product.subcategory}</div>` :
+                    (product.category ? `<div class="search-result-category">${product.category}</div>` : '');
+                
+                const stockInfo = product.inStock ? 
+                    '<span class="search-result-stock in-stock">✅ En stock</span>' :
+                    '<span class="search-result-stock out-of-stock">❌ Rupture</span>';
+                
+                const promoIcon = product.isPromo ? '<span class="search-result-promo-badge">🏷️ PROMO</span>' : '';
+                
+                html += `
+                    <a href="${product.url}" class="search-result-item" style="animation-delay: ${index * 0.05}s;">
+                        <img src="${product.image}" alt="${product.name}" class="search-result-image" loading="lazy">
+                        <div class="search-result-info">
+                            <div class="search-result-header">
+                                <div class="search-result-name">${highlightSearchTerm(product.name, query)}</div>
+                                ${promoIcon}
+                            </div>
+                            ${categoryInfo}
+                            ${product.description ? `<div class="search-result-description">${highlightSearchTerm(product.description, query)}</div>` : ''}
+                            <div class="search-result-footer">
+                                <div class="search-result-pricing">${priceDisplay}</div>
+                                ${stockInfo}
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+            html += '</div>';
+            
+            searchResults.innerHTML = html;
+        }
+
+        function highlightSearchTerm(text, term) {
+            if (!term || term.length < 2) return text;
+            const regex = new RegExp(`(${term})`, 'gi');
+            return text.replace(regex, '<mark style="background: rgba(255, 140, 66, 0.3); padding: 0 2px; border-radius: 3px;">$1</mark>');
+        }
+
+        // Recherche en temps réel dans la navbar
+    }
+
+        // Fermer les résultats si on clique ailleurs
+        document.addEventListener('click', function(e) {
+            if (!searchInput.closest('.navbar-search').contains(e.target)) {
+                searchResults.classList.remove('show');
+            }
+        });
+
+});
+
+window.updateCartCounter = function() {
+    fetch('/cart/cart-count')
+        .then(response => response.json())
+        .then(data => {
+            const counter = document.getElementById('cart-counter');
+            if (counter) {
+                if (data.count > 0) {
+                    counter.textContent = data.count;
+                    counter.style.display = 'flex';
+                    
+                    counter.classList.remove('bounce');
+                    counter.offsetHeight;
+                    counter.classList.add('bounce');
+                    
+                    setTimeout(() => {
+                        counter.classList.remove('bounce');
+                    }, 600);
+                } else {
+                    counter.style.display = 'none';
+                    counter.textContent = '';
+                }
+            }
+        })
+        .catch(error => {
+            // Erreur silencieuse pour le compteur
+        });
+};
+
+window.updateCartCounter();
+
+document.addEventListener('DOMContentLoaded', function () {
+    const categoryLinks = document.querySelectorAll('.dropdown-item-main, .subcategory-item');
+
+    categoryLinks.forEach(link => {
+        // Vérifier que l'événement n'est pas déjà attaché
+        if (link.dataset.clickHandlerAttached) {
+            return;
+        }
+        link.dataset.clickHandlerAttached = 'true';
+
+        link.addEventListener('click', function (e) {
+            e.preventDefault(); // Empêcher la navigation par défaut
+            e.stopPropagation(); // Empêcher la propagation
+            
+            console.log('🖱️ CLIC SUR LE LIEN:', this.textContent.trim());
+            console.log('🖱️ TIMESTAMP:', new Date().getTime());
+            console.log('🔍 URL originale:', this.href);
+            
+            // Vérifier que le href est valide
+            if (!this.href || this.href === '#') {
+                console.log('⚠️ URL invalide, ignorer le clic');
+                return;
+            }
+            
+            const url = new URL(this.href);
+            const params = new URLSearchParams(url.search);
+
+            console.log('🔍 Paramètres extraits:', params.toString());
+
+            // Vérifier si on est sur la page produit
+            if (window.location.pathname === '/product') {
+                console.log('🔄 Navigation depuis navbar - Rechargement de la page');
+                console.log('🔄 Redirection vers:', this.href);
+                
+                // Recharger la page avec la nouvelle URL pour récupérer les produits du serveur
+                window.location.href = this.href;
+                
+            } else {
+                console.log('🔄 Redirection vers la page produit');
+                window.location.href = this.href;
+            }
+        });
+    });
+
+    // Fonction pour synchroniser les filtres avec l'URL
+    function syncFiltersWithURL(params) {
+        const categoryFilter = document.querySelector('#categoryFilter');
+        const subcategoryFilter = document.querySelector('#subcategoryFilter');
+
+        if (categoryFilter && params.has('category')) {
+            categoryFilter.value = params.get('category');
+        }
+
+        if (subcategoryFilter && params.has('subcategory')) {
+            subcategoryFilter.value = params.get('subcategory');
+        }
+    }
+
+    // Fonction pour mettre à jour la liste des produits
+    function updateProductList(params) {
+        fetch(`/product?${params.toString()}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des produits');
+                }
+                return response.text();
+            })
+            .then(html => {
+                const productContainer = document.querySelector('#productContainer');
+                if (productContainer) {
+                    productContainer.innerHTML = html;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la mise à jour des produits :', error);
+            });
+    }
+});
+</script>

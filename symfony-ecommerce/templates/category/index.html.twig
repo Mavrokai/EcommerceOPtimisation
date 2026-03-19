@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Catégories{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📦 Gestion des Catégories</h1>
+        <a href="{{ path('app_category_new') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Nouvelle Catégorie
+        </a>
+    </div>
+
+    {% for flash_error in app.flashes('error') %}
+        <div class="alert alert-danger">{{ flash_error }}</div>
+    {% endfor %}
+
+    {% for flash_notice in app.flashes('success') %}
+        <div class="alert alert-success">{{ flash_notice }}</div>
+    {% endfor %}
+
+    {% if categories|length > 0 %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Liste des Catégories ({{ categories|length }})</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Sous-catégories</th>
+                                <th>Date de création</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                                <tr>
+                                    <td>{{ category.id }}</td>
+                                    <td>
+                                        <strong>{{ category.name }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">
+                                            {{ category.subCategories|length }} sous-catégorie(s)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{ category.createdAt|date('d/m/Y H:i') }}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ path('app_category_show', {'id': category.id}) }}" 
+                                               class="btn btn-outline-info" title="Voir">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ path('app_category_edit', {'id': category.id}) }}" 
+                                               class="btn btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="post" 
+                                                  action="{{ path('app_category_delete', {'id': category.id}) }}" 
+                                                  style="display: inline;"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                                                <button class="btn btn-outline-danger btn-sm" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <h4>Aucune catégorie trouvée</h4>
+            <p>Commencez par créer votre première catégorie.</p>
+            <a href="{{ path('app_category_new') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Créer une catégorie
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

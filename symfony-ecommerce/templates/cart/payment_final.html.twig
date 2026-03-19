@@ -1,0 +1,435 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement - Clochette&CO{% endblock %}
+
+{% block body %}
+<div class="payment-container">
+    <div class="payment-header">
+        <h1><i class="fas fa-credit-card"></i> Finaliser votre paiement</h1>
+        <p>Dernière étape avant de recevoir vos produits !</p>
+    </div>
+
+    <div class="payment-content">
+        <div class="payment-form-section">
+            <div class="order-summary-card">
+                <h2>Récapitulatif de votre commande</h2>
+                
+                <div class="customer-info">
+                    <h3><i class="fas fa-user"></i> Informations client</h3>
+                    <p><strong>{{ orderData.prenom }} {{ orderData.nom }}</strong></p>
+                    <p>{{ orderData.email }}</p>
+                    {% if orderData.telephone %}
+                        <p>{{ orderData.telephone }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="delivery-info">
+                    <h3><i class="fas fa-shipping-fast"></i> Livraison</h3>
+                    <p>{{ orderData.delivery }}</p>
+                </div>
+
+                <div class="payment-method-info">
+                    <h3><i class="fas fa-credit-card"></i> Mode de paiement</h3>
+                    <p>{{ orderData.payment }}</p>
+                </div>
+            </div>
+
+            <div class="payment-form-card">
+                <h2>Paiement sécurisé</h2>
+                
+                <form action="{{ path('app_payment_confirm') }}" method="POST" id="payment-form">
+                    {% if orderData.payment == 'carte' %}
+                        <div class="payment-fields">
+                            <div class="form-group">
+                                <label for="card-number">Numéro de carte</label>
+                                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiry">Date d'expiration</label>
+                                    <input type="text" id="expiry" placeholder="MM/AA" maxlength="5" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cvv">CVV</label>
+                                    <input type="text" id="cvv" placeholder="123" maxlength="3" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cardholder">Nom du porteur</label>
+                                <input type="text" id="cardholder" placeholder="Nom sur la carte" required>
+                            </div>
+                        </div>
+                    {% elseif orderData.payment == 'paypal' %}
+                        <div class="paypal-section">
+                            <p><i class="fab fa-paypal"></i> Vous serez redirigé vers PayPal pour finaliser votre paiement.</p>
+                        </div>
+                    {% else %}
+                        <div class="other-payment">
+                            <p>Mode de paiement : {{ orderData.payment }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="security-info">
+                        <div class="security-badges">
+                            <span class="security-badge"><i class="fas fa-shield-alt"></i> Paiement sécurisé SSL</span>
+                            <span class="security-badge"><i class="fas fa-lock"></i> Données cryptées</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-pay" id="pay-button">
+                        <i class="fas fa-credit-card"></i> 
+                        Payer {{ totalFinal|number_format(2, ',', ' ') }}€
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="order-details">
+            <div class="cart-summary">
+                <h3>Vos articles</h3>
+                {% for item in cartItems %}
+                    <div class="cart-item-summary">
+                        <img src="{{ item.product.imageUrl ? asset('assets/images/' ~ item.product.imageUrl) : asset('assets/images/default.jpg') }}" 
+                             alt="{{ item.product.name }}" class="item-image" onerror="this.src='{{ asset('assets/images/default.jpg') }}'">
+                        <div class="item-info">
+                            <h4>{{ item.product.name }}</h4>
+                            <p>Quantité: {{ item.quantity }}</p>
+                            <p class="item-price">{{ item.total_ligne|number_format(2, ',', ' ') }}€</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="total-summary">
+                <div class="summary-row">
+                    <span>Sous-total HT :</span>
+                    <span>{{ totalHT|number_format(2, ',', ' ') }}€</span>
+                </div>
+                <div class="summary-row">
+                    <span>TVA (20%) :</span>
+                    <span>{{ montantTVA|number_format(2, ',', ' ') }}€</span>
+                </div>
+                <div class="summary-row">
+                    <span>Livraison :</span>
+                    <span>{% if fraisLivraison == 0 %}Gratuite{% else %}{{ fraisLivraison|number_format(2, ',', ' ') }}€{% endif %}</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total TTC :</span>
+                    <span>{{ totalFinal|number_format(2, ',', ' ') }}€</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.payment-header h1 {
+    color: var(--primary-orange);
+    font-family: var(--font-heading);
+    margin-bottom: 0.5rem;
+}
+
+.payment-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.payment-form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.order-summary-card, .payment-form-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary-card h2, .payment-form-card h2 {
+    color: var(--primary-orange);
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+}
+
+.customer-info, .delivery-info, .payment-method-info {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.customer-info h3, .delivery-info h3, .payment-method-info h3 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1rem;
+}
+
+.paypal-section, .other-payment {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.security-info {
+    margin: 1.5rem 0;
+}
+
+.security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.security-badge {
+    background: #e6fffa;
+    color: #00695c;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-pay {
+    width: 100%;
+    background: var(--primary-orange);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-pay:hover {
+    background: var(--secondary-orange);
+    transform: translateY(-2px);
+}
+
+.order-details {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.cart-summary h3 {
+    color: var(--primary-orange);
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+}
+
+.cart-item-summary {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.item-info h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.item-price {
+    color: var(--primary-orange);
+    font-weight: 600;
+}
+
+.total-summary {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid #e2e8f0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-orange);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 768px) {
+    .payment-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Formatage automatique des champs de carte
+    const cardNumber = document.getElementById('card-number');
+    const expiry = document.getElementById('expiry');
+    const cvv = document.getElementById('cvv');
+    
+    if (cardNumber) {
+        cardNumber.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+    }
+    
+    if (expiry) {
+        expiry.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+    }
+    
+    if (cvv) {
+        cvv.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+    }
+    
+    // Validation et animation du bouton de paiement
+    const payButton = document.getElementById('pay-button');
+    const paymentForm = document.getElementById('payment-form');
+    
+    if (paymentForm && payButton) {
+        paymentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validation des champs carte bancaire si sélectionnée
+            if (document.querySelector('.payment-fields')) {
+                const cardNumberValue = cardNumber.value.replace(/\s/g, '');
+                const expiryValue = expiry.value;
+                const cvvValue = cvv.value;
+                const cardholderValue = document.getElementById('cardholder').value;
+                
+                if (cardNumberValue.length !== 16) {
+                    alert('Le numéro de carte doit contenir 16 chiffres');
+                    cardNumber.focus();
+                    return;
+                }
+                
+                if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryValue)) {
+                    alert('La date d\'expiration doit être au format MM/AA');
+                    expiry.focus();
+                    return;
+                }
+                
+                // Vérifier que la date n'est pas expirée
+                const [month, year] = expiryValue.split('/');
+                const currentDate = new Date();
+                const currentYear = currentDate.getFullYear() % 100;
+                const currentMonth = currentDate.getMonth() + 1;
+                
+                if (parseInt(year) < currentYear || (parseInt(year) === currentYear && parseInt(month) < currentMonth)) {
+                    alert('La carte est expirée');
+                    expiry.focus();
+                    return;
+                }
+                
+                // Validation CVV (3 chiffres)
+                if (cvvValue.length !== 3) {
+                    alert('Le CVV doit contenir 3 chiffres');
+                    cvv.focus();
+                    return;
+                }
+                
+                // Validation nom du porteur
+                if (cardholderValue.trim().length < 2) {
+                    alert('Veuillez saisir le nom du porteur de la carte');
+                    document.getElementById('cardholder').focus();
+                    return;
+                }
+            }
+            
+            // Si toutes les validations passent
+            payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement du paiement...';
+            payButton.disabled = true;
+            
+            // Simulation du traitement de paiement (2 secondes)
+            setTimeout(() => {
+                // Soumettre le formulaire après validation
+                paymentForm.submit();
+            }, 2000);
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,353 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}À propos de nous - Clochette&Co{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <style>
+    .about-page {
+      background: linear-gradient(135deg, #fef8eb 0%, #fff4e2 100%);
+      min-height: 100vh;
+      padding: 40px 0;
+    }
+
+    .about-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 80px;
+      padding: 60px 0;
+      background: linear-gradient(135deg, #ffa63b, #f28b00);
+      border-radius: 20px;
+      color: white;
+      box-shadow: 0 20px 40px rgba(255, 166, 59, 0.3);
+    }
+
+    .hero-section h1 {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .hero-section p {
+      font-size: 1.3rem;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0.95;
+    }
+
+    .content-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 80px;
+      align-items: center;
+    }
+
+    .content-section:nth-child(even) {
+      direction: rtl;
+    }
+
+    .content-section:nth-child(even) > * {
+      direction: ltr;
+    }
+
+    .content-text h2 {
+      font-size: 2.5rem;
+      color: #f28b00;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .content-text p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .content-image {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-image img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .content-image:hover img {
+      transform: scale(1.05);
+    }
+
+    .stats-section {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 40px;
+      margin-bottom: 80px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+
+    .stat-item {
+      padding: 30px 20px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #fef8eb, #fff4e2);
+      transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #ffa63b;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .team-section {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .team-section h2 {
+      font-size: 2.5rem;
+      color: #f28b00;
+      margin-bottom: 50px;
+      font-weight: 600;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .team-member {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .team-member:hover {
+      transform: translateY(-10px);
+    }
+
+    .member-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 25px;
+      background: linear-gradient(135deg, #ffa63b, #f28b00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+      font-weight: bold;
+    }
+
+    .member-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .member-role {
+      font-size: 1rem;
+      color: #ffa63b;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .member-bio {
+      font-size: 0.95rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .values-section {
+      background: linear-gradient(135deg, #f28b00, #ffa63b);
+      color: white;
+      border-radius: 20px;
+      padding: 80px 40px;
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .values-section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 50px;
+      font-weight: 600;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+
+    .value-item {
+      padding: 30px 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .value-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .value-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .value-description {
+      font-size: 1rem;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .content-section {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      
+      .hero-section h1 {
+        font-size: 2.5rem;
+      }
+      
+      .content-text h2 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+<div class="about-page">
+  <div class="about-container">
+    
+    <div class="hero-section">
+      <h1>� Notre Histoire</h1>
+      <p>Découvrez l'univers passionnant de notre animalerie en ligne, née de la volonté de vous offrir les meilleurs produits pour vos compagnons à quatre pattes avec une expérience d'achat exceptionnelle.</p>
+    </div>
+    <div class="content-section">
+      <div class="content-text">
+        <h2>🎯 Notre Mission</h2>
+        <p>Chez Clochette&Co, chaque produit est choisi avec amour pour vos animaux de compagnie. Notre mission est de rendre accessible les meilleurs produits pour le bien-être de vos compagnons tout en offrant une expérience client inégalée.</p>
+        <p>Nous croyons que nos amis à quatre pattes méritent le meilleur. C'est pourquoi nous mettons un point d'honneur à sélectionner des produits de qualité, de l'alimentation aux accessoires, en passant par les jouets et les soins.</p>
+      </div>
+      <div class="content-image">
+        <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&h=400&fit=crop&crop=center" alt="Chat adorable avec jouets">
+      </div>
+    </div>
+
+    <div class="content-section">
+      <div class="content-image">
+        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&h=400&fit=crop&crop=center" alt="Équipe avec chats et chiens">
+      </div>
+      <div class="content-text">
+        <h2>📖 Notre Histoire</h2>
+        <p>Fondée en 2025 par des passionnés d'animaux, notre animalerie en ligne est née d'un constat simple : il était difficile de trouver des produits de qualité pour nos compagnons à des prix abordables.</p>
+        <p>Depuis nos débuts, nous n'avons cessé de grandir et d'évoluer, toujours guidés par notre amour des animaux et nos valeurs fondamentales : qualité, bien-être animal et satisfaction client.</p>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">5K+</div>
+          <div class="stat-label">Animaux Heureux</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">800+</div>
+          <div class="stat-label">Produits Animaliers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Propriétaires Satisfaits</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Support Client</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="team-section">
+      <h2>👥 Notre Équipe</h2>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="member-avatar">🐕</div>
+          <div class="member-name">Clara Johansson</div>
+          <div class="member-role">Fondatrice & Vétérinaire</div>
+          <div class="member-bio">Passionnée par les animaux depuis l'enfance, Clara a créé Clochette&Co pour offrir les meilleurs soins à nos compagnons.</div>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">🐱</div>
+          <div class="member-name">Antoine Lefevre</div>
+          <div class="member-role">Spécialiste Nutrition</div>
+          <div class="member-bio">Expert en nutrition animale, Antoine sélectionne avec soin tous nos produits alimentaires pour leur qualité.</div>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">🐰</div>
+          <div class="member-name">Jean-Marcelin</div>
+          <div class="member-role">Responsable Service Client</div>
+          <div class="member-bio">Toujours à l'écoute, Jean-Marcelin vous accompagne dans le choix des meilleurs produits pour vos animaux.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="values-section">
+      <h2>💎 Nos Valeurs</h2>
+      <div class="values-grid">
+        <div class="value-item">
+          <div class="value-icon">🐾</div>
+          <div class="value-title">Bien-être Animal</div>
+          <div class="value-description">Le bien-être de vos animaux est notre priorité absolue. Chaque produit est testé et approuvé par nos vétérinaires.</div>
+        </div>
+        <div class="value-item">
+          <div class="value-icon">🤝</div>
+          <div class="value-title">Confiance</div>
+          <div class="value-description">Nous bâtissons une relation de confiance avec chaque propriétaire d'animal grâce à notre transparence et notre expertise.</div>
+        </div>
+        <div class="value-item">
+          <div class="value-icon">🌟</div>
+          <div class="value-title">Qualité Premium</div>
+          <div class="value-description">Nous sélectionnons uniquement des produits de haute qualité provenant de marques reconnues et respectueuses des animaux.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

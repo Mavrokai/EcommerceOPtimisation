@@ -1,0 +1,246 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }} - Animalerie en ligne{% endblock %}
+
+{% block body %}
+<div class="category-page">
+    <!-- Header de la catégorie -->
+    <div class="category-header">
+        <div class="container">
+            <div class="row align-items-center py-4">
+                <div class="col-md-8">
+                    <h1 class="category-title">
+                        {% if category.name == 'Chiens' %}
+                            🐕 Produits pour Chiens
+                        {% elseif category.name == 'Chats' %}
+                            🐱 Produits pour Chats
+                        {% elseif category.name == 'Oiseaux' %}
+                            🦜 Produits pour Oiseaux
+                        {% elseif category.name == 'Lézards' %}
+                            🦎 Produits pour Lézards
+                        {% else %}
+                            🐾 {{ category.name }}
+                        {% endif %}
+                    </h1>
+                    {% if category.description %}
+                        <p class="category-description">{{ category.description }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="category-stats">
+                        <span class="badge bg-primary fs-6">{{ products|length }} produit{{ products|length > 1 ? 's' : '' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sous-catégories si elles existent -->
+    {% if category.subCategories|length > 0 %}
+    <div class="subcategories-section bg-light py-3">
+        <div class="container">
+            <h5 class="mb-3">Filtrer par sous-catégorie :</h5>
+            <div class="row">
+                {% for subCategory in category.subCategories %}
+                <div class="col-auto mb-2">
+                    <button class="btn btn-outline-secondary btn-sm subcategory-filter" 
+                            data-subcategory="{{ subCategory.id }}">
+                        {{ subCategory.name }}
+                    </button>
+                </div>
+                {% endfor %}
+                <div class="col-auto mb-2">
+                    <button class="btn btn-secondary btn-sm" id="show-all">
+                        Tous les produits
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Liste des produits -->
+    <div class="products-section py-4">
+        <div class="container">
+            {% if products|length > 0 %}
+                <div class="row" id="products-grid">
+                    {% for product in products %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-item" 
+                         data-subcategory="{{ product.subCategory.id }}">
+                        <div class="card product-card h-100">
+                            <!-- Image du produit -->
+                            <div class="product-image-container">
+                                {% if product.imageUrl %}
+                                    <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" 
+                                         class="card-img-top product-image" 
+                                         alt="{{ product.name }}"
+                                         onerror="this.src='{{ asset('assets/images/hero-image.png') }}'">
+                                {% else %}
+                                    <img src="{{ asset('assets/images/hero-image.png') }}" 
+                                         class="card-img-top product-image" 
+                                         alt="{{ product.name }}">
+                                {% endif %}
+                                
+                                <!-- Badges -->
+                                <div class="product-badges">
+                                    {% if product.isNew %}
+                                        <span class="badge bg-success">Nouveau</span>
+                                    {% endif %}
+                                    {% if product.isPromo %}
+                                        <span class="badge bg-danger">-{{ product.promoPercentage }}%</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Contenu de la carte -->
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">{{ product.name }}</h6>
+                                <p class="card-text text-muted small flex-grow-1">
+                                    {{ product.description|length > 80 ? product.description|slice(0, 80) ~ '...' : product.description }}
+                                </p>
+                                
+                                <!-- Prix -->
+                                <div class="price-section mb-2">
+                                    {% if product.isPromo %}
+                                        <span class="text-decoration-line-through text-muted small">
+                                            {{ (product.price * (1 + product.promoPercentage / 100))|number_format(2, ',', ' ') }}€
+                                        </span>
+                                        <span class="fw-bold text-danger">{{ product.price|number_format(2, ',', ' ') }}€</span>
+                                    {% else %}
+                                        <span class="fw-bold">{{ product.price|number_format(2, ',', ' ') }}€</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="product-actions">
+                                    <button class="btn btn-primary btn-sm w-100" 
+                                            onclick="addToCart({{ product.id }})">
+                                        <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                        <h4>Aucun produit dans cette catégorie</h4>
+                        <p class="text-muted">Revenez bientôt pour découvrir nos nouveaux produits !</p>
+                        <a href="{{ path('homepage') }}" class="btn btn-primary">
+                            Retour à l'accueil
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.category-header {
+    background: linear-gradient(135deg, var(--primary-orange), var(--secondary-orange));
+    color: white;
+}
+
+.category-title {
+    font-family: var(--font-heading);
+    margin-bottom: 0.5rem;
+}
+
+.product-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-image {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.product-badges {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.product-badges .badge {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.subcategory-filter.active {
+    background-color: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: white;
+}
+
+.empty-state {
+    max-width: 400px;
+    margin: 0 auto;
+}
+</style>
+
+<script>
+// Fonction pour ajouter au panier
+function addToCart(productId) {
+    console.log('Ajouter produit au panier:', productId);
+    alert('Produit ajouté au panier !');
+}
+
+// Filtrage par sous-catégorie
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.subcategory-filter');
+    const showAllButton = document.getElementById('show-all');
+    const productItems = document.querySelectorAll('.product-item');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const subcategoryId = this.getAttribute('data-subcategory');
+            
+            // Mise à jour des boutons actifs
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            showAllButton.classList.remove('btn-secondary');
+            showAllButton.classList.add('btn-outline-secondary');
+            this.classList.add('active');
+
+            // Filtrage des produits
+            productItems.forEach(item => {
+                if (item.getAttribute('data-subcategory') === subcategoryId) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Bouton "Tous les produits"
+    if (showAllButton) {
+        showAllButton.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.remove('btn-outline-secondary');
+            this.classList.add('btn-secondary');
+
+            productItems.forEach(item => {
+                item.style.display = 'block';
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
