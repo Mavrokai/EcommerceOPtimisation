@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité | Clochette&CO{% endblock %}
+{% block meta_description %}Politique de confidentialité et protection des données personnelles — Clochette&CO.{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .legal-page {
+            background: linear-gradient(135deg, #fef8eb 0%, #fff4e2 100%);
+            min-height: 100vh;
+            padding: 2.5rem 1rem 4rem;
+        }
+        .legal-container {
+            max-width: 880px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,.08);
+        }
+        .legal-container h1 {
+            font-family: var(--font-heading, cursive);
+            color: var(--dark-gray, #2D3748);
+            margin-bottom: 1rem;
+        }
+        .legal-container h2 {
+            margin-top: 2rem;
+            font-size: 1.25rem;
+            color: var(--navbar-orange, #9d4e10);
+        }
+        .legal-container p, .legal-container li {
+            line-height: 1.65;
+            color: var(--medium-gray, #718096);
+        }
+        .legal-updated { font-size: 0.9rem; color: #a0aec0; margin-bottom: 1.5rem; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="legal-page">
+        <article class="legal-container">
+            <h1>Politique de confidentialité</h1>
+            <p class="legal-updated">Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+
+            <p>Clochette&CO (« nous ») respecte votre vie privée. La présente politique décrit quelles données nous collectons,
+                dans quel but, et vos droits au titre du RGPD.</p>
+
+            <h2>1. Responsable du traitement</h2>
+            <p>Les traitements sont effectués par Clochette&CO, animalerie en ligne. Pour toute question relative à vos données :
+                utilisez le <a href="{{ path('app_contact') }}">formulaire de contact</a>.</p>
+
+            <h2>2. Données collectées</h2>
+            <ul>
+                <li>Données de compte : identifiant, nom, adresse e-mail, adresse de livrauration le cas échéant.</li>
+                <li>Données de commande : produits, montants, historique.</li>
+                <li>Données techniques : journaux et cookies nécessaires au fonctionnement du site (sécurité, panier).</li>
+            </ul>
+
+            <h2>3. Finalités</h2>
+            <p>Gestion des commandes, relation client, obligations légales (facturation), et amélioration du service.</p>
+
+            <h2>4. Durée de conservation</h2>
+            <p>Les données sont conservées pendant la durée nécessaire aux finalités ci-dessus et selon les obligations légales
+                (notamment comptables).</p>
+
+            <h2>5. Vos droits</h2>
+            <p>Vous disposez d’un droit d’accès, de rectification, d’effacement, de limitation, d’opposition et de portabilité
+                lorsque cela s’applique. Vous pouvez introduire une réclamation auprès de la CNIL.</p>
+
+            <h2>6. Sécurité</h2>
+            <p>Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données.</p>
+        </article>
+    </div>
+{% endblock %}

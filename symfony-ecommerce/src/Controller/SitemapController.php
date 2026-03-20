@@ -46,6 +46,9 @@ ROBOTS;
             ['loc' => $baseUrl . '/product', 'priority' => '0.9', 'changefreq' => 'daily'],
             ['loc' => $baseUrl . '/contact', 'priority' => '0.5', 'changefreq' => 'monthly'],
             ['loc' => $baseUrl . '/about', 'priority' => '0.4', 'changefreq' => 'monthly'],
+            ['loc' => $baseUrl . '/privacy', 'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => $baseUrl . '/terms', 'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => $baseUrl . '/promotions', 'priority' => '0.7', 'changefreq' => 'weekly'],
         ];
 
         $categories = $categoryRepository->findAll();

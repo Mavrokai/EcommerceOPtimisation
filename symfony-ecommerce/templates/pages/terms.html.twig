@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions générales de vente | Clochette&CO{% endblock %}
+{% block meta_description %}Conditions générales de vente (CGV) — Clochette&CO, animalerie en ligne.{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .legal-page {
+            background: linear-gradient(135deg, #fef8eb 0%, #fff4e2 100%);
+            min-height: 100vh;
+            padding: 2.5rem 1rem 4rem;
+        }
+        .legal-container {
+            max-width: 880px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,.08);
+        }
+        .legal-container h1 {
+            font-family: var(--font-heading, cursive);
+            color: var(--dark-gray, #2D3748);
+            margin-bottom: 1rem;
+        }
+        .legal-container h2 {
+            margin-top: 2rem;
+            font-size: 1.25rem;
+            color: var(--navbar-orange, #9d4e10);
+        }
+        .legal-container p, .legal-container li {
+            line-height: 1.65;
+            color: var(--medium-gray, #718096);
+        }
+        .legal-updated { font-size: 0.9rem; color: #a0aec0; margin-bottom: 1.5rem; }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="legal-page">
+        <article class="legal-container">
+            <h1>Conditions générales de vente</h1>
+            <p class="legal-updated">Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+
+            <h2>1. Objet</h2>
+            <p>Les présentes CGV régissent les ventes de produits proposés sur le site Clochette&CO.</p>
+
+            <h2>2. Prix et commande</h2>
+            <p>Les prix sont indiqués en euros TTC. Toute commande vaut acceptation du prix et des présentes conditions.</p>
+
+            <h2>3. Livraison</h2>
+            <p>Les délais et modalités de livraison sont communiqués lors de la commande. Les risques de transport sont couverts
+                selon les conditions affichées au moment de l’achat.</p>
+
+            <h2>4. Droit de rétractation</h2>
+            <p>Conformément à la réglementation applicable, vous disposez d’un délai de rétractation pour les achats à distance,
+                sous réserve des exceptions prévues par la loi (produits personnalisés, périssables ouverts, etc.).</p>
+
+            <h2>5. Garanties légales</h2>
+            <p>Les produits bénéficient des garanties légales de conformité et des vices cachés, dans les conditions du Code de la consommation.</p>
+
+            <h2>6. Litiges</h2>
+            <p>En cas de litige, une solution amiable sera recherchée avant toute action judiciaire. Médiation de la consommation
+                : les coordonnées du médiateur applicable seront communiquées sur demande.</p>
+
+            <h2>7. Contact</h2>
+            <p>Pour toute question relative à une commande ou aux présentes CGV : <a href="{{ path('app_contact') }}">page Contact</a>.</p>
+        </article>
+    </div>
+{% endblock %}
