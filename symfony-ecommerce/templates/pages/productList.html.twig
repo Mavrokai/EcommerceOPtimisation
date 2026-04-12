@@ -1,6 +1,39 @@
 {% extends 'base.html.twig' %}
 {% block title %}Tous nos produits pour animaux | Clochette&CO{% endblock %}
 {% block meta_description %}Parcourez notre catalogue complet de produits pour animaux : chiens, chats, oiseaux, lézards. Alimentation, jouets, accessoires et soins au meilleur prix.{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Accueil",
+      "item": "{{ app.request.schemeAndHttpHost ~ path('homepage') }}"
+    }{% if navbarCategory is defined and navbarCategory %},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ navbarCategory|capitalize }}",
+      "item": "{{ app.request.schemeAndHttpHost ~ path('app_product_index', {category: navbarCategory}) }}"
+    }{% if navbarSubcategory is defined and navbarSubcategory %},
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ navbarSubcategory|replace({'-': ' '})|capitalize }}"
+    }{% endif %}{% else %},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Tous nos produits"
+    }{% endif %}
+  ]
+}
+</script>
+{% endblock %}
 {% block stylesheets %}
 {{ parent() }}
     <style>
