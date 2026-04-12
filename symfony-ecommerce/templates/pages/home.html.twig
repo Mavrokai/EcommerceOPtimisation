@@ -7,6 +7,36 @@
 {% block head_extra %}
         <link rel="preload" as="image" href="{{ asset('assets/images/hero-image.png'|webp_path) }}" type="image/webp">
         <link rel="preload" as="image" href="{{ asset('assets/images/hero-image.png') }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Accueil",
+      "item": "{{ app.request.schemeAndHttpHost ~ path('homepage') }}"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clochette&CO",
+  "url": "{{ app.request.schemeAndHttpHost }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ app.request.schemeAndHttpHost ~ path('products') }}?search={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 {% endblock %}
 
 {% block stylesheets %}
