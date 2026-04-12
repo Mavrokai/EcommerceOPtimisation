@@ -5,7 +5,7 @@ namespace App\EventListener;
 use App\Entity\User;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\SecurityBundle\Security as SecurityBundle;
 
@@ -17,7 +17,7 @@ class AdminAccessListener
         private UrlGeneratorInterface $urlGenerator
     ) {}
 
-    public function __invoke(ControllerEvent $event): void
+    public function __invoke(RequestEvent $event): void
     {
         // Ignorer les sous-requêtes internes (gestion d'erreurs, ESI, fragments)
         if (!$event->isMainRequest()) {
