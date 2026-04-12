@@ -8,7 +8,6 @@
 {% endblock %}
 
 {% block header_actions %}
-    {# Boutons déplacés dans le contenu principal #}
 {% endblock %}
 
 {% block content %}
@@ -29,7 +28,6 @@
     </div>
 
     <div class="dashboard-content">
-        <!-- Statistiques -->
         <div class="stats-container">
             <div class="stat-card primary">
                 <div class="stat-icon">
@@ -75,7 +73,6 @@
             {% endif %}
         </div>
 
-        <!-- Contenu principal -->
         <div class="main-content">
             {% if subCategories %}
                 <div class="table-card">
@@ -121,7 +118,6 @@
                         </div>
                     </div>
                     
-                    <!-- Barre de recherche -->
                     <div class="search-bar d-none" id="searchBar">
                         <div class="search-input-wrapper">
                             <i class="fas fa-search"></i>
@@ -211,7 +207,6 @@
                         </table>
                     </div>
                     
-                    <!-- Pagination -->
                     <div class="pagination-container" id="paginationContainer">
                         <div class="pagination-info">
                             <span id="paginationInfo">Affichage de 1-8 sur {{ subCategories|length }} éléments</span>
@@ -222,7 +217,6 @@
                                 Précédent
                             </button>
                             <div class="pagination-numbers" id="paginationNumbers">
-                                <!-- Généré par JavaScript -->
                             </div>
                             <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
                                 Suivant
@@ -232,7 +226,6 @@
                     </div>
                 </div>
 
-                <!-- Répartition par catégorie -->
                 <div class="distribution-card">
                     <div class="card-header">
                         <h3>

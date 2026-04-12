@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block header_actions %}
-    {# Boutons déplacés dans le contenu principal #}
 {% endblock %}
 
 {% block content %}
@@ -40,9 +39,7 @@
 
     <div class="dashboard-content">
         <div class="content-grid">
-            <!-- Contenu principal -->
             <div class="main-content">
-                <!-- Détails de la sous-catégorie -->
                 <div class="detail-card">
                     <div class="detail-content">
                         {% if subCategory.description %}
@@ -71,7 +68,6 @@
                     </div>
                 </div>
 
-                <!-- Produits associés (simplifié) -->
                 {% if subCategory.products|length > 0 %}
                 <div class="products-card">
                     <div class="card-header">
@@ -105,9 +101,7 @@
                 {% endif %}
             </div>
 
-            <!-- Sidebar simplifiée -->
             <div class="sidebar-content">
-                <!-- Actions principales -->
                 <div class="action-card">
                     <div class="card-header">
                         <h3>
@@ -123,7 +117,6 @@
                     </div>
                 </div>
 
-                <!-- Statistiques compactes -->
                 <div class="stats-card">
                     <div class="card-header">
                         <h3>
@@ -157,7 +150,6 @@
     </div>
 </div>
 
-<!-- Modal de suppression -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content delete-modal">
