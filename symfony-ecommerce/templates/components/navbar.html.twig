@@ -1513,33 +1513,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const dropdownMenu = dropdown.querySelector('.dropdown-menu');
         
         if (dropdownToggle && dropdownMenu) {
-            // Gestion du hover pour afficher/masquer le dropdown
-            dropdown.addEventListener('mouseenter', function() {
-                dropdownMenu.classList.add('show');
+            // Fonction centralisée qui synchronise classe CSS + aria-expanded
+            function setDropdownOpen(open) {
+                dropdownMenu.classList.toggle('show', open);
+                dropdownToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+
+            // Hover souris
+            dropdown.addEventListener('mouseenter', function() { setDropdownOpen(true); });
+            dropdown.addEventListener('mouseleave', function() { setDropdownOpen(false); });
+
+            // Clic et touches clavier (Enter, Espace)
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const isOpen = dropdownMenu.classList.contains('show');
+                setDropdownOpen(!isOpen);
             });
 
-            dropdown.addEventListener('mouseleave', function() {
-                dropdownMenu.classList.remove('show');
-            });
-
-            // Gestion clavier pour l'accessibilité
             dropdownToggle.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    dropdownMenu.classList.toggle('show');
+                    const isOpen = dropdownMenu.classList.contains('show');
+                    setDropdownOpen(!isOpen);
                 }
             });
 
-            // Clic sur le bouton pour basculer (optionnel)
-            dropdownToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdownMenu.classList.toggle('show');
-            });
-
-            // Fermer le dropdown si on clique ailleurs
+            // Fermer si clic en dehors
             document.addEventListener('click', function(e) {
                 if (!dropdown.contains(e.target)) {
-                    dropdownMenu.classList.remove('show');
+                    setDropdownOpen(false);
                 }
             });
         }
