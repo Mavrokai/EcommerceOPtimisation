@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Détail commande #{{ order.id }} - Clochette&CO{% endblock %}
+{% block meta_description %}Consultez le détail de votre commande Clochette&CO : articles, quantités, total, statut et adresse de livraison.{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -967,7 +968,6 @@
 
 {% block body %}
 <div class="detail-container">
-    <!-- Messages flash -->
     {% for category, messages in app.flashes %}
         {% for message in messages %}
             <div class="alert alert-{{ category == 'error' ? 'danger' : category }} alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px; border-left: 4px solid {% if category == 'success' %}#28a745{% elseif category == 'error' %}#dc3545{% else %}#17a2b8{% endif %}; background: {% if category == 'success' %}rgba(40, 167, 69, 0.1){% elseif category == 'error' %}rgba(220, 53, 69, 0.1){% else %}rgba(23, 162, 184, 0.1){% endif %};">
@@ -1014,7 +1014,6 @@
         Commande #{{ order.id }}
     </h1>
 
-    <!-- Timeline de progression de la commande -->
     <div class="order-timeline">
         <h3 class="timeline-title">
             <i class="fas fa-route"></i>

@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block header_actions %}
-    {# Boutons déplacés dans le contenu principal #}
 {% endblock %}
 
 {% block content %}
@@ -36,7 +35,6 @@
 
     <div class="dashboard-content">
         <div class="content-grid">
-            <!-- Formulaire principal -->
             <div class="main-content">
                 <div class="form-card">
                     <div class="card-header">
@@ -102,9 +100,7 @@
                 </div>
             </div>
 
-            <!-- Sidebar -->
             <div class="sidebar-content">
-                <!-- Informations de la sous-catégorie -->
                 <div class="info-card">
                     <div class="card-header">
                         <h3>
@@ -135,7 +131,6 @@
                     </div>
                 </div>
 
-                <!-- Produits associés -->
                 {% if subCategory.products|length > 0 %}
                 <div class="products-card">
                     <div class="card-header">
@@ -161,7 +156,6 @@
                 </div>
                 {% endif %}
 
-                <!-- Actions rapides -->
                 <div class="quick-actions-card">
                     <div class="card-header">
                         <h3>

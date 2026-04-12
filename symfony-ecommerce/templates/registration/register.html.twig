@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
+{% block robots %}noindex, nofollow{% endblock %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Inscription | Clochette&CO{% endblock %}
 
 {% block stylesheets %}
 {{ parent() }}
@@ -187,7 +188,6 @@ ul.form-error li {
 {% block body %}
   <div class="form-container">
 
-    {# Affichage des flash messages #}
     {% for label, messages in app.flashes %}
       {% for message in messages %}
         {% if label == 'error' %}
@@ -239,7 +239,6 @@ ul.form-error li {
         {{ form_errors(registrationForm.plainPassword.second) }}
       </div>
 
-      {# Affichage des erreurs globales du champ plainPassword #}
       {{ form_errors(registrationForm.plainPassword) }}
 
       <button type="submit">Inscription</button>

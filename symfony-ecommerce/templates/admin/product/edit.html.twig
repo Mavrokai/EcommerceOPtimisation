@@ -26,7 +26,6 @@
 {% block content %}
 <div class="dashboard-container">
     <div class="dashboard-content">
-        <!-- Formulaire principal -->
         <div class="dashboard-card">
             <div class="card-header">
                 <i class="fas fa-edit"></i>
@@ -36,7 +35,6 @@
                 {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data', 'class': 'product-form'}}) }}
                 
                 <div class="form-grid">
-                    <!-- Nom du produit -->
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-tag"></i>
@@ -46,7 +44,6 @@
                         {{ form_errors(form.name) }}
                     </div>
 
-                    <!-- Description -->
                     <div class="form-group full-width">
                         <label class="form-label">
                             <i class="fas fa-align-left"></i>
@@ -56,7 +53,6 @@
                         {{ form_errors(form.description) }}
                     </div>
 
-                    <!-- Prix -->
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-euro-sign"></i>
@@ -69,7 +65,6 @@
                         {{ form_errors(form.price) }}
                     </div>
 
-                    <!-- Stock -->
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-boxes"></i>
@@ -79,7 +74,6 @@
                         {{ form_errors(form.stock) }}
                     </div>
 
-                    <!-- Poids -->
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-weight"></i>
@@ -92,7 +86,6 @@
                         {{ form_errors(form.weight) }}
                     </div>
 
-                    <!-- Catégorie -->
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-tags"></i>
@@ -102,7 +95,6 @@
                         {{ form_errors(form.subCategory) }}
                     </div>
 
-                    <!-- Image -->
                     <div class="form-group full-width">
                         <label class="form-label">
                             <i class="fas fa-image"></i>
@@ -120,7 +112,6 @@
                         {% endif %}
                     </div>
 
-                    <!-- Options -->
                     <div class="form-group full-width">
                         <label class="form-label">
                             <i class="fas fa-cogs"></i>
@@ -152,7 +143,6 @@
                     </div>
                 </div>
 
-                <!-- Actions -->
                 <div class="form-actions">
                     <div class="actions-left">
                         <button type="button" class="btn btn-danger btn-delete" onclick="confirmDelete()" title="Supprimer définitivement ce produit">
@@ -176,7 +166,6 @@
             </div>
         </div>
 
-        <!-- Informations du produit -->
         <div class="dashboard-card">
             <div class="card-header">
                 <i class="fas fa-info-circle"></i>

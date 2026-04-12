@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
+{% block robots %}noindex, nofollow{% endblock %}
 
 {% block title %}Mes Adresses - Clochette&CO{% endblock %}
+{% block meta_description %}Ajoutez et gérez vos adresses de livraison et de facturation dans votre espace client Clochette&CO.{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}

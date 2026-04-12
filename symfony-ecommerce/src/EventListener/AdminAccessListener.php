@@ -5,11 +5,11 @@ namespace App\EventListener;
 use App\Entity\User;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\SecurityBundle\Security as SecurityBundle;
 
-#[AsEventListener(event: 'kernel.controller')]
+#[AsEventListener(event: 'kernel.request', priority: 10)]
 class AdminAccessListener
 {
     public function __construct(
@@ -17,8 +17,13 @@ class AdminAccessListener
         private UrlGeneratorInterface $urlGenerator
     ) {}
 
-    public function __invoke(ControllerEvent $event): void
+    public function __invoke(RequestEvent $event): void
     {
+        // Ignorer les sous-requêtes internes (gestion d'erreurs, ESI, fragments)
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         $request = $event->getRequest();
         $pathInfo = $request->getPathInfo();
 
@@ -33,11 +38,10 @@ class AdminAccessListener
 
         // Vérifier si l'utilisateur est connecté et admin
         if (!$user || !$user->isAdmin()) {
-            // Rediriger vers la page d'erreur personnalisée
-            $response = new RedirectResponse($this->urlGenerator->generate('admin_access_denied'));
-            $event->setController(function() use ($response) {
-                return $response;
-            });
+            // setResponse() court-circuite tout le cycle kernel (controller, arguments, view)
+            $event->setResponse(new RedirectResponse(
+                $this->urlGenerator->generate('admin_access_denied')
+            ));
         }
     }
 }

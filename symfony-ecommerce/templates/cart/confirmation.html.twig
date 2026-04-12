@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% block robots %}noindex, nofollow{% endblock %}
 
 {% block title %}Confirmation - Commande validée{% endblock %}
 
@@ -447,7 +448,7 @@
           {% endfor %}
         {% else %}
           <div class="order-item">
-            <img src="{{ asset('assets/images/default.jpg') }}" alt="Produit" class="item-image">
+            <img src="{{ asset('assets/images/default.jpg') }}" alt="Image produit par défaut" class="item-image">
             <div class="item-details">
               <div class="item-name">Collier GPS</div>
               <div class="item-quantity">Quantité: 1</div>

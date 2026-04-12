@@ -1,4 +1,39 @@
 {% extends 'base.html.twig' %}
+{% block title %}Tous nos produits pour animaux | Clochette&CO{% endblock %}
+{% block meta_description %}Parcourez notre catalogue complet de produits pour animaux : chiens, chats, oiseaux, lézards. Alimentation, jouets, accessoires et soins au meilleur prix.{% endblock %}
+
+{% block head_extra %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Accueil",
+      "item": "{{ app.request.schemeAndHttpHost ~ path('homepage') }}"
+    }{% if navbarCategory is defined and navbarCategory %},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ navbarCategory|capitalize }}",
+      "item": "{{ app.request.schemeAndHttpHost ~ path('app_product_index', {category: navbarCategory}) }}"
+    }{% if navbarSubcategory is defined and navbarSubcategory %},
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ navbarSubcategory|replace({'-': ' '})|capitalize }}"
+    }{% endif %}{% else %},
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Tous nos produits"
+    }{% endif %}
+  ]
+}
+</script>
+{% endblock %}
 {% block stylesheets %}
 {{ parent() }}
     <style>
@@ -1605,7 +1640,6 @@ body {
 {% block body %}
 <div class="product-page-wrapper">
     <div class="main-content">
-        <!-- Bouton filtres mobile -->
         <button class="mobile-filters-toggle" id="mobileFiltersToggle">
             <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
@@ -1616,7 +1650,6 @@ body {
             </svg>
         </button>
 
-        <!-- Sidebar gauche -->
         <aside class="filters-sidebar">
             <div class="sidebar-header">
                 <h3 class="sidebar-title">
@@ -1627,7 +1660,6 @@ body {
                 </h3>
             </div>
 
-            <!-- Recherche -->
             <div class="sidebar-section">
                 <h4 class="section-title">Rechercher</h4>
                 <div class="search-container">
@@ -1638,7 +1670,6 @@ body {
                 </div>
             </div>
 
-            <!-- Tri -->
             <div class="sidebar-section">
                 <h4 class="section-title">Trier par</h4>
                 <select class="sort-select" id="sortSelect">
@@ -1651,14 +1682,16 @@ body {
                 </select>
             </div>
 
-            <!-- Catégories -->
             <div class="sidebar-section">
                 <h4 class="section-title">Catégories</h4>
                 <div class="categories-vertical" id="categoriesSection">
                     <div class="category-item-vertical" data-category-id="all">
                         <button class="category-btn-vertical active" data-category="all" data-type="all">
                             <div class="category-icon-vertical">
-                                <img src="{{ asset('assets/images/hero-image.png') }}" alt="Tous les produits" class="category-image-vertical">
+                                <picture>
+                                    <source srcset="{{ asset('assets/images/hero-image.png'|webp_path) }}" type="image/webp">
+                                    <img src="{{ asset('assets/images/hero-image.png') }}" alt="Vue d'ensemble des produits animaux Clochette&CO" class="category-image-vertical">
+                                </picture>
                             </div>
                             <span class="category-name-vertical">Tous les produits</span>
                         </button>
@@ -1669,26 +1702,28 @@ body {
                             <button class="category-btn-vertical" data-category="{{ category.id }}" data-type="category">
                                 <div class="category-icon-vertical">
                                     {% if category.image %}
-                                        {% set imageSource = asset('assets/images/' ~ category.image) %}
+                                        {% set imgRelPath = 'assets/images/' ~ category.image %}
                                     {% else %}
                                         {% if category.name|lower == 'chiens' %}
-                                            {% set imageName = 'category-dog.png' %}
+                                            {% set imgRelPath = 'assets/images/category-dog.png' %}
                                         {% elseif category.name|lower == 'chats' %}
-                                            {% set imageName = 'category-cat.png' %}
+                                            {% set imgRelPath = 'assets/images/category-cat.png' %}
                                         {% elseif category.name|lower == 'oiseaux' %}
-                                            {% set imageName = 'category-bird.png' %}
+                                            {% set imgRelPath = 'assets/images/category-bird.png' %}
                                         {% else %}
-                                            {% set imageName = 'category-dog.png' %}
+                                            {% set imgRelPath = 'assets/images/category-dog.png' %}
                                         {% endif %}
-                                        {% set imageSource = asset('assets/images/' ~ imageName) %}
                                     {% endif %}
-                                    
-                                    <img 
-                                        src="{{ imageSource }}" 
-                                        alt="{{ category.name }}" 
-                                        class="category-image-vertical"
-                                        loading="lazy"
-                                        onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+
+                                    <picture>
+                                        <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                                        <img
+                                            src="{{ asset(imgRelPath) }}"
+                                            alt="{{ category.name }}"
+                                            class="category-image-vertical"
+                                            loading="lazy"
+                                            onerror="this.src='{{ asset('assets/images/category-dog.png') }}'">
+                                    </picture>
                                 </div>
                                 <span class="category-name-vertical">{{ category.name }}</span>
                                 {% if category.subCategories is not empty %}
@@ -1719,10 +1754,9 @@ body {
             </div>
         </aside>
 
-        <!-- Contenu principal -->
         <main class="products-content">
             <div class="products-header">
-                <h2 class="products-title">Nos Produits</h2>
+                <h1 class="products-title">Nos Produits</h1>
                 <div class="results-info" id="resultsInfo">
                     {{ products|length }} produit{{ products|length > 1 ? 's' : '' }} trouvé{{ products|length > 1 ? 's' : '' }}
                 </div>
@@ -1735,10 +1769,14 @@ body {
                  data-subcategory="{{ product.subCategory ? product.subCategory.id : 'all' }}">
                 <div class="product-image">
                     {% if product.imageUrl and product.imageUrl is not empty %}
-                        <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" alt="{{ product.name }}" />
+                        {% set imgRelPath = 'assets/images/' ~ product.imageUrl %}
                     {% else %}
-                        <img src="{{ asset('assets/images/hero-image.png') }}" alt="{{ product.name }}" />
+                        {% set imgRelPath = 'assets/images/hero-image.png' %}
                     {% endif %}
+                    <picture>
+                        <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                        <img src="{{ asset(imgRelPath) }}" alt="{{ product.name }}" loading="lazy">
+                    </picture>
                 </div>
                 <div class="product-content">
                     <h3 class="product-title">{{ product.name }}</h3>
@@ -1750,7 +1788,6 @@ body {
                             <span class="btn-text-mobile">Détails</span>
                         </a>
                         
-                        <!-- Bouton panier desktop (circulaire) -->
                         <form action="{{ path('app_cart_add', {id: product.id}) }}" method="POST" class="cart-form-desktop">
                             <input type="hidden" name="quantity" value="1">
                             <button type="submit" class="btn btn-secondary" title="Ajouter au panier">
@@ -1760,7 +1797,6 @@ body {
                             </button>
                         </form>
                         
-                        <!-- Bouton panier mobile (avec texte) -->
                         <form action="{{ path('app_cart_add', {id: product.id}) }}" method="POST" class="cart-form-mobile">
                             <input type="hidden" name="quantity" value="1">
                             <button type="submit" class="btn btn-secondary-mobile" title="Ajouter au panier">
@@ -2225,7 +2261,6 @@ body {
                 {% set subSlug = subCategory.name|lower|replace({' ': '-', '&': '', 'à': 'a'}) %}
                 subcategoryMapping['{{ categorySlug }}']['{{ subSlug }}'] = '{{ subCategory.id }}';
                 
-                {# Ajouter des alias pour les sous-catégories courantes #}
                 {% if 'laisses' in subCategory.name|lower %}
                     subcategoryMapping['{{ categorySlug }}']['laisses-colliers'] = '{{ subCategory.id }}';
                 {% endif %}

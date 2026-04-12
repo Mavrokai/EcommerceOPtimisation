@@ -544,7 +544,6 @@
 {% block content %}
 <div class="dashboard-container">
     <div class="dashboard-content">
-        <!-- Statistiques -->
         <div class="dashboard-card">
             <div class="card-header">
                 <i class="fas fa-chart-bar"></i>
@@ -595,7 +594,6 @@
             </div>
         </div>
 
-        <!-- Filtres et recherche -->
         <div class="dashboard-card">
             <div class="card-header">
                 <i class="fas fa-filter"></i>
@@ -645,7 +643,6 @@
             </div>
         </div>
 
-        <!-- Liste des utilisateurs -->
         <div class="dashboard-card">
             <div class="card-header">
                 <i class="fas fa-list"></i>
@@ -769,7 +766,6 @@
                     </table>
                 </div>
                 
-                <!-- Pagination -->
                 {% if totalPages > 1 %}
                     <div class="pagination-container">
                         <nav class="pagination-nav">
@@ -837,7 +833,6 @@
     </div>
 </div>
 
-<!-- Formulaires de suppression cachés -->
 {% for user in users %}
     {% if user != app.user %}
         <form id="deleteForm{{ user.id }}" method="post" action="{{ path('admin_user_delete', {'id': user.id}) }}" style="display: none;">

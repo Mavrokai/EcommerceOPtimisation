@@ -1,10 +1,6 @@
-{# 
-  Component: Footer
-#}
 <footer class="site-footer">
     <div class="footer-container">
         <div class="footer-main">
-            <!-- Logo et description -->
             <div class="footer-brand">
                 <div class="footer-logo">
                     <span class="footer-logo-emoji">🐾</span>
@@ -29,7 +25,7 @@
                 <div class="footer-column">
                     <h3 class="footer-title">Service client</h3>
                     <ul class="footer-list">
-                        <li><a href="{{ path('contact') }}" class="footer-link">Nous contacter</a></li>
+                        <li><a href="{{ path('app_contact') }}" class="footer-link">Nous contacter</a></li>
                         <li><a href="{{ path('about') }}" class="footer-link">À propos de nous</a></li>
                     </ul>
                 </div>
@@ -51,6 +47,26 @@
         </div>
     </div>
 </footer>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Clochette&CO",
+    "url": "{{ app.request.schemeAndHttpHost }}",
+    "logo": "{{ app.request.schemeAndHttpHost ~ asset('assets/images/adminLogo.webp') }}",
+    "email": "contact@Crochette&Co.com",
+    "contactPoint": [
+        {
+            "@type": "ContactPoint",
+            "telephone": "+33 1 00 00 00 00",
+            "contactType": "customer service",
+            "areaServed": "FR",
+            "availableLanguage": ["fr"]
+        }
+    ]
+}
+</script>
 
 <style>
 .site-footer {

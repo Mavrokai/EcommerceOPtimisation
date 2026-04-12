@@ -1,7 +1,7 @@
-{# templates/contact/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Nous contacter{% endblock %}
+{% block title %}Nous contacter | Clochette&CO{% endblock %}
+{% block meta_description %}Contactez Clochette&CO pour toute question sur vos commandes, produits animaliers, livraisons ou retours. Notre équipe vous répond rapidement.{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -269,7 +269,6 @@
 {% block body %}
 
     <div class="contact-container">
-        <!-- Header -->
         <div class="contact-header">
             <h1 class="contact-title">Nous contacter</h1>
             <p class="contact-subtitle">
@@ -278,7 +277,6 @@
             </p>
         </div>
 
-        <!-- Flash messages -->
         {% for label, messages in app.flashes %}
             {% for message in messages %}
                 <div class="alert alert-{{ label }}">{{ message }}</div>
@@ -286,7 +284,6 @@
         {% endfor %}
 
         <div class="contact-layout">
-            <!-- Formulaire de contact -->
             <div class="contact-form-card">
                 <h2 class="form-section-title">Envoyez-nous un message</h2>
                 
@@ -344,7 +341,6 @@
                 {{ form_end(form) }}
             </div>
 
-            <!-- Informations de contact -->
             <div class="contact-info-card">
                 <h3 class="info-title">Nos coordonnées</h3>
                 

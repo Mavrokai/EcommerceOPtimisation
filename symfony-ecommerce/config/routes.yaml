@@ -61,9 +61,7 @@ about:
   path: /about
   controller: App\Controller\AboutController::index
 
-contact:
-  path: /contact
-  controller: App\Controller\PageController::contact
+# /contact : ContactController (attribut app_contact) — ne pas dupliquer ici
 
 privacy:
   path: /privacy

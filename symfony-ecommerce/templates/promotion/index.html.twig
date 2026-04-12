@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Promotions | Clochette&CO{% endblock %}
+{% block meta_description %}Offres spéciales et promotions sur une sélection de produits pour vos animaux.{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .promotions-page {
+            background: linear-gradient(135deg, #fef8eb 0%, #fff4e2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem 4rem;
+        }
+        .promotions-page h1 {
+            text-align: center;
+            font-family: var(--font-heading, cursive);
+            color: var(--dark-gray, #2D3748);
+            margin-bottom: 0.5rem;
+        }
+        .promotions-page .lead {
+            text-align: center;
+            color: var(--medium-gray, #718096);
+            max-width: 640px;
+            margin: 0 auto 2rem;
+        }
+        .promo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: start;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="promotions-page">
+        <h1>Promotions</h1>
+        <p class="lead">Profitez de nos offres du moment sur une sélection de produits pour chiens, chats et oiseaux.</p>
+
+        {% if promotions is defined and promotions|length > 0 %}
+            <div class="promo-grid" role="list">
+                {% for promotion in promotions %}
+                    <div role="listitem">
+                        {% include 'components/promo_card.html.twig' with {
+                            promotion: promotion,
+                            size: promotion.size|default('medium')
+                        } %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align:center;color:#718096;">Aucune promotion pour le moment.</p>
+        {% endif %}
+    </div>
+{% endblock %}

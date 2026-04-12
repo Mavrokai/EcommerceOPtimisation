@@ -1,0 +1,27 @@
+{
+  "name": "symfony-ecommerce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "symfony server:start",
+    "lighthouse": "npx lhci autorun",
+    "carbon": "node scripts/carbon-footprint.js",
+    "carbon:json": "node scripts/carbon-footprint.js --json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@lhci/cli": "^0.15.1"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.0",
+    "@tgwf/co2": "^0.18.0"
+  }
+}

@@ -1,13 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Animalerie en ligne - Produits pour chiens, chats et plus' }}{% endblock %}
+{% block title %}Animalerie en ligne - Produits pour chiens, chats et plus | Clochette&CO{% endblock %}
+{% block meta_description %}Découvrez notre large sélection de produits pour animaux : nourriture, jouets, accessoires pour chiens, chats, oiseaux et plus. Livraison rapide et prix compétitifs.{% endblock %}
+{% block og_type %}website{% endblock %}
 
-{% block description %}
-    {{ 'Découvrez notre large sélection de produits pour animaux : nourriture, jouets, accessoires pour chiens, chats, oiseaux et plus. Livraison rapide et prix compétitifs.' }}
-{% endblock %}
-
-{% block keywords %}
-    {{ 'animalerie, produits animaux, chien, chat, nourriture animaux, jouets animaux, accessoires animaux, livraison' }}
+{% block head_extra %}
+        <link rel="preload" as="image" href="{{ asset('assets/images/hero-image.png'|webp_path) }}" type="image/webp">
+        <link rel="preload" as="image" href="{{ asset('assets/images/hero-image.png') }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Accueil",
+      "item": "{{ app.request.schemeAndHttpHost ~ path('homepage') }}"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clochette&CO",
+  "url": "{{ app.request.schemeAndHttpHost }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ app.request.schemeAndHttpHost ~ path('products') }}?search={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 {% endblock %}
 
 {% block stylesheets %}
@@ -579,7 +608,7 @@
         .featured-subtitle {
             text-align: center;
             font-size: 1.2rem;
-            color: #6c757d;
+            color: #495057;
             margin-bottom: 3rem;
         }
 
@@ -898,7 +927,7 @@
 
         .review-date {
             font-size: 0.8rem;
-            color: #6c757d;
+            color: #4a5568; /* était #6c757d — ratio 4.07:1 insuffisant, #4a5568 donne 6.4:1 */
         }
 
         .review-comment {
@@ -911,7 +940,7 @@
 
         .review-product {
             font-size: 0.9rem;
-            color: #ff8c42;
+            color: #a05000; /* était #ff8c42 — ratio 2.11:1 insuffisant, #a05000 donne 5.0:1 */
             font-weight: 600;
         }
 
@@ -1175,7 +1204,6 @@
             {% endif %}
         </section>
 
-        <!-- Section Produits Phares et Avis Clients -->
         <section class="featured-section" role="region" aria-labelledby="featured-title">
             <div class="featured-container">
                 <h2 id="featured-title" class="featured-main-heading">
@@ -1190,9 +1218,13 @@
                             <div class="featured-product-card">
                                 <div class="product-badge {{ product.badge|lower }}">{{ product.badge }}</div>
                                 <div class="product-image">
-                                    <img src="{{ asset('assets/images/' ~ product.image) }}" 
-                                         alt="{{ product.name }}" 
-                                         onerror="this.src='{{ asset('assets/images/default-product.svg') }}'">>
+                                    {% set imgRelPath = 'assets/images/' ~ product.image %}
+                                    <picture>
+                                        <source srcset="{{ asset(imgRelPath|webp_path) }}" type="image/webp">
+                                        <img src="{{ asset(imgRelPath) }}"
+                                             alt="{{ product.name }}"
+                                             onerror="this.src='{{ asset('assets/images/default-product.svg') }}'">
+                                    </picture>
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-name">{{ product.name }}</h3>
@@ -1221,7 +1253,6 @@
                     {% endif %}
                 </div>
 
-                <!-- Section Avis Clients -->
                 <div class="customer-reviews-section">
                     <h3 class="reviews-heading">
                         <i class="fas fa-comments"></i>
@@ -1233,9 +1264,13 @@
                                 <div class="review-card">
                                     <div class="review-header">
                                         <div class="customer-avatar">
-                                            <img src="{{ asset('assets/images/' ~ review.avatar) }}" 
-                                                 alt="{{ review.name }}" 
-                                                 onerror="this.src='{{ asset('assets/images/default-avatar.svg') }}'">>
+                                            {% set avatarRelPath = 'assets/images/' ~ review.avatar %}
+                                            <picture>
+                                                <source srcset="{{ asset(avatarRelPath|webp_path) }}" type="image/webp">
+                                                <img src="{{ asset(avatarRelPath) }}"
+                                                     alt="{{ review.name }}"
+                                                     onerror="this.src='{{ asset('assets/images/default-avatar.svg') }}'">
+                                            </picture>
                                         </div>
                                         <div class="customer-info">
                                             <h4 class="customer-name">{{ review.name }}</h4>

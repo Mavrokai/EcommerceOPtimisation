@@ -1,7 +1,8 @@
-{# templates/profile/index.html.twig #}
 {% extends 'base.html.twig' %}
+{% block robots %}noindex, nofollow{% endblock %}
 
 {% block title %}Mon Profil{% endblock %}
+{% block meta_description %}Gérez votre profil Clochette&CO : informations personnelles, historique de commandes et adresses de livraison.{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -235,7 +236,6 @@
         {% endfor %}
 
         <div class="profile-layout">
-            <!-- Sidebar -->
             <div class="profile-sidebar">
                 <div class="profile-avatar">
                     <i class="fas fa-user"></i>
@@ -275,7 +275,6 @@
                 </ul>
             </div>
 
-            <!-- Main content -->
             <div class="profile-content">
                 <div class="content-header">
                     <h1 class="content-title">Informations personnelles</h1>

@@ -1,4 +1,3 @@
-{# Navigation principale #}
 <nav class="navbar">
     <div class="navbar-container">
         <div class="navbar-logo">
@@ -9,9 +8,9 @@
         </div>
 
         <div class="navbar-menu" id="navbarMenu">
-            <!-- Dropdown Chiens -->
             <div class="nav-dropdown">
-                <button class="nav-link dropdown-toggle" id="chiensDropdown">
+                <button class="nav-link dropdown-toggle" id="chiensDropdown"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="chiensDropdownMenu">
                     🐕 Chiens
                     <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
                         <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
@@ -30,9 +29,9 @@
                 </div>
             </div>
 
-            <!-- Dropdown Chats -->
             <div class="nav-dropdown">
-                <button class="nav-link dropdown-toggle" id="chatsDropdown">
+                <button class="nav-link dropdown-toggle" id="chatsDropdown"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="chatsDropdownMenu">
                     🐱 Chats
                     <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
                         <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
@@ -51,9 +50,9 @@
                 </div>
             </div>
 
-            <!-- Dropdown Oiseaux -->
             <div class="nav-dropdown">
-                <button class="nav-link dropdown-toggle" id="oiseauxDropdown">
+                <button class="nav-link dropdown-toggle" id="oiseauxDropdown"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="oiseauxDropdownMenu">
                     🐦 Oiseaux
                     <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
                         <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
@@ -71,9 +70,9 @@
                 </div>
             </div>
 
-            <!-- Dropdown Lézards -->
             <div class="nav-dropdown">
-                <button class="nav-link dropdown-toggle" id="lezardsDropdown">
+                <button class="nav-link dropdown-toggle" id="lezardsDropdown"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="lezardsDropdownMenu">
                     🦎 Lézards
                     <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" class="dropdown-arrow">
                         <path fill-rule="evenodd" d="M4.646 6.646a.5.5 0 01.708 0L8 9.293l2.646-2.647a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 010-.708z"/>
@@ -101,7 +100,7 @@
                                class="search-input-inline"
                                id="searchInputInline"
                                autocomplete="off">
-                        <button type="submit" class="search-button-inline">
+                        <button type="submit" class="search-button-inline" aria-label="Rechercher">
                             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                             </svg>
@@ -112,29 +111,25 @@
                 </form>
             </div>
 
-            <!-- Bouton Admin -->
             {% if app.user and app.user.isAdmin %}
                 <a href="{{ path('admin_dashboard') }}" class="action-button admin-button" aria-label="Administration">
-                    <img src="{{ asset('assets/images/adminLogo.png') }}" alt="Admin" width="20" height="20">
+                    <img src="{{ asset('assets/images/adminLogo.png') }}" alt="" width="20" height="20">
                 </a>
             {% endif %}
 
-            <!-- Panier -->
-            <a href="{{ path('app_cart') }}" class="action-button cart-button" aria-label="Panier">
+            {%- set cart = app.session.get('cart', {}) -%}
+            {%- set totalItems = 0 -%}
+            {%- for quantity in cart -%}{%- set totalItems = totalItems + quantity -%}{%- endfor -%}
+            <a href="{{ path('app_cart') }}" class="action-button cart-button"
+               aria-label="Panier{% if totalItems > 0 %} ({{ totalItems }} article{{ totalItems > 1 ? 's' : '' }}){% else %} (vide){% endif %}">
                 <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
                 </svg>
-                <span id="cart-counter" class="cart-count">
-                    {% set cart = app.session.get('cart', {}) %}
-                    {% set totalItems = 0 %}
-                    {% for quantity in cart %}
-                        {% set totalItems = totalItems + quantity %}
-                    {% endfor %}
+                <span id="cart-counter" class="cart-count" aria-hidden="true">
                     {% if totalItems > 0 %}{{ totalItems }}{% endif %}
                 </span>
             </a>
 
-            <!-- Compte utilisateur -->
             {% if app.user %}
                 <div class="user-dropdown">
                     <button class="user-button" aria-label="Mon compte">
@@ -190,7 +185,6 @@
                 </a>
             {% endif %}
 
-            <!-- Menu mobile toggle -->
             <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -526,7 +520,7 @@ body.admin .dropdown-menu.show {
     padding: 0.5rem 2.5rem 0.5rem 1rem;
     border: 2px solid transparent;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.25);
     color: white;
     font-size: 0.9rem;
     outline: none;
@@ -542,7 +536,7 @@ body.admin .dropdown-menu.show {
     padding: 0.5rem 2.5rem 0.5rem 1rem !important;
     border: 2px solid transparent !important;
     border-radius: 20px !important;
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(0, 0, 0, 0.25) !important;
     color: white !important;
     font-size: 0.9rem !important;
     outline: none !important;
@@ -552,13 +546,13 @@ body.admin .dropdown-menu.show {
 }
 
 .search-input-inline::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 /* Forcer la priorité pour le placeholder */
 .navbar-search .search-input-inline::placeholder,
 .navbar-actions .search-input-inline::placeholder {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
 .search-input-inline:focus {
@@ -589,16 +583,21 @@ body.admin .dropdown-menu.show {
 
 .search-button-inline {
     position: absolute;
-    right: 8px;
+    right: 0;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.9);
     cursor: pointer;
-    padding: 0.25rem;
+    /* touch target WCAG 2.5.5 : min 44×44 px */
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .search-input-inline:focus + .search-button-inline {
@@ -607,7 +606,7 @@ body.admin .dropdown-menu.show {
 
 .search-button-inline:hover {
     color: var(--primary-orange);
-    transform: scale(1.1);
+    transform: translateY(-50%) scale(1.1);
 }
 
 /* Résultats de recherche en temps réel */
@@ -1504,33 +1503,62 @@ document.addEventListener('DOMContentLoaded', function() {
         const dropdownMenu = dropdown.querySelector('.dropdown-menu');
         
         if (dropdownToggle && dropdownMenu) {
-            // Gestion du hover pour afficher/masquer le dropdown
-            dropdown.addEventListener('mouseenter', function() {
-                dropdownMenu.classList.add('show');
+            // Fonction centralisée qui synchronise classe CSS + aria-expanded
+            function setDropdownOpen(open) {
+                dropdownMenu.classList.toggle('show', open);
+                dropdownToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+
+            // Hover souris
+            dropdown.addEventListener('mouseenter', function() { setDropdownOpen(true); });
+            dropdown.addEventListener('mouseleave', function() { setDropdownOpen(false); });
+
+            // Clic et touches clavier (Enter, Espace)
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const isOpen = dropdownMenu.classList.contains('show');
+                setDropdownOpen(!isOpen);
             });
 
-            dropdown.addEventListener('mouseleave', function() {
-                dropdownMenu.classList.remove('show');
-            });
-
-            // Gestion clavier pour l'accessibilité
             dropdownToggle.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    dropdownMenu.classList.toggle('show');
+                    const isOpen = dropdownMenu.classList.contains('show');
+                    setDropdownOpen(!isOpen);
                 }
             });
 
-            // Clic sur le bouton pour basculer (optionnel)
-            dropdownToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdownMenu.classList.toggle('show');
-            });
-
-            // Fermer le dropdown si on clique ailleurs
+            // Fermer si clic en dehors
             document.addEventListener('click', function(e) {
                 if (!dropdown.contains(e.target)) {
-                    dropdownMenu.classList.remove('show');
+                    setDropdownOpen(false);
+                }
+            });
+
+            // Fermer avec Échap et remettre le focus sur le bouton (WCAG 2.1.2)
+            dropdownMenu.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    setDropdownOpen(false);
+                    dropdownToggle.focus();
+                }
+
+                // Focus trap : Tab/Shift+Tab reste dans le dropdown tant qu'il est ouvert
+                if (e.key === 'Tab' && dropdownMenu.classList.contains('show')) {
+                    const focusableItems = Array.from(
+                        dropdownMenu.querySelectorAll('a[href], button:not([disabled])')
+                    );
+                    const first = focusableItems[0];
+                    const last = focusableItems[focusableItems.length - 1];
+
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        dropdownToggle.focus();
+                        setDropdownOpen(false);
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        setDropdownOpen(false);
+                        dropdownToggle.focus();
+                    }
                 }
             });
         }
@@ -1670,17 +1698,25 @@ window.updateCartCounter = function() {
                 if (data.count > 0) {
                     counter.textContent = data.count;
                     counter.style.display = 'flex';
-                    
+
                     counter.classList.remove('bounce');
                     counter.offsetHeight;
                     counter.classList.add('bounce');
-                    
+
                     setTimeout(() => {
                         counter.classList.remove('bounce');
                     }, 600);
+
+                    // Mettre à jour l'aria-label du bouton panier pour les lecteurs d'écran
+                    const cartBtn = document.querySelector('a[aria-label="Panier"]');
+                    if (cartBtn) {
+                        cartBtn.setAttribute('aria-label', `Panier (${data.count} article${data.count > 1 ? 's' : ''})`);
+                    }
                 } else {
                     counter.style.display = 'none';
                     counter.textContent = '';
+                    const cartBtn = document.querySelector('a[aria-label^="Panier"]');
+                    if (cartBtn) cartBtn.setAttribute('aria-label', 'Panier (vide)');
                 }
             }
         })
@@ -1689,7 +1725,12 @@ window.updateCartCounter = function() {
         });
 };
 
-window.updateCartCounter();
+// Différer le compteur panier après le LCP pour ne pas bloquer le chargement critique
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => window.updateCartCounter(), { timeout: 2000 });
+    } else {
+        setTimeout(() => window.updateCartCounter(), 0);
+    }
 
 document.addEventListener('DOMContentLoaded', function () {
     const categoryLinks = document.querySelectorAll('.dropdown-item-main, .subcategory-item');
