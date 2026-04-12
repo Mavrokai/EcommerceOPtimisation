@@ -38,11 +38,10 @@ class AdminAccessListener
 
         // Vérifier si l'utilisateur est connecté et admin
         if (!$user || !$user->isAdmin()) {
-            // Rediriger vers la page d'erreur personnalisée
-            $response = new RedirectResponse($this->urlGenerator->generate('admin_access_denied'));
-            $event->setController(function() use ($response) {
-                return $response;
-            });
+            // setResponse() court-circuite tout le cycle kernel (controller, arguments, view)
+            $event->setResponse(new RedirectResponse(
+                $this->urlGenerator->generate('admin_access_denied')
+            ));
         }
     }
 }
