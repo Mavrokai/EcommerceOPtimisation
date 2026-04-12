@@ -19,6 +19,11 @@ class AdminAccessListener
 
     public function __invoke(ControllerEvent $event): void
     {
+        // Ignorer les sous-requêtes internes (gestion d'erreurs, ESI, fragments)
+        if (!$event->isMainRequest()) {
+            return;
+        }
+
         $request = $event->getRequest();
         $pathInfo = $request->getPathInfo();
 
