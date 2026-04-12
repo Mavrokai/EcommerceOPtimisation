@@ -1640,7 +1640,6 @@ body {
 {% block body %}
 <div class="product-page-wrapper">
     <div class="main-content">
-        <!-- Bouton filtres mobile -->
         <button class="mobile-filters-toggle" id="mobileFiltersToggle">
             <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
@@ -1651,7 +1650,6 @@ body {
             </svg>
         </button>
 
-        <!-- Sidebar gauche -->
         <aside class="filters-sidebar">
             <div class="sidebar-header">
                 <h3 class="sidebar-title">
@@ -1662,7 +1660,6 @@ body {
                 </h3>
             </div>
 
-            <!-- Recherche -->
             <div class="sidebar-section">
                 <h4 class="section-title">Rechercher</h4>
                 <div class="search-container">
@@ -1673,7 +1670,6 @@ body {
                 </div>
             </div>
 
-            <!-- Tri -->
             <div class="sidebar-section">
                 <h4 class="section-title">Trier par</h4>
                 <select class="sort-select" id="sortSelect">
@@ -1686,7 +1682,6 @@ body {
                 </select>
             </div>
 
-            <!-- Catégories -->
             <div class="sidebar-section">
                 <h4 class="section-title">Catégories</h4>
                 <div class="categories-vertical" id="categoriesSection">
@@ -1759,7 +1754,6 @@ body {
             </div>
         </aside>
 
-        <!-- Contenu principal -->
         <main class="products-content">
             <div class="products-header">
                 <h1 class="products-title">Nos Produits</h1>
@@ -1794,7 +1788,6 @@ body {
                             <span class="btn-text-mobile">Détails</span>
                         </a>
                         
-                        <!-- Bouton panier desktop (circulaire) -->
                         <form action="{{ path('app_cart_add', {id: product.id}) }}" method="POST" class="cart-form-desktop">
                             <input type="hidden" name="quantity" value="1">
                             <button type="submit" class="btn btn-secondary" title="Ajouter au panier">
@@ -1804,7 +1797,6 @@ body {
                             </button>
                         </form>
                         
-                        <!-- Bouton panier mobile (avec texte) -->
                         <form action="{{ path('app_cart_add', {id: product.id}) }}" method="POST" class="cart-form-mobile">
                             <input type="hidden" name="quantity" value="1">
                             <button type="submit" class="btn btn-secondary-mobile" title="Ajouter au panier">
@@ -2269,7 +2261,6 @@ body {
                 {% set subSlug = subCategory.name|lower|replace({' ': '-', '&': '', 'à': 'a'}) %}
                 subcategoryMapping['{{ categorySlug }}']['{{ subSlug }}'] = '{{ subCategory.id }}';
                 
-                {# Ajouter des alias pour les sous-catégories courantes #}
                 {% if 'laisses' in subCategory.name|lower %}
                     subcategoryMapping['{{ categorySlug }}']['laisses-colliers'] = '{{ subCategory.id }}';
                 {% endif %}
