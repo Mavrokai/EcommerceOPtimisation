@@ -92,8 +92,13 @@
                 <h3>Vos articles</h3>
                 {% for item in cartItems %}
                     <div class="cart-item-summary">
-                        <img src="{{ item.product.imageUrl ? asset('assets/images/' ~ item.product.imageUrl) : asset('assets/images/default.jpg') }}" 
-                             alt="{{ item.product.name }}" class="item-image" onerror="this.src='{{ asset('assets/images/default.jpg') }}'">
+                        <picture>
+                            <source srcset="{{ item.product.imageUrl ? asset('assets/images/' ~ item.product.imageUrl|replace({'.jpg': '.webp', '.jpeg': '.webp', '.png': '.webp'})) : asset('assets/images/default.webp') }}" type="image/webp">
+                            <img src="{{ item.product.imageUrl ? asset('assets/images/' ~ item.product.imageUrl) : asset('assets/images/default.jpg') }}"
+                                 alt="{{ item.product.name }}" class="item-image"
+                                 loading="lazy" width="60" height="60"
+                                 onerror="this.src='{{ asset('assets/images/default.jpg') }}'">
+                        </picture>
                         <div class="item-info">
                             <h4>{{ item.product.name }}</h4>
                             <p>Quantité: {{ item.quantity }}</p>
