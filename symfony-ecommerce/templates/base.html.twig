@@ -218,7 +218,18 @@
                     .then(response => {
                         if (response.ok) {
                             updateCartCounter();
-                            
+
+                            // Annonce pour lecteurs d'écran via aria-live
+                            const announcer = document.getElementById('sr-announcer');
+                            if (announcer) {
+                                {% if product is defined %}
+                                    announcer.textContent = '"' + productName + '" a été ajouté à votre panier.';
+                                {% else %}
+                                    announcer.textContent = 'Produit ajouté à votre panier.';
+                                {% endif %}
+                                setTimeout(() => { announcer.textContent = ''; }, 3000);
+                            }
+
                             setTimeout(() => {
                                 button.textContent = originalText;
                                 button.disabled = false;
