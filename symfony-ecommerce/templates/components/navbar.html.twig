@@ -1708,17 +1708,25 @@ window.updateCartCounter = function() {
                 if (data.count > 0) {
                     counter.textContent = data.count;
                     counter.style.display = 'flex';
-                    
+
                     counter.classList.remove('bounce');
                     counter.offsetHeight;
                     counter.classList.add('bounce');
-                    
+
                     setTimeout(() => {
                         counter.classList.remove('bounce');
                     }, 600);
+
+                    // Mettre à jour l'aria-label du bouton panier pour les lecteurs d'écran
+                    const cartBtn = document.querySelector('a[aria-label="Panier"]');
+                    if (cartBtn) {
+                        cartBtn.setAttribute('aria-label', `Panier (${data.count} article${data.count > 1 ? 's' : ''})`);
+                    }
                 } else {
                     counter.style.display = 'none';
                     counter.textContent = '';
+                    const cartBtn = document.querySelector('a[aria-label^="Panier"]');
+                    if (cartBtn) cartBtn.setAttribute('aria-label', 'Panier (vide)');
                 }
             }
         })
