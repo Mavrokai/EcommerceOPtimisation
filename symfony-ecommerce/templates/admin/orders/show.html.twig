@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-<!-- Messages flash -->
 {% for type, messages in app.flashes %}
     {% for message in messages %}
         <div class="alert alert-{{ type == 'success' ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
@@ -19,7 +18,6 @@
     {% endfor %}
 {% endfor %}
 
-<!-- En-tête de la commande -->
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card">
@@ -49,7 +47,6 @@
                 </div>
             </div>
             <div class="card-body">
-                <!-- Formulaire de changement de statut -->
                 <div class="row">
                     <div class="col-md-6">
                         <h6><i class="fas fa-info-circle me-2"></i>Informations générales</h6>
@@ -93,7 +90,6 @@
     </div>
 </div>
 
-<!-- Détail des produits -->
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card">
@@ -153,7 +149,6 @@
     </div>
 </div>
 
-<!-- Adresses -->
 {% if order.deliveryAddress or order.billingAddress %}
 <div class="row mb-4">
     {% if order.deliveryAddress %}
@@ -194,7 +189,6 @@
 </div>
 {% endif %}
 
-<!-- Code promo -->
 {% if order.promoCode %}
 <div class="row mb-4">
     <div class="col-md-12">
@@ -218,7 +212,6 @@
 </div>
 {% endif %}
 
-<!-- Actions -->
 <div class="row">
     <div class="col-md-12">
         <div class="card">
