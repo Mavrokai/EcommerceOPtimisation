@@ -744,7 +744,6 @@ body {
 
 {% block body %}
 <div class="container">
-    <!-- Navigation de retour -->
     <a href="{{ path('homepage') }}" class="back-navigation">
         <svg fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
@@ -752,10 +751,8 @@ body {
         Retour à la boutique
     </a>
 
-    <!-- Détail du produit -->
     <div class="product-detail">
         <div class="product-layout">
-            <!-- Image du produit -->
             <div class="product-image">
                 {% if product.imageUrl and product.imageUrl is not empty %}
                     {% set imgRelPath = 'assets/images/' ~ product.imageUrl %}
@@ -766,7 +763,6 @@ body {
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                              style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </picture>
-                    <!-- Fallback SVG (caché par défaut) -->
                     <svg width="200" height="200" viewBox="0 0 200 200" fill="none" style="display: none;">
                         <rect width="200" height="200" fill="#f1f3f4"/>
                         <path d="M67 130L97 100L127 130L157 100L187 130V170H13V130L43 100L67 130Z" fill="#dee2e6"/>
@@ -774,7 +770,6 @@ body {
                         <text x="100" y="190" text-anchor="middle" fill="#6c757d" font-size="12">{{ product.name }}</text>
                     </svg>
                 {% else %}
-                    <!-- Image par défaut quand aucune image n'est définie -->
                     <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
                         <rect width="200" height="200" fill="#f1f3f4"/>
                         <path d="M67 130L97 100L127 130L157 100L187 130V170H13V130L43 100L67 130Z" fill="#dee2e6"/>
@@ -784,10 +779,8 @@ body {
                 {% endif %}
             </div>
 
-            <!-- Informations du produit -->
             <div class="product-info">
                 <div>
-                    <!-- Tags -->
                     <div class="product-tags">
                         {% if product.isNew|default(false) %}
                             <span class="product-tag new">Nouveau</span>
@@ -797,11 +790,9 @@ body {
                         {% endif %}
                     </div>
 
-                    <!-- Titre et prix -->
                     <h1 class="product-title">{{ product.name }}</h1>
                     <div class="product-price">${{ product.price }}</div>
 
-                    <!-- Stock -->
                     <div class="product-stock">
                         {% if product.stock > 0 %}
                             <span class="stock-status in-stock">
@@ -820,7 +811,6 @@ body {
                         {% endif %}
                     </div>
 
-                    <!-- Poids du produit -->
                     {% if product.weight %}
                         <div class="product-weight">
                             <span class="weight-info">
@@ -832,7 +822,6 @@ body {
                         </div>
                     {% endif %}
 
-                    <!-- Formulaire d'achat -->
                     {% if product.stock > 0 %}
                         <form action="{{ path('app_cart_add', {'id': product.id}) }}" method="post" class="purchase-form">
                             <div class="form-group">
@@ -844,7 +833,6 @@ body {
                                 </select>
                             </div>
 
-                            <!-- Description -->
                         {% if product.description %}
                             <div class="product-description">
                                 <h3>Description du produit</h3>
@@ -868,9 +856,7 @@ body {
         </div>
     </div>
 
-    <!-- Section des commentaires -->
     <div class="comments-section">
-        <!-- En-tête des commentaires -->
         <div class="comments-header">
             <h2 class="comments-title">
                 <svg fill="currentColor" viewBox="0 0 20 20">
@@ -881,11 +867,9 @@ body {
             <p class="comments-subtitle">Partagez votre expérience avec ce produit</p>
         </div>
 
-        <!-- Formulaire d'ajout de commentaire -->
         <div class="comment-form">
             <h3>Laisser un avis</h3>
             
-            <!-- Messages de retour -->
             {% for message in app.flashes('comment_success') %}
                 <div class="message success">{{ message }}</div>
             {% endfor %}
@@ -912,7 +896,6 @@ body {
             </form>
         </div>
 
-        <!-- Liste des commentaires -->
         <div class="comments-list">
             {% if product.comments is defined and product.comments|length > 0 %}
                 {% for comment in product.comments|reverse %}
