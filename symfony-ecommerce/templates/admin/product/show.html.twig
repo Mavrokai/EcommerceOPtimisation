@@ -27,7 +27,6 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <!-- Informations principales -->
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -117,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- Historique et métadonnées -->
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
@@ -155,7 +153,6 @@
         </div>
 
         <div class="col-lg-4">
-            <!-- Actions rapides -->
             <div class="card mb-3">
                 <div class="card-header">
                     <h6 class="mb-0">
@@ -196,7 +193,6 @@
                 </div>
             </div>
 
-            <!-- Statistiques -->
             <div class="card mb-3">
                 <div class="card-header">
                     <h6 class="mb-0">
@@ -230,7 +226,6 @@
                 </div>
             </div>
 
-            <!-- Recommandations -->
             <div class="card">
                 <div class="card-header">
                     <h6 class="mb-0">
@@ -273,7 +268,6 @@
         </div>
     </div>
 
-    <!-- Formulaire de suppression caché -->
     <form id="deleteForm" method="post" action="{{ path('admin_product_delete', {'id': product.id}) }}" style="display: none;">
         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
     </form>

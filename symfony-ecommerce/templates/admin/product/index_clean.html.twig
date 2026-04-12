@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="dashboard-container">
-    <!-- En-tête de la page -->
     <div class="dashboard-header">
         <div class="d-flex justify-content-between align-items-center">
             <div>
@@ -24,7 +23,6 @@
     </div>
 
     <div class="dashboard-content">
-        <!-- Statistiques simplifiées -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -64,7 +62,6 @@
             </div>
         </div>
 
-        <!-- Filtres simplifiés -->
         <div class="dashboard-card">
             <div class="card-header">
                 <i class="fas fa-filter"></i>
@@ -109,7 +106,6 @@
             </form>
         </div>
 
-        <!-- Liste des produits -->
         <div class="dashboard-card">
             <div class="card-header">
                 <i class="fas fa-list"></i>
@@ -174,7 +170,6 @@
                     {% endfor %}
                 </div>
 
-                <!-- Pagination JavaScript -->
                 <div class="pagination-container" id="paginationContainer">
                     <div class="pagination-info">
                         Page <span id="currentPage">1</span> sur <span id="totalPages"></span>
