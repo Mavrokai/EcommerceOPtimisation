@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\SecurityBundle\Security as SecurityBundle;
 
-#[AsEventListener(event: 'kernel.controller')]
+#[AsEventListener(event: 'kernel.request', priority: 10)]
 class AdminAccessListener
 {
     public function __construct(
