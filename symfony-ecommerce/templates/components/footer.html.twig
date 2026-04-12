@@ -52,6 +52,26 @@
     </div>
 </footer>
 
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Clochette&CO",
+    "url": "{{ app.request.schemeAndHttpHost }}",
+    "logo": "{{ app.request.schemeAndHttpHost ~ asset('assets/images/adminLogo.webp') }}",
+    "email": "contact@Crochette&Co.com",
+    "contactPoint": [
+        {
+            "@type": "ContactPoint",
+            "telephone": "+33 1 00 00 00 00",
+            "contactType": "customer service",
+            "areaServed": "FR",
+            "availableLanguage": ["fr"]
+        }
+    ]
+}
+</script>
+
 <style>
 .site-footer {
     background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);

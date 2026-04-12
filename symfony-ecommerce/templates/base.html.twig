@@ -14,7 +14,9 @@
         <meta property="og:description" content="{% block og_description %}{{ block('meta_description') }}{% endblock %}">
         <meta property="og:url" content="{{ app.request.uri }}">
         <meta property="og:site_name" content="Clochette&CO">
-        <meta property="og:image" content="{% block og_image %}{{ app.request.schemeAndHttpHost ~ asset('assets/images/hero-image.png') }}{% endblock %}">
+        <meta property="og:image" content="{% block og_image %}{{ app.request.schemeAndHttpHost ~ asset('assets/images/hero-image.webp') }}{% endblock %}">
+        <meta property="og:image:width" content="{% block og_image_width %}612{% endblock %}">
+        <meta property="og:image:height" content="{% block og_image_height %}408{% endblock %}">
         
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
