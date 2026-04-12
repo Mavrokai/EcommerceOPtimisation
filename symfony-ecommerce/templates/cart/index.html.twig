@@ -701,7 +701,6 @@
 {% endblock %}
 
 {% block body %}
-{# Messages flash #}
 {% for message in app.flashes('success') %}
     <div class="flash-message flash-success">
         ✅ {{ message }}
@@ -761,7 +760,6 @@
                 <div class="product-variant">
                   <span class="color-indicator"></span>
                   
-                  {# Formulaire pour changer la quantité #}
                   <form action="{{ path('app_cart_update_quantity', {id: item.product.id}) }}" method="POST" style="display: inline-flex; align-items: center; gap: 0.5rem;">
                     <label style="font-weight: 600;">Quantité:</label>
                     <select name="quantity" onchange="this.form.submit()" class="quantity-select">
@@ -772,7 +770,6 @@
                   </form>
                 </div>
                 
-                {# Formulaire pour supprimer #}
                 <form action="{{ path('app_cart_remove', {id: item.product.id}) }}" method="POST" style="display: inline;">
                     <button type="submit" title="Supprimer" class="action-button delete" 
                             onclick="return confirm('Supprimer {{ item.product.name|escape('js') }} du panier ?')">

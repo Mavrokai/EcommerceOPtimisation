@@ -496,7 +496,6 @@
 {% block body %}
 <div class="checkout-page">
     <div class="checkout-container">
-        <!-- Messages flash -->
         {% for type, messages in app.flashes %}
             {% for message in messages %}
                 <div class="alert alert-{{ type == 'error' ? 'danger' : (type == 'success' ? 'success' : 'info') }} alert-dismissible fade show" role="alert" style="margin-bottom: 2rem; padding: 1rem; border-radius: 8px; background-color: {{ type == 'error' ? '#f8d7da' : (type == 'success' ? '#d4edda' : '#d1ecf1') }}; color: {{ type == 'error' ? '#721c24' : (type == 'success' ? '#155724' : '#0c5460') }}; border: 1px solid {{ type == 'error' ? '#f5c6cb' : (type == 'success' ? '#c3e6cb' : '#bee5eb') }};">
@@ -506,7 +505,6 @@
             {% endfor %}
         {% endfor %}
         
-        <!-- Header -->
         <div class="checkout-header">
             <h1 class="checkout-title">
                 <i class="fas fa-shopping-cart"></i>
@@ -514,7 +512,6 @@
             </h1>
             <p class="checkout-subtitle">Quelques informations et c'est terminé !</p>
             
-            <!-- Progress Steps -->
             <div class="progress-steps">
                 <div class="step">
                     <span class="step-number">✓</span>
@@ -532,11 +529,9 @@
         </div>
 
         <div class="checkout-content">
-            <!-- Formulaire principal -->
             <div class="checkout-form">
                 <form action="{{ path('app_cart_process') }}" method="POST" id="checkout-form">
                     
-                    <!-- Informations de contact -->
                     <div class="form-section">
                         <h2 class="section-title">
                             <i class="fas fa-envelope"></i>
@@ -548,7 +543,6 @@
                         </div>
                     </div>
 
-                    <!-- Adresse de livraison -->
                     <div class="form-section">
                         <h2 class="section-title">
                             <i class="fas fa-map-marker-alt"></i>
@@ -589,7 +583,6 @@
                         </div>
                     </div>
 
-                    <!-- Mode de livraison -->
                     <div class="form-section">
                         <h2 class="section-title">
                             <i class="fas fa-truck"></i>
@@ -623,7 +616,6 @@
                             {% endfor %}
                         </div>
 
-                        <!-- Progression vers livraison gratuite -->
                         {% if totalPanier < 200 %}
                         <div class="shipping-progress">
                             <div class="shipping-progress-bar">
@@ -635,7 +627,6 @@
                         </div>
                         {% endif %}
 
-                        <!-- Emballage cadeau -->
                         {% if totalPanier >= 100 %}
                         <div class="gift-wrap">
                             <div class="gift-checkbox">
@@ -651,7 +642,6 @@
                         {% endif %}
                     </div>
 
-                    <!-- Méthode de paiement -->
                     <div class="form-section">
                         <h2 class="section-title">
                             <i class="fas fa-credit-card"></i>
@@ -684,14 +674,12 @@
                 </form>
             </div>
 
-            <!-- Récapitulatif de commande -->
             <div class="order-summary">
                 <h3 class="summary-title">
                     <i class="fas fa-receipt"></i>
                     Récapitulatif
                 </h3>
                 
-                <!-- Articles du panier -->
                 <div class="cart-items">
                     {% for item in cartItems %}
                     <div class="cart-item">
@@ -713,7 +701,6 @@
                     {% endfor %}
                 </div>
 
-                <!-- Détail des prix -->
                 <div class="summary-breakdown">
                     <div class="summary-row">
                         <span class="summary-label">Sous-total HT</span>
@@ -739,13 +726,11 @@
                     </div>
                 </div>
 
-                <!-- Bouton de paiement -->
                 <button type="submit" form="checkout-form" class="btn-checkout">
                     <i class="fas fa-lock"></i>
                     Finaliser la commande
                 </button>
 
-                <!-- Badges de sécurité -->
                 <div class="security-badges">
                     <div class="security-badge">
                         <i class="fas fa-shield-alt"></i>
