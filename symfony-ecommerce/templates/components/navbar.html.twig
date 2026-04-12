@@ -1,4 +1,3 @@
-{# Navigation principale #}
 <nav class="navbar">
     <div class="navbar-container">
         <div class="navbar-logo">
@@ -9,7 +8,6 @@
         </div>
 
         <div class="navbar-menu" id="navbarMenu">
-            <!-- Dropdown Chiens -->
             <div class="nav-dropdown">
                 <button class="nav-link dropdown-toggle" id="chiensDropdown"
                         aria-haspopup="true" aria-expanded="false" aria-controls="chiensDropdownMenu">
@@ -31,7 +29,6 @@
                 </div>
             </div>
 
-            <!-- Dropdown Chats -->
             <div class="nav-dropdown">
                 <button class="nav-link dropdown-toggle" id="chatsDropdown"
                         aria-haspopup="true" aria-expanded="false" aria-controls="chatsDropdownMenu">
@@ -53,7 +50,6 @@
                 </div>
             </div>
 
-            <!-- Dropdown Oiseaux -->
             <div class="nav-dropdown">
                 <button class="nav-link dropdown-toggle" id="oiseauxDropdown"
                         aria-haspopup="true" aria-expanded="false" aria-controls="oiseauxDropdownMenu">
@@ -74,7 +70,6 @@
                 </div>
             </div>
 
-            <!-- Dropdown Lézards -->
             <div class="nav-dropdown">
                 <button class="nav-link dropdown-toggle" id="lezardsDropdown"
                         aria-haspopup="true" aria-expanded="false" aria-controls="lezardsDropdownMenu">
@@ -116,14 +111,12 @@
                 </form>
             </div>
 
-            <!-- Bouton Admin -->
             {% if app.user and app.user.isAdmin %}
                 <a href="{{ path('admin_dashboard') }}" class="action-button admin-button" aria-label="Administration">
                     <img src="{{ asset('assets/images/adminLogo.png') }}" alt="" width="20" height="20">
                 </a>
             {% endif %}
 
-            <!-- Panier -->
             {%- set cart = app.session.get('cart', {}) -%}
             {%- set totalItems = 0 -%}
             {%- for quantity in cart -%}{%- set totalItems = totalItems + quantity -%}{%- endfor -%}
@@ -137,7 +130,6 @@
                 </span>
             </a>
 
-            <!-- Compte utilisateur -->
             {% if app.user %}
                 <div class="user-dropdown">
                     <button class="user-button" aria-label="Mon compte">
@@ -193,7 +185,6 @@
                 </a>
             {% endif %}
 
-            <!-- Menu mobile toggle -->
             <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
