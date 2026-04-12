@@ -1551,6 +1551,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     setDropdownOpen(false);
                     dropdownToggle.focus();
                 }
+
+                // Focus trap : Tab/Shift+Tab reste dans le dropdown tant qu'il est ouvert
+                if (e.key === 'Tab' && dropdownMenu.classList.contains('show')) {
+                    const focusableItems = Array.from(
+                        dropdownMenu.querySelectorAll('a[href], button:not([disabled])')
+                    );
+                    const first = focusableItems[0];
+                    const last = focusableItems[focusableItems.length - 1];
+
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        dropdownToggle.focus();
+                        setDropdownOpen(false);
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        setDropdownOpen(false);
+                        dropdownToggle.focus();
+                    }
+                }
             });
         }
     });
