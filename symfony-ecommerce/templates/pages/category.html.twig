@@ -74,14 +74,22 @@
                             <!-- Image du produit -->
                             <div class="product-image-container">
                                 {% if product.imageUrl %}
-                                    <img src="{{ asset('assets/images/' ~ product.imageUrl) }}" 
-                                         class="card-img-top product-image" 
-                                         alt="{{ product.name }}"
-                                         onerror="this.src='{{ asset('assets/images/hero-image.png') }}'">
+                                    <picture>
+                                        <source srcset="{{ asset('assets/images/' ~ product.imageUrl|replace({'.jpg': '.webp', '.jpeg': '.webp', '.png': '.webp'})) }}" type="image/webp">
+                                        <img src="{{ asset('assets/images/' ~ product.imageUrl) }}"
+                                             class="card-img-top product-image"
+                                             alt="{{ product.name }}"
+                                             loading="lazy" width="300" height="200"
+                                             onerror="this.src='{{ asset('assets/images/hero-image.webp') }}'">
+                                    </picture>
                                 {% else %}
-                                    <img src="{{ asset('assets/images/hero-image.png') }}" 
-                                         class="card-img-top product-image" 
-                                         alt="{{ product.name }}">
+                                    <picture>
+                                        <source srcset="{{ asset('assets/images/hero-image.webp') }}" type="image/webp">
+                                        <img src="{{ asset('assets/images/hero-image.png') }}"
+                                             class="card-img-top product-image"
+                                             alt="{{ product.name }}"
+                                             loading="lazy" width="300" height="200">
+                                    </picture>
                                 {% endif %}
                                 
                                 <!-- Badges -->
