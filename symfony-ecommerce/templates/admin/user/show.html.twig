@@ -33,7 +33,6 @@
 
 {% block content %}
 <div class="row">
-    <!-- Informations principales -->
     <div class="col-md-8">
         <div class="card mb-4">
             <div class="card-header">
@@ -141,7 +140,6 @@
             </div>
         </div>
 
-        <!-- Adresses -->
         {% if user.addresses|length > 0 %}
         <div class="card mb-4">
             <div class="card-header">
@@ -182,7 +180,6 @@
         </div>
         {% endif %}
 
-        <!-- Commandes récentes -->
         {% if user.orders|length > 0 %}
         <div class="card">
             <div class="card-header">
@@ -239,7 +236,6 @@
         {% endif %}
     </div>
 
-    <!-- Actions rapides -->
     <div class="col-md-4">
         <div class="card">
             <div class="card-header">
