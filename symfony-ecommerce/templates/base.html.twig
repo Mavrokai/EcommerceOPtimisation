@@ -176,6 +176,8 @@
     </head>
     <body>
         <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+        {# Zone d'annonces pour lecteurs d'écran — masquée visuellement #}
+        <div id="sr-announcer" aria-live="polite" aria-atomic="true" class="sr-only"></div>
         {% include 'components/navbar.html.twig' %}
         
         <main id="main-content">
