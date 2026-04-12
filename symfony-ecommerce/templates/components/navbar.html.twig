@@ -1544,6 +1544,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     setDropdownOpen(false);
                 }
             });
+
+            // Fermer avec Échap et remettre le focus sur le bouton (WCAG 2.1.2)
+            dropdownMenu.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    setDropdownOpen(false);
+                    dropdownToggle.focus();
+                }
+            });
         }
     });
 
