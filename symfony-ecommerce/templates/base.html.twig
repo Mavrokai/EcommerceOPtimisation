@@ -8,7 +8,6 @@
         <link rel="canonical" href="{% block canonical %}{{ app.request.schemeAndHttpHost ~ app.request.pathInfo }}{% endblock %}">
         <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
 
-        {# Open Graph #}
         <meta property="og:type" content="{% block og_type %}website{% endblock %}">
         <meta property="og:title" content="{% block og_title %}{% block title_text %}Clochette&CO - Animalerie en ligne{% endblock %}{% endblock %}">
         <meta property="og:description" content="{% block og_description %}{{ block('meta_description') }}{% endblock %}">
@@ -21,11 +20,9 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        {# Google Fonts — chargement non bloquant #}
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
 
-        {# Font Awesome — préchargement WOFF2 + subset CSS (self-hosted, sans cookies tiers) #}
         <link rel="preload" href="{{ asset('assets/fontawesome/webfonts/fa-solid-900.woff2') }}" as="font" type="font/woff2" crossorigin>
         <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/fa-subset.min.css') }}">
 
@@ -178,7 +175,6 @@
     </head>
     <body>
         <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-        {# Zone d'annonces pour lecteurs d'écran — masquée visuellement #}
         <div id="sr-announcer" aria-live="polite" aria-atomic="true" class="sr-only"></div>
         {% include 'components/navbar.html.twig' %}
         
